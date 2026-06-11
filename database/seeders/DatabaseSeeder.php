@@ -26,7 +26,7 @@ class DatabaseSeeder extends Seeder
 
             $admin = User::updateOrCreate(
                 ['username' => 'admin'],
-                ['name' => 'Super Admin', 'email' => 'admin@example.test', 'password' => 'password', 'status' => 'active'],
+                ['name' => 'Super Admin', 'email' => 'admin@gmail.com', 'password' => 'password', 'status' => 'active'],
             );
             $admin->syncRoles([$superAdminRole]);
 
@@ -37,8 +37,8 @@ class DatabaseSeeder extends Seeder
             ])->map(fn (array $school) => School::updateOrCreate(['code' => $school['code']], [...$school, 'status' => 'active']));
 
             collect([
-                ['name' => 'Pak Ahmad', 'username' => 'pak.ahmad', 'email' => 'ahmad@example.test', 'teacher_code' => 'GEO-001', 'school_ids' => [$schools[0]->id, $schools[1]->id]],
-                ['name' => 'Bu Sari', 'username' => 'bu.sari', 'email' => 'sari@example.test', 'teacher_code' => 'GEO-002', 'school_ids' => [$schools[2]->id]],
+                ['name' => 'Pak Ahmad', 'username' => 'pak.ahmad', 'email' => 'ahmad@gmail.com', 'teacher_code' => 'GEO-001', 'school_ids' => [$schools[0]->id, $schools[1]->id]],
+                ['name' => 'Bu Sari', 'username' => 'bu.sari', 'email' => 'sari@gmail.com', 'teacher_code' => 'GEO-002', 'school_ids' => [$schools[2]->id]],
             ])->each(function (array $teacherData) use ($guruRole, $admin) {
                 $user = User::updateOrCreate(
                     ['username' => $teacherData['username']],

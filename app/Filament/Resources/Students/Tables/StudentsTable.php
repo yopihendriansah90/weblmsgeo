@@ -15,6 +15,9 @@ class StudentsTable
     {
         return $table
             ->columns([
+                         TextColumn::make('index')
+                    ->label('No')
+                    ->rowIndex(),
                 TextColumn::make('user.name')->label('Nama')->searchable()->sortable(),
                 TextColumn::make('user.username')->label('Username')->searchable(),
                 TextColumn::make('school.name')->label('Sekolah')->searchable()->sortable(),

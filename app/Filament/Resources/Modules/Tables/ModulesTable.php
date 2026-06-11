@@ -15,6 +15,9 @@ class ModulesTable
     {
         return $table
             ->columns([
+                         TextColumn::make('index')
+                    ->label('No')
+                    ->rowIndex(),
                 TextColumn::make('course.title')->label('Kursus')->searchable(),
                 TextColumn::make('title')->label('Bab')->searchable()->sortable(),
                 TextColumn::make('sort_order')->label('Urutan')->sortable(),

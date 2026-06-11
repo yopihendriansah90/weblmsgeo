@@ -15,6 +15,9 @@ class TeachersTable
     {
         return $table
             ->columns([
+                         TextColumn::make('index')
+                    ->label('No')
+                    ->rowIndex(),
                 TextColumn::make('user.name')->label('Nama')->searchable()->sortable(),
                 TextColumn::make('user.username')->label('Username')->searchable(),
                 TextColumn::make('teacher_code')->label('Kode Guru')->searchable(),

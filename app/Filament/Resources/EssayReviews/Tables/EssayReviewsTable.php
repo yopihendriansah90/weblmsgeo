@@ -15,6 +15,9 @@ class EssayReviewsTable
     {
         return $table
             ->columns([
+                         TextColumn::make('index')
+                    ->label('No')
+                    ->rowIndex(),
                 TextColumn::make('stepAttempt.quizAttempt.student.user.name')->label('Siswa')->searchable(),
                 TextColumn::make('stepAttempt.quizAttempt.student.school.name')->label('Sekolah')->searchable(),
                 TextColumn::make('stepAttempt.quizStep.title')->label('Essay')->searchable(),

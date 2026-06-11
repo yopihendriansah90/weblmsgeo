@@ -15,6 +15,11 @@ class CoursesTable
     {
         return $table
             ->columns([
+
+                TextColumn::make('index')
+                    ->label('No')
+                    ->rowIndex(),
+
                 TextColumn::make('title')->label('Kursus')->searchable()->sortable(),
                 TextColumn::make('slug')->searchable(),
                 TextColumn::make('modules_count')->counts('modules')->label('Bab'),

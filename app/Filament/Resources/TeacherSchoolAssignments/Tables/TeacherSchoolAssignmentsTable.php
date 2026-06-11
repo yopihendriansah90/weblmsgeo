@@ -15,6 +15,9 @@ class TeacherSchoolAssignmentsTable
     {
         return $table
             ->columns([
+                         TextColumn::make('index')
+                    ->label('No')
+                    ->rowIndex(),
                 TextColumn::make('teacher.user.name')->label('Guru')->searchable(),
                 TextColumn::make('school.name')->label('Sekolah')->searchable(),
                 TextColumn::make('assigner.name')->label('Assigned By'),

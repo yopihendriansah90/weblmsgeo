@@ -15,6 +15,9 @@ class QuizStepsTable
     {
         return $table
             ->columns([
+                         TextColumn::make('index')
+                    ->label('No')
+                    ->rowIndex(),
                 TextColumn::make('quiz.title')->label('Kuis')->searchable(),
                 TextColumn::make('title')->label('Step')->searchable(),
                 TextColumn::make('type')->badge(),

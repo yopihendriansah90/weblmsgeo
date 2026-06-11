@@ -15,6 +15,9 @@ class LessonsTable
     {
         return $table
             ->columns([
+                         TextColumn::make('index')
+                    ->label('No')
+                    ->rowIndex(),
                 TextColumn::make('module.course.title')->label('Kursus')->searchable(),
                 TextColumn::make('module.title')->label('Bab')->searchable(),
                 TextColumn::make('title')->label('Subbab')->searchable()->sortable(),

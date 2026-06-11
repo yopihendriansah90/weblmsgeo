@@ -15,6 +15,9 @@ class QuizzesTable
     {
         return $table
             ->columns([
+                         TextColumn::make('index')
+                    ->label('No')
+                    ->rowIndex(),
                 TextColumn::make('lesson.title')->label('Subbab')->searchable(),
                 TextColumn::make('title')->label('Kuis')->searchable()->sortable(),
                 TextColumn::make('mode')->badge(),

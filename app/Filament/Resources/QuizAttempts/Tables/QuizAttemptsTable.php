@@ -15,6 +15,9 @@ class QuizAttemptsTable
     {
         return $table
             ->columns([
+                         TextColumn::make('index')
+                    ->label('No')
+                    ->rowIndex(),
                 TextColumn::make('student.user.name')->label('Siswa')->searchable(),
                 TextColumn::make('student.school.name')->label('Sekolah')->searchable(),
                 TextColumn::make('quiz.title')->label('Kuis')->searchable(),
