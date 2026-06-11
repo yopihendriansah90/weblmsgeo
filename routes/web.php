@@ -9,14 +9,38 @@ use App\Livewire\Student\Login;
 use App\Livewire\Student\Profile;
 use App\Livewire\Student\QuizHistory;
 use App\Livewire\Student\QuizTake;
+use App\Livewire\Guru\CourseForm;
+use App\Livewire\Guru\LessonForm;
+use App\Livewire\Guru\ModuleForm;
+use App\Livewire\Guru\ModuleIndex;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return redirect()->route('student.login');
+    if (auth()->check()) {
+        if (auth()->user()->hasRole('super_admin')) return redirect('/admin');
+        if (auth()->user()->hasRole('guru')) return redirect()->route('guru.dashboard');
+        if (auth()->user()->hasRole('siswa')) return redirect()->route('student.dashboard');
+    }
+    return redirect()->route('login');
 });
 
-Route::get('/login-siswa', Login::class)->middleware('guest')->name('student.login');
+Route::get('/guru', function () {
+    return redirect()->route('guru.dashboard');
+});
+
+Route::get('/guru/login', Login::class)->middleware('guest')->name('guru.login');
+
+Route::get('/login', Login::class)->middleware('guest')->name('login');
+Route::get('/login-siswa', function() { return redirect()->route('login'); })->name('student.login');
+
+Route::post('/logout', function (Request $request) {
+    auth()->logout();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+
+    return redirect()->route('login');
+})->middleware('auth')->name('logout');
 
 Route::post('/logout-siswa', function (Request $request) {
     auth()->logout();
@@ -25,6 +49,14 @@ Route::post('/logout-siswa', function (Request $request) {
 
     return redirect()->route('student.login');
 })->middleware('auth')->name('student.logout');
+
+Route::post('/guru/logout', function (Request $request) {
+    auth()->logout();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+
+    return redirect()->route('guru.login');
+})->middleware('auth')->name('guru.logout');
 
 Route::middleware(['auth', 'student'])->prefix('siswa')->name('student.')->group(function () {
     Route::get('/dashboard', Dashboard::class)->name('dashboard');
@@ -35,4 +67,27 @@ Route::middleware(['auth', 'student'])->prefix('siswa')->name('student.')->group
     Route::get('/riwayat-belajar', LearningHistory::class)->name('learning-history');
     Route::get('/riwayat-kuis', QuizHistory::class)->name('quiz-history');
     Route::get('/profil', Profile::class)->name('profile');
+});
+
+Route::middleware(['auth', 'guru'])->prefix('guru')->name('guru.')->group(function () {
+    Route::get('/dashboard', \App\Livewire\Guru\Dashboard::class)->name('dashboard');
+    Route::get('/materi', \App\Livewire\Guru\CourseIndex::class)->name('courses.index');
+    Route::get('/materi/create', CourseForm::class)->name('courses.create');
+    Route::get('/materi/{course}/edit', CourseForm::class)->name('courses.edit');
+    Route::get('/materi/{course}/bab', ModuleIndex::class)->name('modules.index');
+    Route::get('/materi/{course}/bab/create', ModuleForm::class)->name('modules.create');
+    Route::get('/bab/{module}/edit', ModuleForm::class)->name('modules.edit');
+    Route::get('/bab/{module}/subbab/create', LessonForm::class)->name('lessons.create');
+    Route::get('/subbab/{lesson}/edit', LessonForm::class)->name('lessons.edit');
+    Route::post('/editor-image-upload', function (Request $request) {
+        $request->validate([
+            'file' => ['required', 'image', 'max:5120'],
+        ]);
+
+        $path = $request->file('file')->store('lesson-content', 'public');
+
+        return response()->json([
+            'location' => '/storage/'.$path,
+        ]);
+    })->name('editor-image-upload');
 });

@@ -39,10 +39,11 @@ class DatabaseSeeder extends Seeder
             collect([
                 ['name' => 'Pak Ahmad', 'username' => 'pak.ahmad', 'email' => 'ahmad@gmail.com', 'teacher_code' => 'GEO-001', 'school_ids' => [$schools[0]->id, $schools[1]->id]],
                 ['name' => 'Bu Sari', 'username' => 'bu.sari', 'email' => 'sari@gmail.com', 'teacher_code' => 'GEO-002', 'school_ids' => [$schools[2]->id]],
+                ['name' => 'Yopi', 'username' => 'yopi', 'email' => 'yopi@gmail.com', 'teacher_code' => 'GEO-003', 'school_ids' => [$schools[0]->id, $schools[1]->id, $schools[2]->id], 'password' => 'admin'],
             ])->each(function (array $teacherData) use ($guruRole, $admin) {
                 $user = User::updateOrCreate(
                     ['username' => $teacherData['username']],
-                    ['name' => $teacherData['name'], 'email' => $teacherData['email'], 'password' => 'password', 'status' => 'active'],
+                    ['name' => $teacherData['name'], 'email' => $teacherData['email'], 'password' => $teacherData['password'] ?? 'password', 'status' => 'active'],
                 );
                 $user->syncRoles([$guruRole]);
                 $teacher = Teacher::updateOrCreate(

@@ -7,12 +7,12 @@ use Illuminate\Support\Str;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
-#[Layout('layouts.guest')]
+#[Layout('layouts.auth')]
 class Login extends Component
 {
     public string $username = '';
-
     public string $password = '';
+    public bool $remember = false;
 
     public function login()
     {
@@ -21,34 +21,62 @@ class Login extends Component
             'password' => ['required', 'string'],
         ]);
 
+        $this->username = Str::lower(trim($this->username));
+
         $credentials = [
-            'username' => Str::lower(trim($this->username)),
+            'username' => $this->username,
             'password' => $this->password,
         ];
 
-        if (! Auth::attempt($credentials)) {
+        if (! Auth::attempt($credentials, $this->remember)) {
             $this->addError('username', 'Username atau password salah.');
-
             return null;
         }
 
-        $user = Auth::user()->load('student');
+        $user = Auth::user();
 
-        if ($user->status !== 'active' || ! $user->hasRole('siswa') || $user->student?->status !== 'active') {
+        if ($user->status !== 'active') {
             Auth::logout();
-            $this->addError('username', 'Akun siswa tidak aktif atau tidak memiliki akses portal.');
-
+            $this->addError('username', 'Akun Anda tidak aktif.');
             return null;
         }
 
         $user->forceFill(['last_login_at' => now()])->save();
         session()->regenerate();
 
-        return $this->redirectRoute('student.dashboard', navigate: true);
+        // Redirect based on role
+        if ($user->hasRole('super_admin')) {
+            return redirect()->intended('/admin');
+        }
+
+        if ($user->hasRole('guru')) {
+            return redirect()->intended(route('guru.dashboard'));
+        }
+
+        if ($user->hasRole('siswa')) {
+            if ($user->student?->status !== 'active') {
+                Auth::logout();
+                $this->addError('username', 'Akun siswa tidak aktif.');
+                return null;
+            }
+            return redirect()->intended(route('student.dashboard'));
+        }
+
+        // Default redirect
+        return redirect()->intended('/');
     }
 
     public function render()
     {
-        return view('livewire.student.login');
+        $isGuruLogin = request()->routeIs('guru.login');
+
+        return view('livewire.student.login', [
+            'title' => $isGuruLogin ? 'Login Guru' : 'Login Portal LMS SIG',
+            'subtitle' => $isGuruLogin
+                ? 'Masuk ke panel guru untuk mengelola materi, kuis, dan penilaian.'
+                : 'Masuk untuk memulai sesi belajar.',
+            'switch_url' => $isGuruLogin ? route('login') : route('guru.login'),
+            'switch_label' => $isGuruLogin ? 'Masuk sebagai Siswa' : 'Masuk sebagai Guru',
+        ]);
     }
 }

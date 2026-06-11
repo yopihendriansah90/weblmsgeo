@@ -1,22 +1,60 @@
-<div class="flex min-h-screen items-center justify-center px-4">
-    <div class="w-full max-w-md rounded-lg border border-neutral-200 bg-white p-6 shadow-sm">
-        <div class="mb-6">
-            <h1 class="text-2xl font-semibold">Login Siswa</h1>
-            <p class="mt-1 text-sm text-neutral-600">Masuk dengan username dan password siswa.</p>
-        </div>
+<div class="login-box">
+    <div class="login-logo">
+        <a href="/"><b>LMS</b> SIG</a>
+    </div>
+    <!-- /.login-logo -->
+    <div class="card">
+        <div class="card-body login-card-body">
+            <p class="login-box-msg">{{ $subtitle }}</p>
 
-        <form wire:submit="login" class="space-y-4">
-            <div>
-                <label class="text-sm font-medium" for="username">Username</label>
-                <input id="username" wire:model="username" class="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 focus:border-emerald-600 focus:outline-none" autocomplete="username">
-                @error('username') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-            </div>
-            <div>
-                <label class="text-sm font-medium" for="password">Password</label>
-                <input id="password" type="password" wire:model="password" class="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 focus:border-emerald-600 focus:outline-none" autocomplete="current-password">
-                @error('password') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-            </div>
-            <button class="w-full rounded-md bg-emerald-700 px-4 py-2 font-medium text-white hover:bg-emerald-800" type="submit">Masuk</button>
-        </form>
+            <form wire:submit.prevent="login">
+                <div class="input-group mb-3">
+                    <input type="text" wire:model="username" class="form-control @error('username') is-invalid @enderror" placeholder="Username">
+                    <div class="input-group-text">
+                        <span class="bi bi-person-fill"></span>
+                    </div>
+                    @error('username')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+                <div class="input-group mb-3">
+                    <input type="password" wire:model="password" class="form-control @error('password') is-invalid @enderror" placeholder="Password">
+                    <div class="input-group-text">
+                        <span class="bi bi-lock-fill"></span>
+                    </div>
+                    @error('password')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+                <!--begin::Row-->
+                <div class="row">
+                    <div class="col-8">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" wire:model="remember" id="remember">
+                            <label class="form-check-label" for="remember">
+                                Ingat Saya
+                            </label>
+                        </div>
+                    </div>
+                    <!-- /.col -->
+                    <div class="col-4">
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Masuk</button>
+                        </div>
+                    </div>
+                    <!-- /.col -->
+                </div>
+                <!--end::Row-->
+            </form>
+
+            <p class="mb-1 mt-3">
+                <a href="#">Lupa password?</a>
+            </p>
+
+            <p class="mt-3 mb-0 text-center">
+                <a href="{{ $switch_url }}">{{ $switch_label }}</a>
+            </p>
+        </div>
+        <!-- /.login-card-body -->
     </div>
 </div>

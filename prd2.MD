@@ -11,8 +11,10 @@
 **Database:** MySQL
 **Media Management:** Spatie Laravel Media Library
 **Role & Permission:** Filament Shield
-**UI Admin/Guru:** Filament Panel
+**UI Super Admin:** Filament Panel
+**UI Guru:** AdminLTE
 **UI Siswa:** Laravel Blade/Livewire/Tailwind Custom
+**Rich Text Editor Guru:** TinyMCE Self-Hosted GPL Core
 
 ---
 
@@ -35,7 +37,7 @@ Perubahan utama:
 11. Username siswa wajib unik.
 12. Pendaftaran siswa dilakukan manual melalui form admin.
 13. Fitur import siswa Excel/CSV tidak digunakan.
-14. Materi tetap menggunakan RichEditor bawaan Filament 4.
+14. Materi guru menggunakan TinyMCE self-hosted GPL core.
 15. Gambar dapat diupload di tengah materi.
 16. Kuis tetap menggunakan 4 jenis: essay, penjodohan teks, table checklist, dan penjodohan gambar-teks.
 17. Kuis dikerjakan secara berurutan menggunakan sequential quiz flow.
@@ -66,7 +68,7 @@ Tujuan pengembangan sistem adalah:
 7. Memudahkan guru menilai jawaban essay siswa.
 8. Menyediakan login siswa menggunakan username dan password.
 9. Menjamin username siswa unik saat pendaftaran.
-10. Menyediakan CMS materi berbasis RichEditor.
+10. Menyediakan CMS materi berbasis TinyMCE.
 11. Memungkinkan upload gambar di tengah pembahasan materi.
 12. Menyediakan kuis interaktif dengan 4 jenis kuis.
 13. Menyediakan penilaian otomatis untuk kuis non-essay.
@@ -150,7 +152,7 @@ Fitur yang masuk dalam MVP:
 8. Manajemen mata pelajaran/kursus.
 9. Manajemen bab.
 10. Manajemen subbab.
-11. CMS materi dengan RichEditor.
+11. CMS materi dengan TinyMCE.
 12. Upload gambar di tengah materi.
 13. Upload cover materi.
 14. Upload lampiran materi.
@@ -319,7 +321,8 @@ rizky/smp1
 
 ## 9.4 Login Guru dan Super Admin
 
-Guru dan Super Admin login melalui panel Filament.
+Super Admin login melalui panel Filament 4.
+Guru login melalui area web AdminLTE.
 
 Business rule:
 
@@ -664,7 +667,7 @@ Sistem Informasi Geografis
 
 CMS materi menggunakan:
 
-1. RichEditor bawaan Filament 4.
+1. TinyMCE self-hosted GPL core.
 2. Spatie Media Library untuk upload media.
 3. FileUpload untuk cover materi.
 4. RichContentRenderer untuk menampilkan materi di portal siswa.
@@ -695,35 +698,27 @@ Guru atau Super Admin dapat:
 
 Business rule:
 
-1. Gambar dapat diupload langsung melalui RichEditor.
+1. Gambar dapat diupload langsung melalui TinyMCE.
 2. Gambar dapat muncul di awal, tengah, atau akhir pembahasan.
 3. Gambar inline dapat di-resize.
 4. Aspect ratio gambar inline tetap proporsional.
-5. Cover materi tidak dimasukkan ke RichEditor.
-6. Gambar soal kuis tidak dimasukkan ke RichEditor.
+5. Cover materi tidak dimasukkan ke TinyMCE.
+6. Gambar soal kuis tidak dimasukkan ke TinyMCE.
 7. Gambar soal kuis menggunakan media khusus kuis.
 8. File upload dibatasi berdasarkan tipe dan ukuran.
 
 ---
 
-## 16.4 Konfigurasi RichEditor
+## 16.4 Konfigurasi TinyMCE
 
-```php
-use Filament\Forms\Components\RichEditor;
-
-RichEditor::make('content')
-    ->label('Isi Materi')
-    ->json()
-    ->resizableImages()
-    ->fileAttachmentsDisk('public')
-    ->fileAttachmentsDirectory('lesson-content')
-    ->fileAttachmentsAcceptedFileTypes([
-        'image/jpeg',
-        'image/png',
-        'image/webp',
-    ])
-    ->fileAttachmentsMaxSize(5120)
-    ->columnSpanFull();
+```js
+tinymce.init({
+  selector: '#content',
+  license_key: 'gpl',
+  plugins: 'lists link table image code',
+  toolbar: 'undo redo | bold italic | bullist numlist | link image table | code',
+  images_upload_url: '/guru/editor-image-upload'
+});
 ```
 
 ---
@@ -969,7 +964,7 @@ Kuis ini menampilkan gambar dan pilihan jawaban teks. Siswa harus memasangkan ga
 ## 21.3 Business Rule
 
 1. Gambar kuis disimpan menggunakan Spatie Media Library.
-2. Gambar kuis tidak disimpan di RichEditor materi.
+2. Gambar kuis tidak disimpan di editor materi.
 3. Setiap gambar memiliki satu jawaban benar.
 4. Pilihan jawaban dapat diacak.
 5. Gambar harus memiliki alt text.
@@ -1541,6 +1536,8 @@ Tanggung jawab:
 
 ## 33.2 Menu Guru
 
+Menu ini ditampilkan pada area AdminLTE guru.
+
 1. Dashboard
 2. Materi
 3. Kuis
@@ -1552,6 +1549,8 @@ Tanggung jawab:
 ---
 
 ## 33.3 Menu Siswa
+
+Menu ini ditampilkan pada dashboard custom siswa.
 
 1. Dashboard
 2. Mata Pelajaran
@@ -1598,7 +1597,7 @@ flowchart TD
     D --> E{Materi Published?}
     E -- Tidak --> F[Tampilkan pesan materi belum tersedia]
     E -- Ya --> G[Tampilkan halaman materi]
-    G --> H[Render konten RichEditor]
+    G --> H[Render konten materi]
     H --> I[Tampilkan teks, gambar inline, dan lampiran]
     I --> J[Catat aktivitas membuka materi]
     J --> K{Siswa selesai membaca?}
@@ -1830,7 +1829,7 @@ flowchart LR
 ## 37.4 Materi
 
 1. Super Admin/Guru dapat membuat materi.
-2. Materi dibuat menggunakan RichEditor.
+2. Materi dibuat menggunakan TinyMCE.
 3. Gambar dapat diupload di tengah materi.
 4. Cover materi menggunakan field terpisah.
 5. Siswa dapat membaca materi published.
@@ -1869,11 +1868,13 @@ flowchart LR
 
 1. Setup Laravel 12.
 2. Setup Filament 4.
-3. Setup MySQL.
-4. Setup authentication.
-5. Setup Filament Shield.
-6. Setup Spatie Media Library.
-7. Setup role Super Admin, Guru, dan Siswa.
+3. Setup AdminLTE.
+4. Setup MySQL.
+5. Setup authentication.
+6. Setup Filament Shield.
+7. Setup Spatie Media Library.
+8. Setup TinyMCE self-hosted GPL core.
+9. Setup role Super Admin, Guru, dan Siswa.
 
 ---
 
@@ -1892,7 +1893,7 @@ flowchart LR
 1. Manajemen kursus.
 2. Manajemen bab.
 3. Manajemen subbab.
-4. RichEditor materi.
+4. TinyMCE materi.
 5. Upload gambar inline.
 6. Upload cover.
 7. Upload lampiran.
@@ -1966,7 +1967,7 @@ Keputusan final sistem:
 11. Guru dapat di-assign ke satu atau beberapa sekolah.
 12. Assignment guru hanya dilakukan oleh Super Admin.
 13. Guru hanya melihat data dari sekolah yang di-assign.
-14. Materi dibuat menggunakan RichEditor Filament 4.
+14. Materi dibuat menggunakan TinyMCE self-hosted GPL core.
 15. Gambar dapat diupload di tengah materi.
 16. Cover dan gambar kuis menggunakan media field terpisah.
 17. Kuis terdiri dari 4 jenis.
@@ -1985,6 +1986,6 @@ Web LMS Pembelajaran SIG dengan Data Siswa dari Berbagai Sekolah dan Assignment 
 
 Sistem ini tidak menggunakan konsep multi-tenant sekolah penuh agar pengerjaan tidak terlalu rumit. Sekolah hanya digunakan sebagai data asal siswa dan sebagai dasar pembatasan akses guru. Guru tetap dapat di-assign ke sekolah tertentu oleh Super Admin agar guru dapat fokus melihat siswa, hasil kuis, dan essay dari sekolah yang menjadi tanggung jawabnya.
 
-Siswa dapat login menggunakan username dan password, membaca materi, mengerjakan 4 jenis kuis, melihat hasil, serta memantau riwayat pembelajaran. Materi dikelola menggunakan RichEditor sehingga gambar dapat disisipkan langsung di tengah pembahasan. Kuis dirancang berurutan, dengan essay yang dinilai manual oleh guru dan kuis lainnya dinilai otomatis oleh sistem.
+Siswa dapat login menggunakan username dan password, membaca materi, mengerjakan 4 jenis kuis, melihat hasil, serta memantau riwayat pembelajaran. Materi dikelola menggunakan TinyMCE sehingga gambar dapat disisipkan langsung di tengah pembahasan. Kuis dirancang berurutan, dengan essay yang dinilai manual oleh guru dan kuis lainnya dinilai otomatis oleh sistem.
 
 PRD ini menjadi acuan utama untuk tahap desain database, UI/UX, pembuatan migration Laravel, pengembangan fitur, testing, dan persiapan demonstrasi sistem pada sidang skripsi.

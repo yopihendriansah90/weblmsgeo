@@ -12,8 +12,13 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->redirectTo(
+            guests: '/login'
+        );
+
         $middleware->alias([
             'student' => EnsureStudent::class,
+            'guru' => \App\Http\Middleware\EnsureGuru::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
