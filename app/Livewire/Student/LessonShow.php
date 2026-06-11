@@ -15,7 +15,7 @@ class LessonShow extends Component
     public function mount(Lesson $lesson, LessonProgressService $progressService): void
     {
         abort_unless($lesson->status === 'published', 404);
-        $this->lesson = $lesson->load('module.course', 'publishedQuiz');
+        $this->lesson = $lesson->load('module.course', 'publishedQuiz', 'media');
         $progressService->open(auth()->user()->student, $lesson);
     }
 

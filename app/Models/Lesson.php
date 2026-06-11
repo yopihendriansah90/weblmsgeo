@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
@@ -38,5 +40,21 @@ class Lesson extends Model implements HasMedia
     public function publishedQuiz(): HasOne
     {
         return $this->hasOne(Quiz::class)->where('status', 'published');
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('lesson_covers')->singleFile();
+        $this->addMediaCollection('lesson_attachments');
+    }
+
+    public function coverImage(): MorphOne
+    {
+        return $this->media()->one()->where('collection_name', 'lesson_covers');
+    }
+
+    public function attachments(): MorphMany
+    {
+        return $this->media()->where('collection_name', 'lesson_attachments');
     }
 }

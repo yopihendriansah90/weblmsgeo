@@ -33,6 +33,40 @@
                         @error('summary') <div class="invalid-feedback">{{ $message }}</div> @enderror
                     </div>
 
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Cover Subbab</label>
+                            <input type="file" wire:model="cover_image" class="form-control @error('cover_image') is-invalid @enderror" accept="image/*">
+                            @error('cover_image') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                            @if($lesson?->getFirstMediaUrl('lesson_covers'))
+                                <div class="mt-2">
+                                    <img src="{{ $lesson->getFirstMediaUrl('lesson_covers') }}" alt="Cover" class="img-fluid rounded border" style="max-height: 180px;">
+                                </div>
+                            @endif
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Lampiran</label>
+                            <input type="file" wire:model="attachments" class="form-control @error('attachments') is-invalid @enderror" multiple>
+                            @error('attachments') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                            @error('attachments.*') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
+                            <div class="mt-2 small text-muted">Bisa upload lebih dari satu file.</div>
+                        </div>
+                    </div>
+
+                    @if($lesson?->getMedia('lesson_attachments')->count())
+                        <div class="mb-3">
+                            <label class="form-label">Lampiran Saat Ini</label>
+                            <div class="list-group">
+                                @foreach($lesson->getMedia('lesson_attachments') as $media)
+                                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                                        <a href="{{ $media->getUrl() }}" target="_blank">{{ $media->name ?: $media->file_name }}</a>
+                                        <button type="button" class="btn btn-sm btn-outline-danger" wire:click="deleteMedia({{ $media->id }})">Hapus</button>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
+
                     <div class="mb-3">
                         <label class="form-label">Isi Materi</label>
                         <div wire:ignore>

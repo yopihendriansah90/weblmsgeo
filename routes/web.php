@@ -11,6 +11,7 @@ use App\Livewire\Student\QuizHistory;
 use App\Livewire\Student\QuizTake;
 use App\Livewire\Guru\CourseForm;
 use App\Livewire\Guru\LessonForm;
+use App\Livewire\Guru\LessonPreview;
 use App\Livewire\Guru\ModuleForm;
 use App\Livewire\Guru\ModuleIndex;
 use Illuminate\Http\Request;
@@ -79,6 +80,7 @@ Route::middleware(['auth', 'guru'])->prefix('guru')->name('guru.')->group(functi
     Route::get('/bab/{module}/edit', ModuleForm::class)->name('modules.edit');
     Route::get('/bab/{module}/subbab/create', LessonForm::class)->name('lessons.create');
     Route::get('/subbab/{lesson}/edit', LessonForm::class)->name('lessons.edit');
+    Route::get('/subbab/{lesson}/preview', LessonPreview::class)->name('lessons.preview');
     Route::post('/editor-image-upload', function (Request $request) {
         $request->validate([
             'file' => ['required', 'image', 'max:5120'],
