@@ -16,7 +16,7 @@ class CourseForm
                 TextInput::make('title')->label('Judul')->required()->maxLength(255),
                 TextInput::make('slug')->required()->maxLength(255)->unique(ignoreRecord: true),
                 Textarea::make('description')->label('Deskripsi')->columnSpanFull(),
-                Select::make('status')->options(['draft' => 'Draft', 'published' => 'Published', 'archived' => 'Archived'])->required()->default('draft'),
+                Select::make('status')->options(['draft' => 'Draf', 'published' => 'Dipublikasikan', 'archived' => 'Diarsipkan'])->required()->default('draft'),
             ]);
     }
 }

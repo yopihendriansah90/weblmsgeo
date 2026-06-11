@@ -15,19 +15,19 @@ class QuizAttemptsTable
     {
         return $table
             ->columns([
-                         TextColumn::make('index')
+                TextColumn::make('index')
                     ->label('No')
                     ->rowIndex(),
                 TextColumn::make('student.user.name')->label('Siswa')->searchable(),
                 TextColumn::make('student.school.name')->label('Sekolah')->searchable(),
                 TextColumn::make('quiz.title')->label('Kuis')->searchable(),
-                TextColumn::make('auto_score')->label('Auto'),
-                TextColumn::make('essay_score')->label('Essay'),
-                TextColumn::make('final_score')->label('Final'),
+                TextColumn::make('auto_score')->label('Otomatis'),
+                TextColumn::make('essay_score')->label('Esai'),
+                TextColumn::make('final_score')->label('Nilai Akhir'),
                 TextColumn::make('status')->badge(),
             ])
             ->filters([
-                SelectFilter::make('status')->options(['in_progress' => 'In Progress', 'pending_review' => 'Pending Review', 'completed' => 'Completed']),
+                SelectFilter::make('status')->label('Status')->options(['in_progress' => 'Sedang Dikerjakan', 'pending_review' => 'Menunggu Penilaian', 'completed' => 'Selesai']),
             ])
             ->recordActions([
                 EditAction::make(),

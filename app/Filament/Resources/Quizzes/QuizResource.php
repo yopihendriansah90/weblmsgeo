@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Quizzes;
 
+use App\Filament\Concerns\HasPanelRoleAccess;
 use App\Filament\Resources\Quizzes\Pages\CreateQuiz;
 use App\Filament\Resources\Quizzes\Pages\EditQuiz;
 use App\Filament\Resources\Quizzes\Pages\ListQuizzes;
@@ -16,7 +17,11 @@ use Filament\Tables\Table;
 
 class QuizResource extends Resource
 {
+    use HasPanelRoleAccess;
+
     protected static ?string $model = Quiz::class;
+
+    protected static ?string $navigationLabel = 'Kuis';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
@@ -44,5 +49,10 @@ class QuizResource extends Resource
             'create' => CreateQuiz::route('/create'),
             'edit' => EditQuiz::route('/{record}/edit'),
         ];
+    }
+
+    public static function canViewAny(): bool
+    {
+        return static::currentUserIsTeacherOrAdmin();
     }
 }

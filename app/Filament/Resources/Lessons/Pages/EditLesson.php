@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Lessons\Pages;
 
 use App\Filament\Resources\Lessons\LessonResource;
+use App\Filament\Resources\Modules\ModuleResource;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 
@@ -13,7 +14,9 @@ class EditLesson extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            DeleteAction::make(),
+            DeleteAction::make()
+                ->label('Hapus')
+                ->successRedirectUrl(fn (): string => ModuleResource::getUrl('edit', ['record' => $this->getRecord()->module_id])),
         ];
     }
 
@@ -22,5 +25,10 @@ class EditLesson extends EditRecord
         $data['updated_by'] = auth()->id();
 
         return $data;
+    }
+
+    protected function getRedirectUrl(): string
+    {
+        return ModuleResource::getUrl('edit', ['record' => $this->getRecord()->module_id]);
     }
 }

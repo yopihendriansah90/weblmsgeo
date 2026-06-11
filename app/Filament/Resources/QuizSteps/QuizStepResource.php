@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\QuizSteps;
 
+use App\Filament\Concerns\HasPanelRoleAccess;
 use App\Filament\Resources\QuizSteps\Pages\CreateQuizStep;
 use App\Filament\Resources\QuizSteps\Pages\EditQuizStep;
 use App\Filament\Resources\QuizSteps\Pages\ListQuizSteps;
@@ -16,6 +17,8 @@ use Filament\Tables\Table;
 
 class QuizStepResource extends Resource
 {
+    use HasPanelRoleAccess;
+
     protected static ?string $model = QuizStep::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
@@ -44,5 +47,10 @@ class QuizStepResource extends Resource
             'create' => CreateQuizStep::route('/create'),
             'edit' => EditQuizStep::route('/{record}/edit'),
         ];
+    }
+
+    public static function canViewAny(): bool
+    {
+        return static::currentUserIsTeacherOrAdmin();
     }
 }

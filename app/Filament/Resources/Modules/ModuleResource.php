@@ -2,9 +2,11 @@
 
 namespace App\Filament\Resources\Modules;
 
+use App\Filament\Concerns\HasPanelRoleAccess;
 use App\Filament\Resources\Modules\Pages\CreateModule;
 use App\Filament\Resources\Modules\Pages\EditModule;
 use App\Filament\Resources\Modules\Pages\ListModules;
+use App\Filament\Resources\Modules\RelationManagers\LessonsRelationManager;
 use App\Filament\Resources\Modules\Schemas\ModuleForm;
 use App\Filament\Resources\Modules\Tables\ModulesTable;
 use App\Models\Module;
@@ -16,7 +18,15 @@ use Filament\Tables\Table;
 
 class ModuleResource extends Resource
 {
+    use HasPanelRoleAccess;
+
     protected static ?string $model = Module::class;
+
+    protected static ?string $navigationLabel = 'Bab';
+
+    protected static ?string $modelLabel = 'bab';
+
+    protected static ?string $pluralModelLabel = 'bab';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
@@ -33,7 +43,7 @@ class ModuleResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            LessonsRelationManager::class,
         ];
     }
 
@@ -44,5 +54,15 @@ class ModuleResource extends Resource
             'create' => CreateModule::route('/create'),
             'edit' => EditModule::route('/{record}/edit'),
         ];
+    }
+
+    public static function canViewAny(): bool
+    {
+        return static::currentUserIsTeacherOrAdmin();
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
     }
 }

@@ -15,10 +15,10 @@ class LessonsTable
     {
         return $table
             ->columns([
-                         TextColumn::make('index')
+                TextColumn::make('index')
                     ->label('No')
                     ->rowIndex(),
-                TextColumn::make('module.course.title')->label('Kursus')->searchable(),
+                TextColumn::make('module.course.title')->label('Materi Pembelajaran')->searchable(),
                 TextColumn::make('module.title')->label('Bab')->searchable(),
                 TextColumn::make('title')->label('Subbab')->searchable()->sortable(),
                 TextColumn::make('sort_order')->label('Urutan')->sortable(),
@@ -26,7 +26,7 @@ class LessonsTable
             ])
             ->filters([
                 SelectFilter::make('module_id')->relationship('module', 'title')->label('Bab')->searchable()->preload(),
-                SelectFilter::make('status')->options(['draft' => 'Draft', 'published' => 'Published', 'archived' => 'Archived']),
+                SelectFilter::make('status')->label('Status')->options(['draft' => 'Draf', 'published' => 'Dipublikasikan', 'archived' => 'Diarsipkan']),
             ])
             ->recordActions([
                 EditAction::make(),

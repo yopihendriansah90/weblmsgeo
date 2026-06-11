@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\QuizAttempts;
 
+use App\Filament\Concerns\HasPanelRoleAccess;
+use App\Filament\Concerns\ScopesTeacherSchoolData;
 use App\Filament\Resources\QuizAttempts\Pages\CreateQuizAttempt;
 use App\Filament\Resources\QuizAttempts\Pages\EditQuizAttempt;
 use App\Filament\Resources\QuizAttempts\Pages\ListQuizAttempts;
@@ -17,7 +19,12 @@ use Illuminate\Database\Eloquent\Builder;
 
 class QuizAttemptResource extends Resource
 {
+    use HasPanelRoleAccess;
+    use ScopesTeacherSchoolData;
+
     protected static ?string $model = QuizAttempt::class;
+
+    protected static ?string $navigationLabel = 'Hasil Kuis';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
@@ -40,15 +47,7 @@ class QuizAttemptResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        $query = parent::getEloquentQuery();
-        $user = auth()->user();
-
-        if ($user?->hasRole('guru') && ! $user->hasRole('super_admin')) {
-            $schoolIds = $user->teacher?->activeAssignments()->pluck('school_id') ?? collect();
-            $query->whereHas('student', fn (Builder $studentQuery) => $studentQuery->whereIn('school_id', $schoolIds));
-        }
-
-        return $query;
+        return static::scopeToTeacherSchools(parent::getEloquentQuery(), 'student');
     }
 
     public static function getPages(): array
@@ -58,5 +57,20 @@ class QuizAttemptResource extends Resource
             'create' => CreateQuizAttempt::route('/create'),
             'edit' => EditQuizAttempt::route('/{record}/edit'),
         ];
+    }
+
+    public static function canViewAny(): bool
+    {
+        return static::currentUserIsTeacherOrAdmin();
+    }
+
+    public static function canCreate(): bool
+    {
+        return false;
+    }
+
+    public static function canDeleteAny(): bool
+    {
+        return false;
     }
 }

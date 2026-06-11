@@ -14,8 +14,8 @@ class EssayReviewForm
         return $schema
             ->components([
                 TextInput::make('score')->label('Nilai')->numeric()->minValue(0)->maxValue(100)->required(),
-                Textarea::make('feedback')->label('Feedback')->columnSpanFull(),
-                Select::make('status')->options(['pending_review' => 'Pending Review', 'reviewed' => 'Reviewed'])->required(),
+                Textarea::make('feedback')->label('Umpan Balik')->columnSpanFull(),
+                Select::make('status')->label('Status')->options(['pending_review' => 'Menunggu Penilaian', 'reviewed' => 'Sudah Dinilai'])->required(),
             ]);
     }
 }

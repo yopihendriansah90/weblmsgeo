@@ -15,7 +15,7 @@ class QuizzesTable
     {
         return $table
             ->columns([
-                         TextColumn::make('index')
+                TextColumn::make('index')
                     ->label('No')
                     ->rowIndex(),
                 TextColumn::make('lesson.title')->label('Subbab')->searchable(),
@@ -25,7 +25,7 @@ class QuizzesTable
                 TextColumn::make('status')->badge(),
             ])
             ->filters([
-                SelectFilter::make('status')->options(['draft' => 'Draft', 'published' => 'Published', 'archived' => 'Archived']),
+                SelectFilter::make('status')->label('Status')->options(['draft' => 'Draf', 'published' => 'Dipublikasikan', 'archived' => 'Diarsipkan']),
             ])
             ->recordActions([
                 EditAction::make(),

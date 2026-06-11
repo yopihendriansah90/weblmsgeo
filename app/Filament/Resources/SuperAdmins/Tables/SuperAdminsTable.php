@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\TeacherSchoolAssignments\Tables;
+namespace App\Filament\Resources\SuperAdmins\Tables;
 
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -9,20 +9,17 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
-class TeacherSchoolAssignmentsTable
+class SuperAdminsTable
 {
     public static function configure(Table $table): Table
     {
         return $table
             ->columns([
-                TextColumn::make('index')
-                    ->label('No')
-                    ->rowIndex(),
-                TextColumn::make('teacher.user.name')->label('Guru')->searchable(),
-                TextColumn::make('school.name')->label('Sekolah')->searchable(),
-                TextColumn::make('assigner.name')->label('Diassign Oleh'),
-                TextColumn::make('status')->badge(),
-                TextColumn::make('assigned_at')->dateTime(),
+                TextColumn::make('name')->label('Nama')->searchable()->sortable(),
+                TextColumn::make('username')->label('Username')->searchable(),
+                TextColumn::make('email')->label('Email')->searchable()->placeholder('-'),
+                TextColumn::make('status')->label('Status')->badge(),
+                TextColumn::make('last_login_at')->label('Login Terakhir')->dateTime()->placeholder('-')->sortable(),
             ])
             ->filters([
                 SelectFilter::make('status')->options(['active' => 'Aktif', 'inactive' => 'Nonaktif']),

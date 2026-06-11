@@ -15,17 +15,17 @@ class ModulesTable
     {
         return $table
             ->columns([
-                         TextColumn::make('index')
+                TextColumn::make('index')
                     ->label('No')
                     ->rowIndex(),
-                TextColumn::make('course.title')->label('Kursus')->searchable(),
+                TextColumn::make('course.title')->label('Materi Pembelajaran')->searchable(),
                 TextColumn::make('title')->label('Bab')->searchable()->sortable(),
                 TextColumn::make('sort_order')->label('Urutan')->sortable(),
                 TextColumn::make('status')->badge(),
             ])
             ->filters([
-                SelectFilter::make('course_id')->relationship('course', 'title')->label('Kursus')->searchable()->preload(),
-                SelectFilter::make('status')->options(['draft' => 'Draft', 'published' => 'Published', 'archived' => 'Archived']),
+                SelectFilter::make('course_id')->relationship('course', 'title')->label('Materi Pembelajaran')->searchable()->preload(),
+                SelectFilter::make('status')->label('Status')->options(['draft' => 'Draf', 'published' => 'Dipublikasikan', 'archived' => 'Diarsipkan']),
             ])
             ->recordActions([
                 EditAction::make(),

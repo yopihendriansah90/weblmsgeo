@@ -17,10 +17,10 @@ class QuizForm
                 Select::make('lesson_id')->relationship('lesson', 'title')->label('Subbab')->required()->searchable()->preload(),
                 TextInput::make('title')->label('Judul Kuis')->required(),
                 Textarea::make('description')->label('Deskripsi')->columnSpanFull(),
-                Select::make('mode')->options(['practice' => 'Practice', 'final' => 'Final'])->required()->default('practice'),
-                Toggle::make('allow_retake')->label('Boleh Retake')->default(false),
-                TextInput::make('max_attempts')->label('Maks Attempt')->numeric(),
-                Select::make('status')->options(['draft' => 'Draft', 'published' => 'Published', 'archived' => 'Archived'])->required()->default('draft'),
+                Select::make('mode')->label('Mode')->options(['practice' => 'Latihan', 'final' => 'Final'])->required()->default('practice'),
+                Toggle::make('allow_retake')->label('Boleh Ulang')->default(false),
+                TextInput::make('max_attempts')->label('Maksimal Percobaan')->numeric(),
+                Select::make('status')->options(['draft' => 'Draf', 'published' => 'Dipublikasikan', 'archived' => 'Diarsipkan'])->required()->default('draft'),
             ]);
     }
 }

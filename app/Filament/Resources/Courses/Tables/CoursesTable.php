@@ -20,13 +20,13 @@ class CoursesTable
                     ->label('No')
                     ->rowIndex(),
 
-                TextColumn::make('title')->label('Kursus')->searchable()->sortable(),
+                TextColumn::make('title')->label('Materi Pembelajaran')->searchable()->sortable(),
                 TextColumn::make('slug')->searchable(),
                 TextColumn::make('modules_count')->counts('modules')->label('Bab'),
                 TextColumn::make('status')->badge(),
             ])
             ->filters([
-                SelectFilter::make('status')->options(['draft' => 'Draft', 'published' => 'Published', 'archived' => 'Archived']),
+                SelectFilter::make('status')->label('Status')->options(['draft' => 'Draf', 'published' => 'Dipublikasikan', 'archived' => 'Diarsipkan']),
             ])
             ->recordActions([
                 EditAction::make(),

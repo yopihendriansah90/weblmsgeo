@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\ActivityLogs;
 
+use App\Filament\Concerns\HasPanelRoleAccess;
 use App\Filament\Resources\ActivityLogs\Pages\ListActivityLogs;
 use BackedEnum;
 use Filament\Resources\Resource;
@@ -12,19 +13,21 @@ use Spatie\Activitylog\Models\Activity;
 
 class ActivityLogResource extends Resource
 {
+    use HasPanelRoleAccess;
+
     protected static ?string $model = Activity::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClock;
 
-    protected static ?string $navigationLabel = 'Activity Log';
+    protected static ?string $navigationLabel = 'Log Aktivitas';
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                TextColumn::make('log_name')->label('Log')->badge(),
+                TextColumn::make('log_name')->label('Kategori')->badge(),
                 TextColumn::make('description')->label('Aktivitas')->searchable(),
-                TextColumn::make('causer.name')->label('User')->placeholder('-'),
+                TextColumn::make('causer.name')->label('Pengguna')->placeholder('-'),
                 TextColumn::make('created_at')->label('Waktu')->dateTime()->sortable(),
             ])
             ->defaultSort('created_at', 'desc');
@@ -40,5 +43,10 @@ class ActivityLogResource extends Resource
     public static function canCreate(): bool
     {
         return false;
+    }
+
+    public static function canViewAny(): bool
+    {
+        return static::currentUserIsSuperAdmin();
     }
 }

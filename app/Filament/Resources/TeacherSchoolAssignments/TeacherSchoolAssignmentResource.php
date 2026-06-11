@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\TeacherSchoolAssignments;
 
+use App\Filament\Concerns\HasPanelRoleAccess;
 use App\Filament\Resources\TeacherSchoolAssignments\Pages\CreateTeacherSchoolAssignment;
 use App\Filament\Resources\TeacherSchoolAssignments\Pages\EditTeacherSchoolAssignment;
 use App\Filament\Resources\TeacherSchoolAssignments\Pages\ListTeacherSchoolAssignments;
@@ -16,7 +17,11 @@ use Filament\Tables\Table;
 
 class TeacherSchoolAssignmentResource extends Resource
 {
+    use HasPanelRoleAccess;
+
     protected static ?string $model = TeacherSchoolAssignment::class;
+
+    protected static ?string $navigationLabel = 'Assignment Guru';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
@@ -44,5 +49,10 @@ class TeacherSchoolAssignmentResource extends Resource
             'create' => CreateTeacherSchoolAssignment::route('/create'),
             'edit' => EditTeacherSchoolAssignment::route('/{record}/edit'),
         ];
+    }
+
+    public static function canViewAny(): bool
+    {
+        return static::currentUserIsSuperAdmin();
     }
 }

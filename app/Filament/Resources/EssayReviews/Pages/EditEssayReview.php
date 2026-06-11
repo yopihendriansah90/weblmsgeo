@@ -4,7 +4,6 @@ namespace App\Filament\Resources\EssayReviews\Pages;
 
 use App\Filament\Resources\EssayReviews\EssayReviewResource;
 use App\Services\EssayReviewService;
-use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
 
@@ -14,9 +13,7 @@ class EditEssayReview extends EditRecord
 
     protected function getHeaderActions(): array
     {
-        return [
-            DeleteAction::make(),
-        ];
+        return [];
     }
 
     protected function handleRecordUpdate(Model $record, array $data): Model

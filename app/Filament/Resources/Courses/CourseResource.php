@@ -2,9 +2,11 @@
 
 namespace App\Filament\Resources\Courses;
 
+use App\Filament\Concerns\HasPanelRoleAccess;
 use App\Filament\Resources\Courses\Pages\CreateCourse;
 use App\Filament\Resources\Courses\Pages\EditCourse;
 use App\Filament\Resources\Courses\Pages\ListCourses;
+use App\Filament\Resources\Courses\RelationManagers\ModulesRelationManager;
 use App\Filament\Resources\Courses\Schemas\CourseForm;
 use App\Filament\Resources\Courses\Tables\CoursesTable;
 use App\Models\Course;
@@ -16,7 +18,15 @@ use Filament\Tables\Table;
 
 class CourseResource extends Resource
 {
+    use HasPanelRoleAccess;
+
     protected static ?string $model = Course::class;
+
+    protected static ?string $navigationLabel = 'Materi Pembelajaran';
+
+    protected static ?string $modelLabel = 'materi pembelajaran';
+
+    protected static ?string $pluralModelLabel = 'materi pembelajaran';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
@@ -33,7 +43,7 @@ class CourseResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            ModulesRelationManager::class,
         ];
     }
 
@@ -44,5 +54,10 @@ class CourseResource extends Resource
             'create' => CreateCourse::route('/create'),
             'edit' => EditCourse::route('/{record}/edit'),
         ];
+    }
+
+    public static function canViewAny(): bool
+    {
+        return static::currentUserIsTeacherOrAdmin();
     }
 }

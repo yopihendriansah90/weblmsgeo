@@ -30,8 +30,8 @@ class LessonForm
                 TextInput::make('estimated_duration')->label('Estimasi Menit')->numeric(),
                 TextInput::make('sort_order')->numeric()->default(1)->required(),
                 Toggle::make('is_required')->label('Wajib')->default(true),
-                Select::make('status')->options(['draft' => 'Draft', 'published' => 'Published', 'archived' => 'Archived'])->required()->default('draft'),
-                DateTimePicker::make('published_at')->label('Published At'),
+                Select::make('status')->options(['draft' => 'Draf', 'published' => 'Dipublikasikan', 'archived' => 'Diarsipkan'])->required()->default('draft'),
+                DateTimePicker::make('published_at')->label('Waktu Publikasi'),
             ]);
     }
 }

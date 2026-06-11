@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Schools;
 
+use App\Filament\Concerns\HasPanelRoleAccess;
 use App\Filament\Resources\Schools\Pages\CreateSchool;
 use App\Filament\Resources\Schools\Pages\EditSchool;
 use App\Filament\Resources\Schools\Pages\ListSchools;
@@ -16,6 +17,8 @@ use Filament\Tables\Table;
 
 class SchoolResource extends Resource
 {
+    use HasPanelRoleAccess;
+
     protected static ?string $model = School::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
@@ -44,5 +47,10 @@ class SchoolResource extends Resource
             'create' => CreateSchool::route('/create'),
             'edit' => EditSchool::route('/{record}/edit'),
         ];
+    }
+
+    public static function canViewAny(): bool
+    {
+        return static::currentUserIsSuperAdmin();
     }
 }

@@ -15,7 +15,7 @@ class QuizStepsTable
     {
         return $table
             ->columns([
-                         TextColumn::make('index')
+                TextColumn::make('index')
                     ->label('No')
                     ->rowIndex(),
                 TextColumn::make('quiz.title')->label('Kuis')->searchable(),
@@ -27,9 +27,9 @@ class QuizStepsTable
             ->filters([
                 SelectFilter::make('quiz_id')->relationship('quiz', 'title')->label('Kuis')->searchable()->preload(),
                 SelectFilter::make('type')->options([
-                    'essay' => 'Essay',
+                    'essay' => 'Esai',
                     'text_matching' => 'Penjodohan Teks',
-                    'table_checklist' => 'Table Checklist',
+                    'table_checklist' => 'Tabel Checklist',
                     'image_text_matching' => 'Penjodohan Gambar-Teks',
                 ]),
             ])

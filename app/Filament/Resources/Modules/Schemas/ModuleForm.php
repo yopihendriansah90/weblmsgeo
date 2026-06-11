@@ -13,12 +13,12 @@ class ModuleForm
     {
         return $schema
             ->components([
-                Select::make('course_id')->relationship('course', 'title')->label('Kursus')->required()->searchable()->preload(),
+                Select::make('course_id')->relationship('course', 'title')->label('Materi Pembelajaran')->required()->searchable()->preload(),
                 TextInput::make('title')->label('Judul Bab')->required(),
                 TextInput::make('slug')->required()->maxLength(255),
                 Textarea::make('description')->label('Deskripsi')->columnSpanFull(),
                 TextInput::make('sort_order')->numeric()->default(1)->required(),
-                Select::make('status')->options(['draft' => 'Draft', 'published' => 'Published', 'archived' => 'Archived'])->required()->default('draft'),
+                Select::make('status')->options(['draft' => 'Draf', 'published' => 'Dipublikasikan', 'archived' => 'Diarsipkan'])->required()->default('draft'),
             ]);
     }
 }

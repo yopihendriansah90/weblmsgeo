@@ -15,7 +15,7 @@ class SchoolsTable
     {
         return $table
             ->columns([
-                         TextColumn::make('index')
+                TextColumn::make('index')
                     ->label('No')
                     ->rowIndex(),
                 TextColumn::make('name')->label('Sekolah')->searchable()->sortable(),
