@@ -68,6 +68,13 @@ class QuizTake extends Component
         }
     }
 
+    public function isLastStep(): bool
+    {
+        $lastStep = $this->quiz->steps->sortBy('sort_order')->last();
+
+        return $lastStep?->id === $this->activeStepId;
+    }
+
     private function normalizedAnswer(QuizStep $step): array
     {
         if ($step->type === 'essay') {

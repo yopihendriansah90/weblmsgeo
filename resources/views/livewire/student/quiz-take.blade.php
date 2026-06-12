@@ -51,7 +51,7 @@
             </div>
         </aside>
 
-        <section class="space-y-6 xl:col-span-6">
+        <section class="space-y-6 xl:col-span-9">
             @if($activeStep)
                 @php($payload = $activeStep->content_payload ?? [])
                 @php($activeAttempt = $stepAttempts->get($activeStep->id))
@@ -109,9 +109,6 @@
                                         <div class="rounded-[20px] border border-slate-200 bg-slate-50 p-4">
                                             <div class="flex flex-wrap items-start justify-between gap-3">
                                                 <div class="min-w-0">
-                                                    <span class="mb-2 inline-flex rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-700">
-                                                        Soal {{ $item['key'] }}
-                                                    </span>
                                                     <p class="text-sm font-semibold text-slate-900">{{ $item['label'] }}</p>
                                                 </div>
 
@@ -210,45 +207,37 @@
                     </div>
                 @endif
 
-                <div class="flex flex-wrap gap-3">
-                    @if(! in_array($activeAttempt?->status, ['auto_graded', 'pending_review', 'completed'], true))
-                        <button wire:click="submit" class="inline-flex items-center justify-center rounded-full bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm shadow-indigo-600/20 transition hover:bg-indigo-700">
-                            Kirim Jawaban
-                        </button>
-                    @endif
+                <div class="flex items-center justify-between gap-3">
+                    <div>
+                        @if(! in_array($activeAttempt?->status, ['auto_graded', 'pending_review', 'completed'], true))
+                            <button wire:click="submit" class="inline-flex items-center justify-center rounded-full bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm shadow-indigo-600/20 transition hover:bg-indigo-700">
+                                Kirim Jawaban
+                            </button>
+                        @endif
+                    </div>
+
                     @if(in_array($activeAttempt?->status, ['auto_graded', 'pending_review', 'completed'], true))
-                        <button wire:click="next" class="inline-flex items-center justify-center rounded-full border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:border-indigo-300 hover:text-indigo-700">
-                            Next
-                        </button>
+                        @if($this->isLastStep())
+                            <div class="flex flex-wrap items-center justify-end gap-3">
+                                <a href="{{ route('student.courses.show', $quiz->module->course) }}" class="inline-flex items-center justify-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-5 py-2.5 text-sm font-semibold text-indigo-700 transition hover:border-indigo-300 hover:bg-indigo-100">
+                                    Kembali ke Materi
+                                    <span class="material-symbols-outlined text-[18px]">menu_book</span>
+                                </a>
+                                <a href="{{ route('student.dashboard') }}" class="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-cyan-500 to-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-indigo-500/20 transition hover:from-cyan-400 hover:to-indigo-700 hover:shadow-xl hover:shadow-indigo-500/30">
+                                    Kembali ke Beranda
+                                    <span class="material-symbols-outlined text-[18px]">home</span>
+                                </a>
+                            </div>
+                        @else
+                            <button wire:click="next" class="inline-flex items-center justify-center gap-2 rounded-full bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm shadow-indigo-600/20 transition hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-600/30">
+                                Next Soal
+                                <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                            </button>
+                        @endif
                     @endif
                 </div>
             @endif
         </section>
 
-        <aside class="space-y-6 xl:col-span-3">
-            <section class="rounded-[24px] border border-slate-200/80 bg-white p-5 shadow-sm">
-                <p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-indigo-700">Ringkasan</p>
-                <h2 class="mt-1 text-2xl font-semibold text-slate-900">Status attempt</h2>
-
-                <div class="mt-5 space-y-3">
-                    <div class="rounded-[18px] border border-slate-200 bg-slate-50 p-4">
-                        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Auto</p>
-                        <p class="mt-2 text-2xl font-semibold text-slate-900">{{ $attempt->fresh()->auto_score ?? '-' }}</p>
-                    </div>
-                    <div class="rounded-[18px] border border-slate-200 bg-slate-50 p-4">
-                        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Essay</p>
-                        <p class="mt-2 text-2xl font-semibold text-slate-900">{{ $attempt->fresh()->essay_score ?? '-' }}</p>
-                    </div>
-                    <div class="rounded-[18px] border border-slate-200 bg-slate-50 p-4">
-                        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Final</p>
-                        <p class="mt-2 text-2xl font-semibold text-slate-900">{{ $attempt->fresh()->final_score ?? '-' }}</p>
-                    </div>
-                    <div class="rounded-[18px] border border-slate-200 bg-slate-50 p-4">
-                        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Status</p>
-                        <p class="mt-2 text-lg font-semibold text-slate-900">{{ $attempt->fresh()->status }}</p>
-                    </div>
-                </div>
-            </section>
-        </aside>
     </div>
 </div>

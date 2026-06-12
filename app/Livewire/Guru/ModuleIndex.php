@@ -51,7 +51,10 @@ class ModuleIndex extends Component
                         ->orWhere('description', 'like', '%'.$search.'%');
                 });
             })
-            ->with(['quizzes' => fn ($query) => $query->latest()])
+            ->with([
+                'quizzes' => fn ($query) => $query->latest(),
+                'latestQuiz',
+            ])
             ->withCount('quizzes')
             ->orderBy('sort_order')
             ->get();

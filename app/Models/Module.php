@@ -58,4 +58,9 @@ class Module extends Model
     {
         return $this->hasOne(Quiz::class)->where('status', 'published');
     }
+
+    public function latestQuiz(): HasOne
+    {
+        return $this->hasOne(Quiz::class)->latestOfMany();
+    }
 }

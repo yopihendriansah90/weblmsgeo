@@ -38,7 +38,7 @@ class QuizForm extends Component
         abort_unless($module->isQuiz(), 404);
 
         $this->module = $module->load('course');
-        $this->quiz = $quiz?->load('steps') ?? $this->module->quizzes()->with('steps')->latest('id')->first();
+        $this->quiz = $quiz?->load('steps');
 
         $this->initializeStepForms();
 
@@ -124,7 +124,10 @@ class QuizForm extends Component
 
         session()->flash('success', 'Quiz berhasil disimpan.');
 
-        return redirect()->route('guru.modules.index', $this->module->course);
+        return redirect()->route('guru.quizzes.edit', [
+            'module' => $this->module,
+            'quiz' => $this->quiz,
+        ]);
     }
 
     public function render()
@@ -218,6 +221,8 @@ class QuizForm extends Component
                 $option = $options->values()->get($index) ?? [];
 
                 return [
+                    'item_key' => $item['key'] ?? $this->numberKey($index),
+                    'correct_option_key' => $option['key'] ?? $this->alphabetKey($index),
                     'question_label' => $item['label'] ?? '',
                     'answer_label' => $option['label'] ?? '',
                 ];
@@ -225,10 +230,15 @@ class QuizForm extends Component
         }
 
         $this->stepForms['text_matching']['pairs'] = $pairs
-            ->map(fn (array $pair): array => [
-                'question_label' => $pair['question_label'] ?? '',
-                'answer_label' => $pair['answer_label'] ?? '',
-            ])
+            ->map(function (array $pair) use ($items, $options): array {
+                $item = $items->firstWhere('key', $pair['item_key'] ?? null) ?? [];
+                $option = $options->firstWhere('key', $pair['correct_option_key'] ?? null) ?? [];
+
+                return [
+                    'question_label' => $pair['question_label'] ?? $item['label'] ?? '',
+                    'answer_label' => $pair['answer_label'] ?? $option['label'] ?? '',
+                ];
+            })
             ->whenEmpty(fn () => collect([$this->blankRow('text_matching', 'pairs')]))
             ->all();
 
@@ -358,6 +368,8 @@ class QuizForm extends Component
                     ->map(fn (array $pair, int $index): array => [
                         'item_key' => $this->numberKey($index),
                         'correct_option_key' => $this->alphabetKey($index),
+                        'question_label' => $pair['question_label'],
+                        'answer_label' => $pair['answer_label'],
                     ])
                     ->all(),
             ],

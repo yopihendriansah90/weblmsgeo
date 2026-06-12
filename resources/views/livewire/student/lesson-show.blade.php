@@ -13,6 +13,62 @@
         <span class="rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-700">Mode baca</span>
     </div>
 
+    @if($nextTimelineItem)
+        <div class="flex justify-end">
+            <a href="{{ $nextTimelineItem['href'] }}" class="inline-flex items-center gap-2 rounded-full bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm shadow-indigo-600/20 transition hover:bg-indigo-700">
+                Lanjut berikutnya
+                <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+            </a>
+        </div>
+    @endif
+
+    <section class="rounded-[24px] border border-slate-200/80 bg-white px-4 py-5 shadow-sm sm:px-6">
+        <div class="flex items-center justify-between gap-3">
+            <div>
+                <p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-indigo-700">Timeline Belajar</p>
+                <h2 class="mt-1 text-xl font-semibold text-slate-900 sm:text-2xl">Perjalanan pembelajaran materi</h2>
+            </div>
+            <span class="hidden rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600 sm:inline-flex">
+                {{ $timelineItems->count() }} tahap
+            </span>
+        </div>
+
+        <div class="mt-6 overflow-x-auto pb-2">
+            <div class="timeline-track flex min-w-max items-start justify-between gap-3 px-2">
+                @foreach($timelineItems as $item)
+                    @php
+                        $statusClasses = match ($item['status']) {
+                            'completed' => 'border-emerald-200 bg-emerald-200 text-emerald-800',
+                            'current' => 'border-indigo-700 bg-indigo-600 text-white shadow-[0_0_0_7px_rgba(99,102,241,0.16)]',
+                            'available' => 'border-sky-200 bg-sky-100 text-sky-700',
+                            default => 'border-slate-300 bg-slate-100 text-slate-400',
+                        };
+                    @endphp
+
+                    <div class="timeline-step relative flex min-w-[150px] flex-1 flex-col items-center text-center">
+                        @if($item['href'])
+                            <a href="{{ $item['href'] }}" class="flex flex-col items-center transition hover:scale-[1.02]">
+                                <span class="flex h-14 w-14 items-center justify-center rounded-full border-2 text-lg {{ $statusClasses }}">
+                                    <span class="material-symbols-outlined">{{ $item['icon'] }}</span>
+                                </span>
+                                <span class="mt-3 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">{{ $item['label'] }}</span>
+                                <span class="mt-1 text-sm font-semibold {{ $item['is_current'] ? 'text-indigo-700' : 'text-slate-700' }}">{{ $item['title'] }}</span>
+                            </a>
+                        @else
+                            <div class="flex flex-col items-center">
+                                <span class="flex h-14 w-14 items-center justify-center rounded-full border-2 text-lg {{ $statusClasses }}">
+                                    <span class="material-symbols-outlined">{{ $item['icon'] }}</span>
+                                </span>
+                                <span class="mt-3 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">{{ $item['label'] }}</span>
+                                <span class="mt-1 text-sm font-semibold text-slate-500">{{ $item['title'] }}</span>
+                            </div>
+                        @endif
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    </section>
+
     <section class="rounded-[24px] border border-slate-200/80 bg-white p-5 shadow-sm sm:p-6">
         <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div class="max-w-3xl">
@@ -136,6 +192,32 @@
 
     .lesson-content p {
         line-height: 1.75;
+    }
+
+    .timeline-step:not(:last-child)::after {
+        content: "";
+        position: absolute;
+        top: 1.7rem;
+        left: calc(50% + 2rem);
+        width: calc(100% - 1rem);
+        height: 2px;
+        background: linear-gradient(90deg, #cbd5e1 0%, #e2e8f0 100%);
+        z-index: 0;
+    }
+
+    .timeline-step > * {
+        position: relative;
+        z-index: 1;
+    }
+
+    @media (max-width: 640px) {
+        .timeline-step {
+            min-width: 132px;
+        }
+
+        .timeline-step:not(:last-child)::after {
+            width: calc(100% - 0.5rem);
+        }
     }
 </style>
 @endpush

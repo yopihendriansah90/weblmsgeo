@@ -71,7 +71,7 @@
                     <div class="module-actions d-flex flex-wrap gap-2 justify-content-lg-end align-items-start">
                         @if($module->isQuiz())
                             @if(($module->quizzes_count ?? 0) > 0)
-                                <a href="{{ route('guru.quizzes.edit', ['module' => $module, 'quiz' => $module->quizzes->first()]) }}" class="btn btn-sm btn-outline-success guru-btn-soft-secondary">
+                                <a href="{{ route('guru.quizzes.edit', ['module' => $module, 'quiz' => $module->latestQuiz]) }}" class="btn btn-sm btn-outline-success guru-btn-soft-secondary">
                                     Kelola Quiz
                                 </a>
                             @else
