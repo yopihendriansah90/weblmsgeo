@@ -1,0 +1,383 @@
+.guru-theme {
+    --guru-bg: #f8fafc;
+    --guru-surface: #ffffff;
+    --guru-surface-alt: #f8fafc;
+    --guru-border: rgba(148, 163, 184, 0.18);
+    --guru-text: #0f172a;
+    --guru-muted: #64748b;
+    --guru-primary: #1d4ed8;
+    --guru-primary-strong: #0f172a;
+    --guru-success: #16a34a;
+    --guru-warning: #f59e0b;
+    --guru-danger: #dc2626;
+    --guru-shadow: 0 0.75rem 2rem rgba(15, 23, 42, 0.08);
+    --guru-shadow-soft: 0 0.35rem 1rem rgba(15, 23, 42, 0.06);
+    --guru-radius-lg: 1rem;
+    --guru-radius-md: 0.85rem;
+    --guru-radius-sm: 0.7rem;
+    --guru-space-1: 0.25rem;
+    --guru-space-2: 0.5rem;
+    --guru-space-3: 0.75rem;
+    --guru-space-4: 1rem;
+    --guru-space-5: 1.25rem;
+}
+
+.guru-theme body {
+    background: var(--guru-bg);
+    color: var(--guru-text);
+}
+
+.guru-theme .app-main {
+    background: linear-gradient(180deg, #f8fafc 0%, #f5f7fb 100%);
+}
+
+.guru-theme .app-content-header {
+    background: transparent;
+}
+
+.guru-theme .app-content {
+    padding-top: 0.25rem;
+}
+
+.guru-theme .app-content .container-fluid {
+    padding-bottom: 1.25rem;
+}
+
+.guru-panel {
+    border: 1px solid var(--guru-border);
+    border-radius: var(--guru-radius-lg);
+    box-shadow: var(--guru-shadow);
+    background: var(--guru-surface);
+}
+
+.guru-panel .card-header,
+.guru-panel .card-footer {
+    background: var(--guru-surface);
+    border-color: var(--guru-border);
+}
+
+.guru-kicker {
+    color: #64748b;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin-bottom: 0;
+}
+
+.guru-panel-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    line-height: 1.25;
+    margin-bottom: 0;
+}
+
+.guru-panel-body {
+    padding: var(--guru-space-4);
+}
+
+@media (min-width: 768px) {
+    .guru-panel-body {
+        padding: var(--guru-space-5);
+    }
+}
+
+.guru-btn-sm {
+    padding: 0.42rem 0.8rem;
+    font-size: 0.875rem;
+    line-height: 1.2;
+    border-radius: 0.75rem;
+}
+
+.guru-btn-bordered {
+    border-width: 1px;
+    background: #fff;
+    box-shadow: var(--guru-shadow-soft);
+}
+
+.guru-btn-bordered:hover,
+.guru-btn-bordered:focus {
+    background: #f8fafc;
+    border-color: rgba(148, 163, 184, 0.36);
+}
+
+.guru-btn-soft-primary {
+    --bs-btn-color: #1d4ed8;
+    --bs-btn-border-color: rgba(29, 78, 216, 0.28);
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #1d4ed8;
+    --bs-btn-hover-border-color: #1d4ed8;
+    --bs-btn-focus-shadow-rgb: 29, 78, 216;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: #1d4ed8;
+    --bs-btn-active-border-color: #1d4ed8;
+}
+
+.guru-btn-soft-secondary {
+    --bs-btn-color: #334155;
+    --bs-btn-border-color: rgba(51, 65, 85, 0.22);
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #334155;
+    --bs-btn-hover-border-color: #334155;
+    --bs-btn-focus-shadow-rgb: 51, 65, 85;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: #334155;
+    --bs-btn-active-border-color: #334155;
+}
+
+.guru-btn-soft-danger {
+    --bs-btn-color: #dc2626;
+    --bs-btn-border-color: rgba(220, 38, 38, 0.26);
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #dc2626;
+    --bs-btn-hover-border-color: #dc2626;
+    --bs-btn-focus-shadow-rgb: 220, 38, 38;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: #dc2626;
+    --bs-btn-active-border-color: #dc2626;
+}
+
+.guru-surface {
+    background: var(--guru-surface);
+    border-radius: var(--guru-radius-lg);
+    border: 1px solid var(--guru-border);
+    box-shadow: var(--guru-shadow-soft);
+}
+
+.guru-topbar {
+    min-height: 4.35rem;
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.92));
+    border-bottom: 1px solid var(--guru-border);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset;
+}
+
+.guru-topbar .navbar-links {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.guru-topbar .navbar-links > li {
+    list-style: none;
+}
+
+.guru-sidebar-toggle {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.85rem;
+    color: #1e293b;
+    background: #fff;
+    border: 1px solid rgba(148, 163, 184, 0.25);
+    box-shadow: 0 0.35rem 0.9rem rgba(15, 23, 42, 0.06);
+}
+
+.guru-topbar-context {
+    line-height: 1.1;
+}
+
+.guru-topbar-kicker {
+    color: #64748b;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+    margin-bottom: 0.2rem;
+}
+
+.guru-user-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.45rem 0.7rem;
+    border-radius: 999px;
+    color: var(--guru-text);
+    text-decoration: none;
+    border: 1px solid transparent;
+}
+
+.guru-user-toggle:hover,
+.guru-user-toggle:focus {
+    color: var(--guru-text);
+    background: rgba(255, 255, 255, 0.8);
+    border-color: var(--guru-border);
+}
+
+.guru-user-avatar {
+    width: 2rem;
+    height: 2rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #1d4ed8, #0f172a);
+    color: #fff;
+    font-size: 0.8rem;
+    font-weight: 700;
+    flex: none;
+}
+
+.guru-user-name {
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.guru-user-menu {
+    min-width: 18rem;
+    padding: 0.45rem;
+    border-radius: 1rem;
+    border: 1px solid var(--guru-border);
+    box-shadow: var(--guru-shadow);
+}
+
+.guru-user-card {
+    padding: 0.7rem 0.75rem 0.8rem;
+}
+
+.guru-user-card-name {
+    font-weight: 700;
+    color: var(--guru-text);
+    line-height: 1.2;
+}
+
+.guru-user-card-role {
+    margin-top: 0.2rem;
+    color: var(--guru-muted);
+    font-size: 0.82rem;
+}
+
+.guru-user-menu .dropdown-item {
+    border-radius: 0.8rem;
+    padding: 0.65rem 0.75rem;
+    font-weight: 600;
+    color: var(--guru-text);
+}
+
+.guru-user-menu .dropdown-item:hover,
+.guru-user-menu .dropdown-item:focus {
+    background: #f8fafc;
+    color: var(--guru-text);
+}
+
+.guru-user-logout {
+    color: #dc2626 !important;
+}
+
+.guru-user-logout:hover,
+.guru-user-logout:focus {
+    background: rgba(220, 38, 38, 0.08) !important;
+    color: #b91c1c !important;
+}
+
+.guru-page {
+    display: grid;
+    gap: 1rem;
+}
+
+.guru-page-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem 1rem;
+}
+
+.guru-page-title {
+    margin: 0;
+    font-size: 1.5rem;
+    line-height: 1.15;
+    font-weight: 700;
+    color: var(--guru-text);
+}
+
+.guru-page-subtitle {
+    margin: 0.35rem 0 0;
+    color: var(--guru-muted);
+    font-size: 0.9rem;
+}
+
+.guru-section-label {
+    margin-bottom: 0.25rem;
+    color: var(--guru-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.72rem;
+    font-weight: 700;
+}
+
+.guru-card {
+    background: var(--guru-surface);
+    border: 1px solid var(--guru-border);
+    border-radius: var(--guru-radius-lg);
+    box-shadow: var(--guru-shadow-soft);
+}
+
+.guru-card-header {
+    background: var(--guru-surface);
+    border-bottom: 1px solid var(--guru-border);
+    padding: 1rem 1.25rem;
+}
+
+.guru-card-body {
+    padding: 1rem 1.25rem;
+}
+
+.guru-card-footer {
+    background: var(--guru-surface);
+    border-top: 1px solid var(--guru-border);
+    padding: 0.9rem 1.25rem;
+}
+
+.guru-breadcrumb {
+    margin: 0;
+    font-size: 0.88rem;
+}
+
+.guru-breadcrumb a {
+    text-decoration: none;
+}
+
+.guru-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.guru-toolbar .btn {
+    white-space: nowrap;
+}
+
+.guru-form-grid {
+    display: grid;
+    gap: 1rem;
+}
+
+.guru-form-grid .row {
+    margin-left: calc(var(--bs-gutter-x) * -0.5);
+    margin-right: calc(var(--bs-gutter-x) * -0.5);
+}
+
+.guru-input,
+.guru-select,
+.guru-textarea {
+    border-radius: 0.8rem;
+    border-color: rgba(148, 163, 184, 0.35);
+    box-shadow: none;
+}
+
+.guru-input:focus,
+.guru-select:focus,
+.guru-textarea:focus {
+    border-color: var(--guru-primary);
+    box-shadow: 0 0 0 0.2rem rgba(29, 78, 216, 0.12);
+}
+
+.guru-badge {
+    border-radius: 999px;
+    font-weight: 700;
+    padding: 0.35rem 0.6rem;
+}

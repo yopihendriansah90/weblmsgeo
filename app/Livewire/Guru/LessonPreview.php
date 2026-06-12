@@ -13,7 +13,7 @@ class LessonPreview extends Component
     #[Layout('layouts.guru')]
     public function mount(Lesson $lesson): void
     {
-        $this->lesson = $lesson->load('module.course', 'media');
+        $this->lesson = $lesson->load('module.course');
     }
 
     public function render()

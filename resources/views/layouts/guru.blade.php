@@ -3,7 +3,7 @@
   <!--begin::Head-->
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Guru Panel | {{ $title ?? 'Dashboard' }}</title>
+    <title>Guru Panel | {{ $title ?? 'Dashboard Guru' }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     
@@ -43,52 +43,130 @@
   <!--end::Head-->
 
   <!--begin::Body-->
-  <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
+  <body class="layout-fixed sidebar-expand-lg bg-body-tertiary guru-theme">
     <!--begin::App Wrapper-->
     <div class="app-wrapper">
+      @php
+        $routeName = request()->route()?->getName();
+        $breadcrumbSection = null;
+        $breadcrumbSectionUrl = null;
+        $pageTitle = $title ?? 'Dashboard Guru';
+        $pageSubtitle = 'Ringkasan aktivitas dan akses cepat fitur utama.';
+        $pageContext = 'Dashboard';
+
+        switch (true) {
+            case $routeName === 'guru.dashboard':
+                $pageTitle = 'Dashboard Guru';
+                $pageSubtitle = 'Ringkasan aktivitas dan akses cepat fitur utama.';
+                $pageContext = 'Overview';
+                break;
+            case request()->routeIs('guru.courses.index'):
+                $pageTitle = 'Daftar Materi';
+                $pageSubtitle = 'Lihat, tambah, dan kelola daftar materi pembelajaran.';
+                $breadcrumbSection = 'Materi';
+                $breadcrumbSectionUrl = route('guru.courses.index');
+                $pageContext = 'Materi';
+                break;
+            case request()->routeIs('guru.courses.create'):
+                $pageTitle = 'Tambah Materi';
+                $pageSubtitle = 'Buat materi baru beserta judul, status, dan cover.';
+                $breadcrumbSection = 'Materi';
+                $breadcrumbSectionUrl = route('guru.courses.index');
+                $pageContext = 'Materi';
+                break;
+            case request()->routeIs('guru.courses.edit'):
+                $pageTitle = 'Edit Materi';
+                $pageSubtitle = 'Perbarui informasi materi yang sudah dibuat.';
+                $breadcrumbSection = 'Materi';
+                $breadcrumbSectionUrl = route('guru.courses.index');
+                $pageContext = 'Materi';
+                break;
+            case request()->routeIs('guru.modules.index'):
+                $pageTitle = 'Kelola Bab';
+                $pageSubtitle = 'Susun urutan bab dan subbab pada materi ini.';
+                $breadcrumbSection = 'Materi';
+                $breadcrumbSectionUrl = route('guru.courses.index');
+                $pageContext = 'Bab';
+                break;
+            case request()->routeIs('guru.modules.create'):
+                $pageTitle = 'Tambah Bab';
+                $pageSubtitle = 'Tambahkan bab baru ke dalam materi.';
+                $breadcrumbSection = 'Materi';
+                $breadcrumbSectionUrl = route('guru.courses.index');
+                $pageContext = 'Bab';
+                break;
+            case request()->routeIs('guru.modules.edit'):
+                $pageTitle = 'Edit Bab';
+                $pageSubtitle = 'Perbarui detail bab yang sudah ada.';
+                $breadcrumbSection = 'Materi';
+                $breadcrumbSectionUrl = route('guru.courses.index');
+                $pageContext = 'Bab';
+                break;
+            case request()->routeIs('guru.lessons.create'):
+                $pageTitle = 'Tambah Subbab';
+                $pageSubtitle = 'Tambahkan subbab baru ke dalam bab.';
+                $breadcrumbSection = 'Materi';
+                $breadcrumbSectionUrl = route('guru.courses.index');
+                $pageContext = 'Subbab';
+                break;
+            case request()->routeIs('guru.lessons.edit'):
+                $pageTitle = 'Edit Subbab';
+                $pageSubtitle = 'Perbarui isi subbab yang sudah ada.';
+                $breadcrumbSection = 'Materi';
+                $breadcrumbSectionUrl = route('guru.courses.index');
+                $pageContext = 'Subbab';
+                break;
+            case request()->routeIs('guru.lessons.preview'):
+                $pageTitle = 'Preview Subbab';
+                $pageSubtitle = 'Pratinjau tampilan subbab sebelum dipublikasikan.';
+                $breadcrumbSection = 'Materi';
+                $breadcrumbSectionUrl = route('guru.courses.index');
+                $pageContext = 'Subbab';
+                break;
+            default:
+                $pageTitle = $title ?? 'Dashboard Guru';
+                $pageContext = 'Dashboard';
+                break;
+        }
+      @endphp
       <!--begin::Header-->
-      <nav class="app-header navbar navbar-expand bg-body">
+      <nav class="app-header navbar navbar-expand guru-topbar">
         <!--begin::Container-->
         <div class="container-fluid">
-          <!--begin::Start Navbar Links-->
-          <ul class="navbar-links d-none d-md-flex me-auto">
-            <li class="nav-item">
-              <a class="nav-link" data-lte-toggle="sidebar" href="#" role="button">
-                <i class="bi bi-list"></i>
-              </a>
-            </li>
-          </ul>
-          <!--end::Start Navbar Links-->
+          <div class="d-flex align-items-center gap-3 me-auto">
+            <a class="nav-link p-0 d-inline-flex align-items-center justify-content-center guru-sidebar-toggle" data-lte-toggle="sidebar" href="#" role="button" aria-label="Toggle sidebar">
+              <i class="bi bi-list"></i>
+            </a>
+            <div class="guru-topbar-context">
+              <div class="guru-topbar-kicker">{{ $pageContext }}</div>
+            </div>
+          </div>
 
-          <!--begin::End Navbar Links-->
           <ul class="navbar-links ms-auto">
             <!--begin::User Menu Dropdown-->
             <li class="nav-item dropdown user-menu">
-              <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                <span class="d-none d-md-inline">{{ auth()->user()->name }}</span>
+              <a href="#" class="nav-link dropdown-toggle guru-user-toggle" data-bs-toggle="dropdown">
+                <span class="guru-user-avatar">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</span>
+                <span class="d-none d-md-inline guru-user-name">{{ auth()->user()->name }}</span>
               </a>
-              <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
-                <!--begin::User Image-->
-                <li class="user-header bg-primary">
-                  <p>
-                    {{ auth()->user()->name }}
-                    <small>Guru</small>
-                  </p>
+              <ul class="dropdown-menu dropdown-menu-end guru-user-menu">
+                <li class="guru-user-card">
+                  <div class="guru-user-card-name">{{ auth()->user()->name }}</div>
+                  <div class="guru-user-card-role">Guru</div>
                 </li>
-                <!--end::User Image-->
-                <!--begin::Menu Footer-->
-                <li class="user-footer">
-                  <form action="{{ route('guru.logout') }}" method="POST">
+                <li><hr class="dropdown-divider m-0"></li>
+                <li>
+                  <form action="{{ route('guru.logout') }}" method="POST" class="m-0">
                     @csrf
-                    <button type="submit" class="btn btn-default btn-flat float-end">Sign out</button>
+                    <button type="submit" class="dropdown-item guru-user-logout">
+                      <i class="bi bi-box-arrow-right me-2"></i> Sign out
+                    </button>
                   </form>
                 </li>
-                <!--end::Menu Footer-->
               </ul>
             </li>
             <!--end::User Menu Dropdown-->
           </ul>
-          <!--end::End Navbar Links-->
         </div>
         <!--end::Container-->
       </nav>
@@ -165,15 +243,20 @@
           <!--begin::Container-->
           <div class="container-fluid">
             <!--begin::Row-->
-            <div class="row">
-              <div class="col-sm-6">
-                <h3 class="mb-0">{{ $title ?? 'Dashboard' }}</h3>
+            <div class="guru-page-header">
+              <div>
+                <div class="guru-section-label">{{ $pageContext }}</div>
+                <h3 class="guru-page-title">{{ $pageTitle }}</h3>
+                <p class="guru-page-subtitle">{{ $pageSubtitle }}</p>
               </div>
-              <div class="col-sm-6">
-                <ol class="breadcrumb float-sm-end">
-                  <li class="breadcrumb-item"><a href="#">Home</a></li>
+              <div>
+                <ol class="breadcrumb guru-breadcrumb">
+                  <li class="breadcrumb-item"><a href="{{ route('guru.dashboard') }}">Beranda</a></li>
+                  @if($breadcrumbSection)
+                    <li class="breadcrumb-item"><a href="{{ $breadcrumbSectionUrl }}">{{ $breadcrumbSection }}</a></li>
+                  @endif
                   <li class="breadcrumb-item active" aria-current="page">
-                    {{ $title ?? 'Dashboard' }}
+                    {{ $pageTitle }}
                   </li>
                 </ol>
               </div>
@@ -185,7 +268,7 @@
         <!--end::App Content Header-->
 
         <!--begin::App Content-->
-        <div class="app-content">
+        <div class="app-content guru-page">
           <!--begin::Container-->
           <div class="container-fluid">
             {{ $slot }}
@@ -237,6 +320,44 @@
     <!--end::Required Plugin(AdminLTE)-->
 
     @livewireScripts
+    @if (session('success'))
+      <script>
+        (() => {
+          const dispatchNotify = () => document.dispatchEvent(new CustomEvent('guru-notify', {
+            detail: {
+              type: 'success',
+              message: @js(session('success')),
+            },
+          }));
+
+          if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', dispatchNotify, { once: true });
+            return;
+          }
+
+          dispatchNotify();
+        })();
+      </script>
+    @endif
+    @if (session('error'))
+      <script>
+        (() => {
+          const dispatchNotify = () => document.dispatchEvent(new CustomEvent('guru-notify', {
+            detail: {
+              type: 'error',
+              message: @js(session('error')),
+            },
+          }));
+
+          if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', dispatchNotify, { once: true });
+            return;
+          }
+
+          dispatchNotify();
+        })();
+      </script>
+    @endif
     @stack('scripts')
   </body>
   <!--end::Body-->

@@ -8,12 +8,9 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
-use Livewire\WithFileUploads;
 
 class LessonForm extends Component
 {
-    use WithFileUploads;
-
     public ?Module $module = null;
     public ?Lesson $lesson = null;
 
@@ -25,8 +22,6 @@ class LessonForm extends Component
     public int $sort_order = 1;
     public bool $is_required = true;
     public string $status = 'draft';
-    public mixed $cover_image = null;
-    public array $attachments = [];
 
     #[Layout('layouts.guru')]
     public function mount(?Module $module = null, ?Lesson $lesson = null): void
@@ -35,7 +30,7 @@ class LessonForm extends Component
         $this->lesson = $lesson;
 
         if ($lesson) {
-            $this->lesson = $lesson->load('module.course', 'media');
+            $this->lesson = $lesson->load('module.course');
             $this->title = $lesson->title;
             $this->slug = $lesson->slug;
             $this->summary = $lesson->summary;
@@ -77,9 +72,6 @@ class LessonForm extends Component
             'sort_order' => ['required', 'integer', 'min:1'],
             'is_required' => ['boolean'],
             'status' => ['required', Rule::in(['draft', 'published', 'archived'])],
-            'cover_image' => ['nullable', 'image', 'max:5120'],
-            'attachments' => ['nullable', 'array'],
-            'attachments.*' => ['file', 'max:10240', 'mimes:pdf,doc,docx,xls,xlsx,ppt,pptx,jpg,jpeg,png,webp,zip,rar'],
         ]);
 
         $payload = [
@@ -96,36 +88,9 @@ class LessonForm extends Component
             $this->lesson = Lesson::create($payload);
         }
 
-        if ($this->cover_image) {
-            $this->lesson->clearMediaCollection('lesson_covers');
-            $this->lesson->addMedia($this->cover_image->getRealPath())
-                ->usingFileName($this->cover_image->getClientOriginalName())
-                ->toMediaCollection('lesson_covers');
-        }
-
-        if (! empty($this->attachments)) {
-            foreach ($this->attachments as $attachment) {
-                $this->lesson->addMedia($attachment->getRealPath())
-                    ->usingFileName($attachment->getClientOriginalName())
-                    ->toMediaCollection('lesson_attachments');
-            }
-        }
-
-        $this->reset('cover_image', 'attachments');
-
         session()->flash('success', 'Subbab berhasil disimpan.');
 
         return redirect()->route('guru.modules.index', $this->module->course);
-    }
-
-    public function deleteMedia(int $mediaId): void
-    {
-        abort_unless($this->lesson, 404);
-
-        $media = $this->lesson->media()->whereKey($mediaId)->firstOrFail();
-        $media->delete();
-
-        $this->lesson->load('media');
     }
 
     public function render()

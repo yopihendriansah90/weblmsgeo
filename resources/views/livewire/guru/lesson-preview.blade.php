@@ -1,5 +1,5 @@
-<div class="row justify-content-center">
-    <div class="col-lg-10">
+<div class="row">
+    <div class="col-12">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <div>
                 <h4 class="mb-0">{{ $lesson->title }}</h4>
@@ -29,25 +29,9 @@
                     <p class="lead">{{ $lesson->summary }}</p>
                 @endif
 
-                @if($lesson->getFirstMediaUrl('lesson_covers'))
-                    <div class="mb-4">
-                        <img src="{{ $lesson->getFirstMediaUrl('lesson_covers') }}" alt="Cover" class="img-fluid rounded border">
-                    </div>
-                @endif
-
                 <article class="lesson-content">
                     {!! $lesson->content !!}
                 </article>
-
-                @if($lesson->getMedia('lesson_attachments')->count())
-                    <hr>
-                    <h5>Lampiran</h5>
-                    <ul class="mb-0">
-                        @foreach($lesson->getMedia('lesson_attachments') as $media)
-                            <li><a href="{{ $media->getUrl() }}" target="_blank">{{ $media->name ?: $media->file_name }}</a></li>
-                        @endforeach
-                    </ul>
-                @endif
             </div>
         </div>
     </div>

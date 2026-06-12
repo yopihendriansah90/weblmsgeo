@@ -1,31 +1,46 @@
 <div class="module-manager">
     <section class="module-hero card border-0 shadow-sm mb-4">
-        <div class="card-body p-4">
-            <div class="d-flex flex-column flex-lg-row gap-3 align-items-lg-start justify-content-between">
+        <div class="card-body p-3 p-md-4">
+            <div class="d-flex flex-column flex-lg-row gap-3 align-items-lg-center justify-content-between">
                 <div>
-                    <p class="text-uppercase text-muted small fw-semibold mb-2">Kelola Bab Materi</p>
-                    <h2 class="h1 mb-2">{{ $course->title }}</h2>
-                    <p class="text-muted mb-0">Susun bab dan subbab materi dalam urutan belajar yang jelas untuk guru dan siswa.</p>
+                    <p class="text-uppercase text-muted small fw-semibold mb-1">Kelola Bab Materi</p>
+                    <h2 class="h4 mb-2">{{ $course->title }}</h2>
+                    <p class="text-muted mb-0 module-hero-desc">Susun bab dan subbab materi dalam urutan belajar yang jelas.</p>
+                    <div class="module-search mt-3">
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text bg-white text-muted">
+                                <i class="bi bi-search"></i>
+                            </span>
+                            <input
+                                type="text"
+                                class="form-control"
+                                placeholder="Cari bab..."
+                                wire:model.live.debounce.300ms="search"
+                            >
+                            @if(trim($search) !== '')
+                                <button type="button" class="btn btn-outline-secondary" wire:click="$set('search', '')">
+                                    Hapus
+                                </button>
+                            @endif
+                        </div>
+                    </div>
                 </div>
-                <div class="d-flex flex-wrap gap-2">
-                    <button type="button" class="btn btn-outline-secondary" wire:click="expandAll">Expand All</button>
-                    <button type="button" class="btn btn-outline-secondary" wire:click="collapseAll">Collapse All</button>
-                    <a href="{{ route('guru.courses.index') }}" class="btn btn-light">Kembali ke Materi</a>
-                    <a href="{{ route('guru.modules.create', $course) }}" class="btn btn-primary">+ Tambah Bab</a>
+                <div class="d-flex flex-wrap gap-2 align-items-center">
+                    <button type="button" class="btn btn-sm btn-outline-secondary guru-btn-soft-secondary guru-btn-toggle-all" wire:click="toggleAllModules">
+                        {{ $allModulesExpanded ? 'Tutup Semua' : 'Buka Semua' }}
+                    </button>
+                    <a href="{{ route('guru.courses.index') }}" class="btn btn-sm btn-outline-secondary guru-btn-sm guru-btn-bordered">Kembali</a>
+                    <a href="{{ route('guru.modules.create', $course) }}" class="btn btn-sm btn-primary guru-btn-sm">+ BAB Pembahasan</a>
                 </div>
             </div>
         </div>
     </section>
 
-    @if (session('success'))
-        <div class="alert alert-success shadow-sm">{{ session('success') }}</div>
-    @endif
-
     @forelse($modules as $module)
         @php($isExpanded = in_array($module->id, $expandedModules, true))
-        <section class="card shadow-sm border-0 mb-4 module-card">
+        <section class="card shadow-sm border-0 mb-3 module-card">
             <div class="card-body p-0">
-                <div class="module-summary p-4">
+                <div class="module-summary p-3 p-md-4">
                     <div class="d-flex flex-column flex-xl-row gap-3 justify-content-between">
                         <div class="d-flex gap-3 align-items-start flex-grow-1">
                             <button
@@ -39,45 +54,45 @@
                             <div class="flex-grow-1">
                                 <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
                                     <span class="module-index">{{ $loop->iteration }}</span>
-                                    <h3 class="h3 mb-0">{{ $module->title }}</h3>
-                                    <span class="badge bg-{{ $module->status === 'published' ? 'success' : ($module->status === 'draft' ? 'warning text-dark' : 'secondary') }}">
+                                    <h3 class="h5 mb-0 module-title">{{ $module->title }}</h3>
+                                    <span class="badge rounded-pill bg-{{ $module->status === 'published' ? 'success' : ($module->status === 'draft' ? 'warning text-dark' : 'secondary') }}">
                                         {{ ucfirst($module->status) }}
                                     </span>
                                 </div>
-                                <p class="text-muted mb-3">{{ $module->description ?: 'Belum ada deskripsi bab.' }}</p>
+                                <p class="text-muted mb-2 module-summary-text">{{ $module->description ?: 'Belum ada deskripsi bab.' }}</p>
                                 <div class="d-flex flex-wrap gap-3 text-muted small">
                                     <span><strong>{{ $module->lessons_count }}</strong> subbab</span>
-                                    <span>Urutan bab mengikuti struktur materi siswa</span>
+                                    <span>Urutan mengikuti struktur belajar</span>
                                 </div>
                             </div>
                         </div>
 
                         <div class="module-actions d-flex flex-wrap gap-2 justify-content-xl-end align-items-start">
-                            <a href="{{ route('guru.lessons.create', $module) }}" class="btn btn-sm btn-primary">+ Subbab</a>
-                            <a href="{{ route('guru.modules.edit', $module) }}" class="btn btn-sm btn-info text-white">Edit Bab</a>
-                            <button type="button" class="btn btn-sm btn-outline-danger" wire:click="deleteModule({{ $module->id }})">Hapus</button>
+                            <a href="{{ route('guru.lessons.create', $module) }}" class="btn btn-sm btn-primary guru-btn-sm">+ Subbab</a>
+                            <a href="{{ route('guru.modules.edit', $module) }}" class="btn btn-sm btn-outline-primary guru-btn-soft-primary">Edit</a>
+                            <button type="button" class="btn btn-sm btn-outline-danger guru-btn-soft-danger" wire:click="requestDeleteModule({{ $module->id }})">Hapus</button>
                         </div>
                     </div>
                 </div>
 
                 @if($isExpanded)
                     <div class="module-detail border-top">
-                        <div class="px-4 pt-4 pb-3 d-flex flex-column flex-md-row gap-2 justify-content-between align-items-md-center">
+                        <div class="px-3 px-md-4 pt-3 pb-2 d-flex flex-column flex-md-row gap-2 justify-content-between align-items-md-center">
                             <div>
-                                <h4 class="h4 mb-1">Daftar Subbab</h4>
+                                <h4 class="h6 mb-1">Daftar Subbab</h4>
                                 <p class="text-muted mb-0">{{ $module->title }}</p>
                             </div>
                             <span class="badge rounded-pill text-bg-light px-3 py-2">{{ $module->lessons_count }} subbab</span>
                         </div>
 
                         @if($module->lessons->isEmpty())
-                            <div class="px-4 pb-4">
+                            <div class="px-3 px-md-4 pb-4">
                                 <div class="empty-state rounded-4 border border-dashed p-4 text-center text-muted">
                                     Belum ada subbab pada bab ini.
                                 </div>
                             </div>
                         @else
-                            <div class="px-4 pb-4">
+                            <div class="px-3 px-md-4 pb-4">
                                 <div class="sublesson-table-wrap rounded-4 border overflow-hidden">
                                     <table class="table align-middle mb-0 sublesson-table">
                                         <thead>
@@ -105,12 +120,12 @@
                                                     <td class="fw-semibold">{{ $lesson->sort_order }}</td>
                                                     <td>
                                                         <div class="d-flex flex-wrap gap-2">
-                                                            <a href="{{ route('guru.lessons.edit', $lesson) }}" class="btn btn-sm btn-info text-white">Edit</a>
-                                                            <a href="{{ route('guru.lessons.preview', $lesson) }}" class="btn btn-sm btn-outline-secondary">Preview</a>
-                                                            <button type="button" class="btn btn-sm btn-warning" wire:click="toggleLessonStatus({{ $lesson->id }})">
+                                                            <a href="{{ route('guru.lessons.edit', $lesson) }}" class="btn btn-sm btn-outline-primary guru-btn-soft-primary">Edit</a>
+                                                            <a href="{{ route('guru.lessons.preview', $lesson) }}" class="btn btn-sm btn-outline-secondary guru-btn-soft-secondary">Preview</a>
+                                                            <button type="button" class="btn btn-sm btn-warning guru-btn-sm" wire:click="toggleLessonStatus({{ $lesson->id }})">
                                                                 {{ $lesson->status === 'published' ? 'Jadikan Draft' : 'Publish' }}
                                                             </button>
-                                                            <button type="button" class="btn btn-sm btn-outline-danger" wire:click="deleteLesson({{ $lesson->id }})">Hapus</button>
+                                                            <button type="button" class="btn btn-sm btn-outline-danger guru-btn-soft-danger" wire:click="requestDeleteLesson({{ $lesson->id }})">Hapus</button>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -127,7 +142,11 @@
     @empty
         <section class="card border-0 shadow-sm">
             <div class="card-body p-5 text-center text-muted">
-                Belum ada bab pada materi ini.
+                @if(trim($search) !== '')
+                    Tidak ada bab yang cocok dengan kata kunci "{{ $search }}".
+                @else
+                    Belum ada bab pada materi ini.
+                @endif
             </div>
         </section>
     @endforelse
@@ -148,6 +167,7 @@
 
     .module-card {
         background: var(--module-surface);
+        border-radius: 1rem;
     }
 
     .module-summary {
@@ -155,9 +175,9 @@
     }
 
     .module-toggle {
-        min-width: 38px;
-        min-height: 38px;
-        border-radius: 12px;
+        min-width: 34px;
+        min-height: 34px;
+        border-radius: 10px;
         font-size: 1rem;
         line-height: 1;
     }
@@ -174,6 +194,22 @@
         font-weight: 700;
     }
 
+    .module-title {
+        line-height: 1.25;
+    }
+
+    .module-summary-text {
+        max-width: 62rem;
+    }
+
+    .module-hero-desc {
+        max-width: 42rem;
+    }
+
+    .module-search {
+        max-width: 32rem;
+    }
+
     .module-detail {
         background: var(--module-soft);
     }
@@ -183,6 +219,10 @@
         padding-block: 0.45rem;
         line-height: 1.2;
         align-self: flex-start;
+    }
+
+    .guru-btn-toggle-all {
+        min-width: 7.5rem;
     }
 
     .sublesson-table-wrap {
@@ -205,6 +245,10 @@
     .empty-state {
         background: #ffffff;
         border-color: var(--module-border) !important;
+    }
+
+    .sublesson-table .fw-semibold.fs-5 {
+        font-size: 1rem !important;
     }
 </style>
 @endpush

@@ -1,15 +1,14 @@
 <div class="row">
-    <div class="col-md-10">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">{{ $title }}</h3>
+    <div class="col-12">
+        <div class="card guru-panel">
+            <div class="card-header bg-white">
+                <div class="d-flex flex-column gap-1">
+                    <p class="guru-kicker">Kelola Bab</p>
+                    <h3 class="guru-panel-title">{{ $title }}</h3>
+                </div>
             </div>
             <form wire:submit.prevent="save">
-                <div class="card-body">
-                    @if (session('success'))
-                        <div class="alert alert-success">{{ session('success') }}</div>
-                    @endif
-
+                <div class="card-body guru-panel-body">
                     <div class="mb-3">
                         <label class="form-label">Materi</label>
                         <input type="text" class="form-control" value="{{ $course?->title }}" disabled>
@@ -50,9 +49,9 @@
                         </div>
                     </div>
                 </div>
-                <div class="card-footer d-flex justify-content-between">
-                    <a href="{{ $course ? route('guru.modules.index', $course) : route('guru.courses.index') }}" class="btn btn-light">Kembali</a>
-                    <button type="submit" class="btn btn-primary">Simpan</button>
+                <div class="card-footer bg-white d-flex justify-content-between">
+                    <a href="{{ $course ? route('guru.modules.index', $course) : route('guru.courses.index') }}" class="btn btn-sm btn-outline-secondary guru-btn-sm guru-btn-bordered">Kembali</a>
+                    <button type="submit" class="btn btn-sm btn-primary guru-btn-sm ms-auto">Simpan</button>
                 </div>
             </form>
         </div>

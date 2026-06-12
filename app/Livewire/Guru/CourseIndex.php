@@ -12,7 +12,21 @@ class CourseIndex extends Component
 {
     use WithPagination;
 
-    #[Layout('layouts.guru')]
+    protected string $paginationTheme = 'bootstrap';
+
+    public function requestDeleteCourse(int $courseId): void
+    {
+        $this->dispatch(
+            'guru-confirm-delete',
+            componentId: $this->getId(),
+            action: 'deleteCourse',
+            id: $courseId,
+            title: 'Hapus materi ini?',
+            text: 'Materi dan seluruh bab di dalamnya akan ikut terhapus.',
+            confirmButtonText: 'Ya, hapus materi',
+        );
+    }
+
     public function deleteCourse(int $courseId): void
     {
         $course = Course::findOrFail($courseId);
@@ -20,13 +34,15 @@ class CourseIndex extends Component
         DB::transaction(function () use ($course): void {
             $course->delete();
         });
-
-        session()->flash('success', 'Materi berhasil dihapus.');
+        $this->dispatch('guru-notify', type: 'success', message: 'Materi berhasil dihapus.');
     }
 
     public function render()
     {
-        $courses = Course::latest()->paginate(10);
+        $courses = Course::with('media')
+            ->withCount('modules')
+            ->latest()
+            ->paginate(9);
 
         return view('livewire.guru.course-index', [
             'title' => 'Daftar Materi Pembelajaran',
