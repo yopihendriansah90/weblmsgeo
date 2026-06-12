@@ -14,7 +14,16 @@ class CourseShow extends Component
     public function mount(Course $course): void
     {
         abort_unless($course->status === 'published', 404);
-        $this->course = $course->load(['modules' => fn ($query) => $query->where('status', 'published'), 'modules.lessons' => fn ($query) => $query->where('status', 'published')]);
+        $this->course = $course->load(['modules' => fn ($query) => $query
+            ->where(function ($subQuery): void {
+                $subQuery->where('type', 'lesson')
+                    ->where('status', 'published');
+            })
+            ->orWhere(function ($subQuery): void {
+                $subQuery->where('type', 'quiz')
+                    ->where('status', 'published');
+            })
+            ->orderByRaw("CASE WHEN type = 'quiz' THEN 1 ELSE 0 END, sort_order")]);
     }
 
     public function render()

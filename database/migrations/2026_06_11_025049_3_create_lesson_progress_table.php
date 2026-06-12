@@ -14,14 +14,14 @@ return new class extends Migration
         Schema::create('lesson_progress', function (Blueprint $table) {
             $table->id();
             $table->foreignId('student_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('lesson_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('module_id')->constrained()->cascadeOnDelete();
             $table->enum('status', ['not_started', 'in_progress', 'completed'])->default('not_started')->index();
             $table->timestamp('last_opened_at')->nullable();
             $table->timestamp('completed_at')->nullable();
             $table->unsignedInteger('duration_seconds')->default(0);
             $table->timestamps();
 
-            $table->unique(['student_id', 'lesson_id']);
+            $table->unique(['student_id', 'module_id']);
         });
     }
 

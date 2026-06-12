@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class LessonProgress extends Model
 {
-    protected $fillable = ['student_id', 'lesson_id', 'status', 'last_opened_at', 'completed_at', 'duration_seconds'];
+    protected $fillable = ['student_id', 'module_id', 'status', 'last_opened_at', 'completed_at', 'duration_seconds'];
 
     protected function casts(): array
     {
@@ -19,8 +19,8 @@ class LessonProgress extends Model
         return $this->belongsTo(Student::class);
     }
 
-    public function lesson(): BelongsTo
+    public function module(): BelongsTo
     {
-        return $this->belongsTo(Lesson::class);
+        return $this->belongsTo(Module::class);
     }
 }

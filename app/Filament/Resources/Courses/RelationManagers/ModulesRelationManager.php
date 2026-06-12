@@ -66,9 +66,9 @@ class ModulesRelationManager extends RelationManager
                     ->label('Bab')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('lessons_count')
-                    ->counts('lessons')
-                    ->label('Subbab'),
+                TextColumn::make('quizzes_count')
+                    ->counts('quizzes')
+                    ->label('Kuis'),
                 TextColumn::make('status')
                     ->label('Status')
                     ->badge(),
@@ -79,11 +79,11 @@ class ModulesRelationManager extends RelationManager
             ])
             ->recordActions([
                 Action::make('manageLessons')
-                    ->label('Kelola Subbab')
+                    ->label('Kelola Bab')
                     ->icon('heroicon-o-book-open')
                     ->url(fn ($record): string => ModuleResource::getUrl('edit', ['record' => $record])),
                 EditAction::make()
-                    ->label('Ubah'),
+                    ->label('Ubah Bab'),
                 DeleteAction::make()
                     ->label('Hapus'),
             ]);

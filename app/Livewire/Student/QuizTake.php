@@ -5,6 +5,7 @@ namespace App\Livewire\Student;
 use App\Models\Quiz;
 use App\Models\QuizAttempt;
 use App\Models\QuizStep;
+use App\Models\QuizStepAttempt;
 use App\Services\QuizFlowService;
 use Illuminate\Support\Arr;
 use Livewire\Attributes\Layout;
@@ -26,7 +27,7 @@ class QuizTake extends Component
     public function mount(Quiz $quiz, QuizFlowService $flowService): void
     {
         abort_unless($quiz->status === 'published', 404);
-        $this->quiz = $quiz->load('lesson.module.course', 'steps');
+        $this->quiz = $quiz->load('module.course', 'steps');
         $this->attempt = $flowService->startOrContinue($quiz, auth()->user()->student);
         $this->activeStepId = $this->attempt->current_step_id ?? $this->quiz->steps->first()?->id;
     }
@@ -50,7 +51,7 @@ class QuizTake extends Component
         $step = QuizStep::findOrFail($this->activeStepId);
 
         try {
-            $flowService->submitStep($this->attempt->fresh('quiz.steps', 'stepAttempts'), $step, $this->normalizedAnswer($step));
+            $flowService->submitStep($this->attempt->fresh(['quiz.steps', 'stepAttempts']), $step, $this->normalizedAnswer($step));
             $this->attempt = $this->attempt->fresh(['quiz.steps', 'stepAttempts.quizStep', 'stepAttempts.answers', 'stepAttempts.essayReview']);
         } catch (\Throwable $exception) {
             $this->errorMessage = $exception->getMessage();
@@ -101,5 +102,27 @@ class QuizTake extends Component
             'stepAttempts' => $this->attempt->stepAttempts()->with(['quizStep', 'answers', 'essayReview'])->get()->keyBy('quiz_step_id'),
             'activeStep' => QuizStep::find($this->activeStepId),
         ]);
+    }
+
+    public function orderedItems(QuizStep $step, ?QuizStepAttempt $stepAttempt = null): array
+    {
+        $items = collect($step->content_payload['items'] ?? []);
+
+        if (! in_array($step->type, ['text_matching', 'image_text_matching'], true)) {
+            return $items->all();
+        }
+
+        $order = data_get($stepAttempt?->result_payload, 'presentation.item_order', []);
+
+        if ($order === []) {
+            return $items->all();
+        }
+
+        $positionMap = array_flip($order);
+
+        return $items
+            ->sortBy(fn (array $item): int => $positionMap[$item['key']] ?? PHP_INT_MAX)
+            ->values()
+            ->all();
     }
 }

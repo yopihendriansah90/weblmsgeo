@@ -10,10 +10,9 @@ use App\Livewire\Student\Profile;
 use App\Livewire\Student\QuizHistory;
 use App\Livewire\Student\QuizTake;
 use App\Livewire\Guru\CourseForm;
-use App\Livewire\Guru\LessonForm;
-use App\Livewire\Guru\LessonPreview;
 use App\Livewire\Guru\ModuleForm;
 use App\Livewire\Guru\ModuleIndex;
+use App\Livewire\Guru\QuizForm;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -63,7 +62,7 @@ Route::middleware(['auth', 'student'])->prefix('siswa')->name('student.')->group
     Route::get('/dashboard', Dashboard::class)->name('dashboard');
     Route::get('/kursus', CourseIndex::class)->name('courses');
     Route::get('/kursus/{course:slug}', CourseShow::class)->name('courses.show');
-    Route::get('/materi/{lesson:slug}', LessonShow::class)->name('lessons.show');
+    Route::get('/materi/{module:slug}', LessonShow::class)->name('modules.show');
     Route::get('/kuis/{quiz}', QuizTake::class)->name('quizzes.take');
     Route::get('/riwayat-belajar', LearningHistory::class)->name('learning-history');
     Route::get('/riwayat-kuis', QuizHistory::class)->name('quiz-history');
@@ -78,9 +77,8 @@ Route::middleware(['auth', 'guru'])->prefix('guru')->name('guru.')->group(functi
     Route::get('/materi/{course}/bab', ModuleIndex::class)->name('modules.index');
     Route::get('/materi/{course}/bab/create', ModuleForm::class)->name('modules.create');
     Route::get('/bab/{module}/edit', ModuleForm::class)->name('modules.edit');
-    Route::get('/bab/{module}/subbab/create', LessonForm::class)->name('lessons.create');
-    Route::get('/subbab/{lesson}/edit', LessonForm::class)->name('lessons.edit');
-    Route::get('/subbab/{lesson}/preview', LessonPreview::class)->name('lessons.preview');
+    Route::get('/bab/{module}/quiz', QuizForm::class)->name('quizzes.create');
+    Route::get('/bab/{module}/quiz/{quiz}', QuizForm::class)->name('quizzes.edit');
     Route::post('/editor-image-upload', function (Request $request) {
         $request->validate([
             'file' => ['required', 'image', 'max:5120'],

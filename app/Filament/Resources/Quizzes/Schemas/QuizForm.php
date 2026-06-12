@@ -14,7 +14,7 @@ class QuizForm
     {
         return $schema
             ->components([
-                Select::make('lesson_id')->relationship('lesson', 'title')->label('Subbab')->required()->searchable()->preload(),
+                Select::make('module_id')->relationship('module', 'title')->label('Bab')->required()->searchable()->preload(),
                 TextInput::make('title')->label('Judul Kuis')->required(),
                 Textarea::make('description')->label('Deskripsi')->columnSpanFull(),
                 Select::make('mode')->label('Mode')->options(['practice' => 'Latihan', 'final' => 'Final'])->required()->default('practice'),

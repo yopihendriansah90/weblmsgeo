@@ -8,6 +8,7 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\Attributes\Layout;
 
+#[Layout('layouts.guru')]
 class CourseIndex extends Component
 {
     use WithPagination;
@@ -40,7 +41,7 @@ class CourseIndex extends Component
     public function render()
     {
         $courses = Course::with('media')
-            ->withCount('modules')
+            ->withCount(['modules as lessons_count' => fn ($query) => $query->where('type', 'lesson')])
             ->latest()
             ->paginate(9);
 

@@ -16,7 +16,8 @@ class Course extends Model implements HasMedia
 
     public function modules(): HasMany
     {
-        return $this->hasMany(Module::class)->orderBy('sort_order');
+        return $this->hasMany(Module::class)
+            ->orderByRaw("CASE WHEN type = 'quiz' THEN 1 ELSE 0 END, sort_order");
     }
 
     public function registerMediaCollections(): void

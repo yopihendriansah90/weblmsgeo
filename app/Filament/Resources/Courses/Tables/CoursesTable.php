@@ -22,7 +22,9 @@ class CoursesTable
 
                 TextColumn::make('title')->label('Materi Pembelajaran')->searchable()->sortable(),
                 TextColumn::make('slug')->searchable(),
-                TextColumn::make('modules_count')->counts('modules')->label('Bab'),
+                TextColumn::make('lessons_count')
+                    ->label('Bab')
+                    ->getStateUsing(fn ($record) => $record->modules()->where('type', 'lesson')->count()),
                 TextColumn::make('status')->badge(),
             ])
             ->filters([

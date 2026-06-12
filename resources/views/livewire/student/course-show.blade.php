@@ -1,24 +1,106 @@
 <div class="space-y-6">
-    <div>
-        <p class="text-sm text-neutral-600">Kursus</p>
-        <h1 class="text-2xl font-semibold">{{ $course->title }}</h1>
-        <p class="mt-2 text-neutral-700">{{ $course->description }}</p>
-    </div>
+    <section class="rounded-[24px] border border-slate-200/80 bg-white p-5 shadow-sm sm:p-6">
+        <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+            <div class="max-w-3xl">
+                <p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-indigo-700">Materi</p>
+                <h1 class="mt-1 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">{{ $course->title }}</h1>
+                <p class="mt-3 text-sm leading-6 text-slate-600 sm:text-base">{{ $course->description }}</p>
+            </div>
+            <div class="flex flex-wrap gap-2">
+                <span class="rounded-full bg-indigo-100 px-4 py-2 text-sm font-medium text-indigo-700">{{ $course->modules->where('type', 'lesson')->count() }} bab pembahasan</span>
+                <span class="rounded-full bg-slate-100 px-4 py-2 text-sm font-medium text-slate-600">Quiz di item terakhir</span>
+            </div>
+        </div>
+    </section>
 
-    @foreach($course->modules as $module)
-        <section class="rounded-lg border border-neutral-200 bg-white p-5">
-            <h2 class="text-lg font-semibold">{{ $module->title }}</h2>
-            <div class="mt-4 divide-y divide-neutral-100">
-                @foreach($module->lessons as $lesson)
-                    <div class="flex flex-col gap-2 py-3 sm:flex-row sm:items-center sm:justify-between">
-                        <div>
-                            <p class="font-medium">{{ $lesson->title }}</p>
-                            <p class="text-sm text-neutral-600">{{ $lesson->summary }}</p>
-                        </div>
-                        <a class="rounded-md border border-neutral-300 px-3 py-2 text-sm" href="{{ route('student.lessons.show', $lesson) }}">Buka</a>
+    <div class="grid gap-6 xl:grid-cols-12">
+        <section class="xl:col-span-8">
+            <div class="rounded-[24px] border border-slate-200/80 bg-white p-5 shadow-sm">
+                <div class="flex items-center justify-between gap-3">
+                    <div>
+                        <p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-indigo-700">Daftar Bab</p>
+                        <h2 class="mt-1 text-2xl font-semibold text-slate-900">Susunan pembelajaran</h2>
                     </div>
-                @endforeach
+                    <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">{{ $course->modules->count() }} item</span>
+                </div>
+
+                <div class="mt-5 space-y-3">
+                    @foreach($course->modules as $module)
+                        @php($isQuiz = $module->isQuiz())
+                        <div class="group rounded-[20px] border border-slate-200 bg-slate-50 p-4 transition hover:border-indigo-300 hover:bg-white">
+                            <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                                <div class="flex gap-4">
+                                    <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl {{ $isQuiz ? 'bg-cyan-100 text-cyan-700' : 'bg-indigo-100 text-indigo-700' }}">
+                                        <span class="material-symbols-outlined">{{ $isQuiz ? 'quiz' : 'menu_book' }}</span>
+                                    </div>
+                                    <div>
+                                        <div class="flex flex-wrap items-center gap-2">
+                                            <p class="text-sm font-semibold uppercase tracking-[0.22em] text-slate-500">
+                                                {{ $isQuiz ? 'Quiz Materi' : 'Bab Pembahasan' }}
+                                            </p>
+                                            <span class="rounded-full px-3 py-1 text-xs font-semibold {{ $isQuiz ? 'bg-cyan-100 text-cyan-700' : 'bg-indigo-100 text-indigo-700' }}">
+                                                {{ $isQuiz ? 'Item Quiz' : 'Bab ' . ($loop->iteration) }}
+                                            </span>
+                                        </div>
+                                        <h3 class="mt-2 text-xl font-semibold text-slate-900">{{ $isQuiz ? ($module->title ?: 'Quiz Akhir Materi') : $module->title }}</h3>
+                                        <p class="mt-2 max-w-3xl text-sm leading-6 text-slate-600">
+                                            {{ $isQuiz ? ($module->description ?: 'Item khusus untuk quiz materi.') : (\Illuminate\Support\Str::limit(trim(strip_tags($module->description ?: $module->content)), 140)) }}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="flex flex-wrap gap-2">
+                                    @if($isQuiz)
+                                        @if($module->publishedQuiz)
+                                            <a class="inline-flex items-center justify-center rounded-full bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm shadow-indigo-600/20 transition hover:bg-indigo-700" href="{{ route('student.quizzes.take', $module->publishedQuiz) }}">
+                                                Buka Quiz
+                                            </a>
+                                        @else
+                                            <span class="inline-flex items-center justify-center rounded-full border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-500">
+                                                Quiz belum tersedia
+                                            </span>
+                                        @endif
+                                    @else
+                                        <a class="inline-flex items-center justify-center rounded-full border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:border-indigo-300 hover:text-indigo-700" href="{{ route('student.modules.show', $module) }}">
+                                            Buka Materi
+                                        </a>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
             </div>
         </section>
-    @endforeach
+
+        <aside class="space-y-6 xl:col-span-4">
+            <section class="rounded-[24px] border border-slate-200/80 bg-white p-5 shadow-sm">
+                <p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-indigo-700">Ringkasan</p>
+                <h2 class="mt-1 text-2xl font-semibold text-slate-900">Informasi materi</h2>
+
+                <div class="mt-5 space-y-3">
+                    <div class="rounded-[18px] border border-slate-200 bg-slate-50 p-4">
+                        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Bab pembahasan</p>
+                        <p class="mt-2 text-3xl font-semibold text-indigo-700">{{ $course->modules->where('type', 'lesson')->count() }}</p>
+                    </div>
+                    <div class="rounded-[18px] border border-slate-200 bg-slate-50 p-4">
+                        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Item quiz</p>
+                        <p class="mt-2 text-3xl font-semibold text-slate-900">{{ $course->modules->where('type', 'quiz')->count() }}</p>
+                    </div>
+                    <div class="rounded-[18px] border border-slate-200 bg-slate-50 p-4">
+                        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Status course</p>
+                        <p class="mt-2 text-xl font-semibold text-slate-900">{{ ucfirst($course->status) }}</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="rounded-[24px] border border-slate-200/80 bg-indigo-600 p-5 text-white shadow-sm">
+                <p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-indigo-100/80">Catatan</p>
+                <h2 class="mt-1 text-2xl font-semibold">Quiz berada di item terakhir</h2>
+                <p class="mt-3 text-sm leading-6 text-indigo-50/90">
+                    Struktur materi mengikuti urutan bab pembahasan, lalu diakhiri dengan item quiz agar siswa memahami alur belajar secara utuh.
+                </p>
+            </section>
+        </aside>
+    </div>
 </div>

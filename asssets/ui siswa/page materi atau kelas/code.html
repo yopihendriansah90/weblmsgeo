@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EduCampus | Academic Clarity</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary": "#ffffff",
+                    "surface-container-high": "#dce9ff",
+                    "tertiary-container": "#885500",
+                    "on-error-container": "#93000a",
+                    "outline": "#777587",
+                    "surface-variant": "#d3e4fe",
+                    "surface-container-low": "#eff4ff",
+                    "surface-tint": "#4d44e3",
+                    "surface": "#f8f9ff",
+                    "on-secondary-fixed-variant": "#005049",
+                    "surface-bright": "#f8f9ff",
+                    "surface-container-lowest": "#ffffff",
+                    "on-tertiary-fixed": "#2a1700",
+                    "error": "#ba1a1a",
+                    "surface-container-highest": "#d3e4fe",
+                    "inverse-on-surface": "#eaf1ff",
+                    "on-primary-container": "#dad7ff",
+                    "tertiary-fixed": "#ffddb8",
+                    "primary-fixed-dim": "#c3c0ff",
+                    "secondary-fixed": "#89f5e7",
+                    "on-error": "#ffffff",
+                    "on-primary": "#ffffff",
+                    "secondary-container": "#86f2e4",
+                    "surface-container": "#e5eeff",
+                    "background": "#f8f9ff",
+                    "primary-fixed": "#e2dfff",
+                    "primary-container": "#4f46e5",
+                    "on-surface-variant": "#464555",
+                    "tertiary": "#684000",
+                    "secondary": "#006a61",
+                    "inverse-surface": "#213145",
+                    "on-tertiary-container": "#ffd4a4",
+                    "tertiary-fixed-dim": "#ffb95f",
+                    "error-container": "#ffdad6",
+                    "on-secondary-fixed": "#00201d",
+                    "on-primary-fixed-variant": "#3323cc",
+                    "primary": "#3525cd",
+                    "on-background": "#0b1c30",
+                    "on-secondary-container": "#006f66",
+                    "on-secondary": "#ffffff",
+                    "on-primary-fixed": "#0f0069",
+                    "surface-dim": "#cbdbf5",
+                    "outline-variant": "#c7c4d8",
+                    "on-surface": "#0b1c30",
+                    "on-tertiary-fixed-variant": "#653e00",
+                    "inverse-primary": "#c3c0ff",
+                    "secondary-fixed-dim": "#6bd8cb"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "gutter": "24px",
+                    "stack-sm": "8px",
+                    "stack-lg": "32px",
+                    "base": "8px",
+                    "container-max": "1280px",
+                    "margin-desktop": "40px",
+                    "margin-mobile": "16px",
+                    "stack-md": "16px"
+            },
+            "fontFamily": {
+                    "label-sm": ["Inter"],
+                    "label-md": ["Inter"],
+                    "headline-md": ["Plus Jakarta Sans"],
+                    "headline-lg": ["Plus Jakarta Sans"],
+                    "body-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-xl": ["Plus Jakarta Sans"],
+                    "headline-lg-mobile": ["Plus Jakarta Sans"]
+            },
+            "fontSize": {
+                    "label-sm": ["12px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                    "label-md": ["14px", {"lineHeight": "1.4", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                    "headline-md": ["24px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                    "headline-lg": ["32px", {"lineHeight": "1.25", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "headline-xl": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "1.3", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .card-shadow {
+            box-shadow: 0px 4px 20px rgba(0,0,0,0.05);
+        }
+        .card-shadow:hover {
+            box-shadow: 0px 8px 30px rgba(79, 70, 229, 0.1);
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d3e4fe;
+            border-radius: 10px;
+        }
+        .glass-header {
+            backdrop-filter: blur(8px);
+            background: rgba(248, 249, 255, 0.8);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md selection:bg-primary-fixed-dim selection:text-on-primary-fixed">
+<div class="flex min-h-screen">
+<!-- SideNavBar Anchor -->
+<aside class="h-screen w-64 hidden lg:flex flex-col sticky top-0 left-0 bg-surface-container-low py-stack-lg border-r border-outline-variant z-40">
+<div class="px-6 mb-10">
+<h1 class="font-headline-md text-headline-md text-primary tracking-tight">Learning Portal</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant opacity-70">Academic Clarity</p>
+</div>
+<nav class="flex-1 px-4 space-y-2">
+<a class="flex items-center gap-4 text-on-surface-variant hover:bg-surface-container-high px-4 py-3 rounded-lg transition-all active:translate-x-1" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-4 bg-primary-container text-on-primary-container border-l-4 border-primary px-4 py-3 font-semibold rounded-r-lg transition-all active:translate-x-1" href="#">
+<span class="material-symbols-outlined" data-icon="school">school</span>
+<span class="font-label-md text-label-md">My Courses</span>
+</a>
+<a class="flex items-center gap-4 text-on-surface-variant hover:bg-surface-container-high px-4 py-3 rounded-lg transition-all active:translate-x-1" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+<span class="font-label-md text-label-md">Calendar</span>
+</a>
+<a class="flex items-center gap-4 text-on-surface-variant hover:bg-surface-container-high px-4 py-3 rounded-lg transition-all active:translate-x-1" href="#">
+<span class="material-symbols-outlined" data-icon="insights">insights</span>
+<span class="font-label-md text-label-md">Performance</span>
+</a>
+</nav>
+<div class="mt-auto px-4 space-y-2">
+<button class="w-full bg-primary text-on-primary py-3 px-4 rounded-xl font-label-md text-label-md shadow-lg hover:brightness-110 active:scale-95 transition-all mb-6">
+                    New Request
+                </button>
+<a class="flex items-center gap-4 text-on-surface-variant hover:bg-surface-container-high px-4 py-3 rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+<a class="flex items-center gap-4 text-on-surface-variant hover:bg-surface-container-high px-4 py-3 rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span class="font-label-md text-label-md">Help</span>
+</a>
+</div>
+</aside>
+<div class="flex-1 flex flex-col min-w-0">
+<!-- TopNavBar Anchor -->
+<header class="docked full-width top-0 sticky z-50 bg-surface shadow-sm flex justify-between items-center w-full px-gutter h-16 glass-header">
+<div class="flex items-center gap-8 flex-1">
+<div class="font-headline-md text-headline-md font-bold text-primary lg:hidden">EduCampus</div>
+<div class="relative w-full max-w-md hidden md:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" data-icon="search">search</span>
+<input class="w-full bg-surface-container border-none rounded-full py-2 pl-10 pr-4 text-body-md focus:ring-2 focus:ring-primary/20 transition-all" placeholder="Search courses, instructors..." type="text"/>
+</div>
+</div>
+<nav class="hidden md:flex items-center gap-6 px-gutter">
+<a class="font-body-md text-body-md text-primary font-bold border-b-2 border-primary pb-1" href="#">Catalog</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Resources</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors" href="#">Faculty</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container rounded-full active:scale-95 transition-all">
+<span class="material-symbols-outlined" data-icon="mail">mail</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container rounded-full active:scale-95 transition-all relative">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<img alt="Student Profile" class="w-10 h-10 rounded-full object-cover border-2 border-primary/10 cursor-pointer" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCuHyrfGtnnsHtT8fcEyUUPYitUeLB9V4PLrD8qngpww1xc2A0zD6dDaPVyaIf-ZczuykWYhn0qza0gvB8DxlYYQfaTtk6xBrTuzxEXx1-i_s6DuFNVlxyPebpzZhGxcWnGB8r5Y8bDqIauvWn0-usa4g0ncvoT-B-18DJlXoq4zKxe8-i65HzdeUdC_vKFPA_Rog6kJ9NpCTSLqr1UVYHUdSQ92u-7jwfRyc0gEt1UrLPuKngDhYsU5y8EJRFkABK3oDQon9_sq0M"/>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-1 overflow-y-auto px-gutter py-stack-lg">
+<!-- Header & Filters -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-stack-md mb-stack-lg">
+<div>
+<nav class="flex items-center gap-2 text-label-sm text-on-surface-variant mb-2">
+<span>Home</span>
+<span class="material-symbols-outlined text-[14px]" data-icon="chevron_right">chevron_right</span>
+<span class="text-primary">Courses</span>
+</nav>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Explore Knowledge</h2>
+<p class="text-body-md text-on-surface-variant mt-2 max-w-2xl">Curated academic pathways designed for deep comprehension and practical application in modern environments.</p>
+</div>
+<div class="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar">
+<button class="px-5 py-2 rounded-full bg-primary text-on-primary font-label-md text-label-md whitespace-nowrap shadow-md">All Subjects</button>
+<button class="px-5 py-2 rounded-full bg-white border border-outline-variant text-on-surface-variant font-label-md text-label-md hover:border-primary hover:text-primary transition-all whitespace-nowrap">Mathematics</button>
+<button class="px-5 py-2 rounded-full bg-white border border-outline-variant text-on-surface-variant font-label-md text-label-md hover:border-primary hover:text-primary transition-all whitespace-nowrap">Computer Science</button>
+<button class="px-5 py-2 rounded-full bg-white border border-outline-variant text-on-surface-variant font-label-md text-label-md hover:border-primary hover:text-primary transition-all whitespace-nowrap">Applied Arts</button>
+<button class="px-5 py-2 rounded-full bg-white border border-outline-variant text-on-surface-variant font-label-md text-label-md hover:border-primary hover:text-primary transition-all whitespace-nowrap">Humanities</button>
+</div>
+</div>
+<!-- Course Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+<!-- Featured Course Card (Larger) -->
+<div class="md:col-span-2 bg-white rounded-xl overflow-hidden card-shadow border border-outline-variant group flex flex-col md:flex-row">
+<div class="md:w-1/2 relative overflow-hidden">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="A macro photograph of high-tech laboratory glassware filled with glowing cyan liquids in a pristine scientific environment. The lighting is cold and clinical, emphasizing the academic clarity and advanced research theme. The background features blurred silhouettes of researchers and sophisticated measuring equipment, creating an atmosphere of intense scholarly focus and discovery." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9K0gynvT7LJ0R4onaAYLHXo5nceqI-z46km5Ls7ZVjHUk0QU-oX1cU4r5zF4mlp8fNh9IgSDa8ot28buXez2hp2-Nez-qH76vAQMxZ17GBWJrVUyS9jmfkdog0cBuuUPyx-tVo209GqsE7i7mceLczmwgr5DhGrO99OerMiapu6cwvtPMna_m4Vm4wbKtzAH7DBwA6pREcmo4wd5T2Xd9KoFI2QhX-wo8zxpZoFqWoDydwM9d7PdzWsS0bjHf0s9obFDnLkkb4rs"/>
+<div class="absolute top-4 left-4 bg-primary-container text-on-primary-container px-3 py-1 rounded-full text-label-sm font-label-sm">Bestseller</div>
+</div>
+<div class="md:w-1/2 p-8 flex flex-col">
+<div class="flex justify-between items-start mb-4">
+<span class="text-primary font-label-md text-label-md uppercase tracking-wider">Mathematics</span>
+<div class="flex items-center gap-1 text-tertiary">
+<span class="material-symbols-outlined text-base" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-label-md text-label-md">4.9</span>
+</div>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-3">Quantum Computing Fundamentals</h3>
+<p class="text-on-surface-variant text-body-md mb-6 line-clamp-3">Deep dive into the mathematical foundations of quantum mechanics and their direct application in next-generation computation. Led by Dr. Elena Vance.</p>
+<div class="mt-auto space-y-4">
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]" data-icon="schedule">schedule</span>
+<span class="text-label-md font-label-md">12 Weeks</span>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]" data-icon="person">person</span>
+<span class="text-label-md font-label-md">Dr. Elena Vance</span>
+</div>
+</div>
+<button class="w-full bg-primary text-on-primary py-4 rounded-xl font-label-md text-label-md hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                                    Start Learning
+                                    <span class="material-symbols-outlined" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Regular Card 1 -->
+<div class="bg-white rounded-xl overflow-hidden card-shadow border border-outline-variant group flex flex-col">
+<div class="relative h-48">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="A minimalist and bright art studio filled with canvases and vibrant abstract paintings. Soft daylight streams through large industrial windows, highlighting a palette of primary colors and clean white surfaces. The scene is calm and inspiring, reflecting a high-end academic art department where creativity meets disciplined study." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCmFokNm5rwWw90gXvJjkaUu5xninmUaluZ21z0pLrVyXpRnLlEeamMre9deIAlV5ssw_liLg4fWQhxg_i3-55e9gUmxH8ZS3KF66kA90H31P9wxmR7yfTH9aSnQK_QPxMxzG5b-MtQVui3hJS0-YcuR7lB-rfyKA_5MpdHahoUb32ZjgO_fIKdrtKJ-6RURgStgG_jTD7V68Vi_3ykAlgMVeWFkmGm5c6pIUd66Z6zP_RqVVf2dBkil4Req1N9VKgYe1hcggzB4EI"/>
+<div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm p-2 rounded-full text-primary hover:bg-primary hover:text-white transition-colors cursor-pointer">
+<span class="material-symbols-outlined" data-icon="favorite">favorite</span>
+</div>
+</div>
+<div class="p-6 flex-1 flex flex-col">
+<span class="text-on-surface-variant font-label-sm text-label-sm mb-2">Applied Arts</span>
+<h4 class="font-headline-md text-[20px] leading-tight text-on-surface mb-3">Minimalist Design Systems</h4>
+<p class="text-on-surface-variant text-label-md mb-6 line-clamp-2">Mastering the balance between aesthetic simplicity and functional complexity in UI/UX design.</p>
+<div class="mt-auto">
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center gap-2">
+<img class="w-8 h-8 rounded-full border border-outline-variant" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBnFpb-NiSom8ykXDfmR5KamKZgWZKScO99VG7_oBWqyVHpKvKSbKc0-wZIC0b9Yfc-6kc_Cd68MyRktI60iLG83TC8kxJtzQRlwuFz6c4XfNl04o_QULMQlm2Wq1b9qFlvJyU1Rmi2EA0cmjhOY3RS-nRQGQJ1KXtnwynbfaHE81Fyth_-1XQJLra7ld4X4dRS8tap-LiVFmrwkHyPyTcqbHShCvv3Yd1tCetKZunVBiWkdUOQ8fv1fZ3MP7qZvE21Ml9LjNRgEN0"/>
+<span class="text-label-sm text-on-surface font-medium">Julian Marcus</span>
+</div>
+<span class="text-label-sm text-on-surface-variant">8h 45m</span>
+</div>
+<button class="w-full bg-surface-container-high text-primary py-3 rounded-lg font-label-md text-label-md hover:bg-primary hover:text-white active:scale-[0.98] transition-all">Start Learning</button>
+</div>
+</div>
+</div>
+<!-- Regular Card 2 -->
+<div class="bg-white rounded-xl overflow-hidden card-shadow border border-outline-variant group flex flex-col">
+<div class="relative h-48">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="An expansive view of a modern university library with towering bookshelves reaching towards a glass ceiling. The architectural design is contemporary, featuring clean lines and a soft color palette of light grey and indigo. Sunlight creates geometric patterns on the floor, symbolizing the structured pursuit of knowledge in a futuristic academic campus." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDWYtXOGKPYs3Si0IUhuVKQIgZphf-GD1GjNB5dsiJaqL1NjEXFfCzWrgKJHg3oP9O6H8U3q1HU3jL-JY6lTpIoH1ohBgaodO-Q5GBv0O1yFZQSml1Ocb6-N2eRN_w8R_CB-U1emzH6QNbBtSrjDjkaCdmuFm3WSKFUMC_0NhAunxcNs7XjmeaX9_I_ZWM2GXxYHSc1-5mQDYFfh6RFsyuFj1XNjdsMwENnyC5IjSQsAvKlP62nPT9pzkusn9eE6Gdl6rnxUEKDoI"/>
+</div>
+<div class="p-6 flex-1 flex flex-col">
+<span class="text-on-surface-variant font-label-sm text-label-sm mb-2">Humanities</span>
+<h4 class="font-headline-md text-[20px] leading-tight text-on-surface mb-3">Sociology of Digital Spaces</h4>
+<p class="text-on-surface-variant text-label-md mb-6 line-clamp-2">Exploring how digital interactions reshape human behavior and community building in the 21st century.</p>
+<div class="mt-auto">
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center gap-2">
+<img class="w-8 h-8 rounded-full border border-outline-variant" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCbofFPz7nuHEBrfFC-Nox0HaBRxepAKL06DWeQENn2xmULt5N_hQ9TAF67yZY00wH7TIrhR0-Uit8hnv7xIZMwMnkxFe77YdgiCYoIo0HksIeKUoQDz_FhCbNhlNr12wo4Oe1_n6NJFW7SsDu1SB0yOxF41xi5XO1jUblapvhnZrcnliHlylre5_zBdm5B_mMvYT7Xcr_8vh3Q1FNwugB6ryLXhx_7F2_g_VXNfszanj9FYweLkGTPxhPiGrOZbWd87wubuHLJ0-Q"/>
+<span class="text-label-sm text-on-surface font-medium">Sarah Chen</span>
+</div>
+<span class="text-label-sm text-on-surface-variant">14 Weeks</span>
+</div>
+<button class="w-full bg-surface-container-high text-primary py-3 rounded-lg font-label-md text-label-md hover:bg-primary hover:text-white active:scale-[0.98] transition-all">Start Learning</button>
+</div>
+</div>
+</div>
+<!-- Regular Card 3 -->
+<div class="bg-white rounded-xl overflow-hidden card-shadow border border-outline-variant group flex flex-col">
+<div class="relative h-48">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="A top-down view of an organized desk featuring a high-performance laptop, architectural sketches, and precise drafting tools. The desk surface is a polished dark wood, contrasted by bright workspace lighting. This scene encapsulates the technical and professional nature of engineering and architecture courses in a high-end digital learning environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBk2wo37wjS7q_Y-23TetYtmM8X2T_GHqfw37bSX6cNCfQ3uuxDoEmOosMtSYOC-XwAIQN_55o-P0_gwq0HIj7ARYuviFmTPLcl39bE406lP4byhUaqFWlwk4UFaYEnYbYrsWSZtAlp2gPdYHVMuwqaPQIJ9mnCgaHIQbPtWVPTumUqlnHsgXXxxSY_ve1nwMK_PAgACG3EJ5qJO_6JxhwlfexNHP6XGfTzzQfKsxzP_zoOBOmYSs8LViAcMlm73MGABiVdS8sgJkA"/>
+</div>
+<div class="p-6 flex-1 flex flex-col">
+<span class="text-on-surface-variant font-label-sm text-label-sm mb-2">Science</span>
+<h4 class="font-headline-md text-[20px] leading-tight text-on-surface mb-3">Sustainable Engineering</h4>
+<p class="text-on-surface-variant text-label-md mb-6 line-clamp-2">An advanced study into renewable energy systems and carbon-neutral structural design for urban growth.</p>
+<div class="mt-auto">
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center gap-2">
+<img class="w-8 h-8 rounded-full border border-outline-variant" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCfrSPmws6ykWkaYCOwIU27TnYcMLb4Y1DTXbn9lObBv1wTG_liYxft2WzVxYmc5qipRo4E-u7ibMfp1QY2w_oDqXooivxas_4jUMdttbajqsvSnOiY2jLcUnhP0xZdw4TqqsP2ZR1bkuxvPKfTt6M13ANQl0Q0rJtYTjtEQNmIobMCJxhZgQfJnaNKVdO0KXLZtH3EXfmGVWagQvDSVwc7UO1CyzvZ1gk6eG7deeu_lMrY_whEqTAhdm6Tj_pAfuYFXVTU8iuoPOc"/>
+<span class="text-label-sm text-on-surface font-medium">Dr. Robert Vance</span>
+</div>
+<span class="text-label-sm text-on-surface-variant">18h Course</span>
+</div>
+<div class="relative w-full h-1 bg-surface-container rounded-full mb-4 overflow-hidden">
+<div class="absolute top-0 left-0 h-full w-[45%] bg-primary rounded-full"></div>
+</div>
+<button class="w-full bg-primary text-on-primary py-3 rounded-lg font-label-md text-label-md hover:brightness-110 active:scale-[0.98] transition-all">Continue (45%)</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer Anchor -->
+<footer class="w-full mt-stack-lg py-stack-lg border-t border-outline-variant bg-surface-container-highest flex flex-col md:flex-row justify-between items-center gap-base">
+<div class="flex flex-col items-center md:items-start gap-1">
+<div class="font-label-md text-label-md font-black text-on-surface">EduCampus Academic</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant">© 2024 EduCampus Academic. All rights reserved.</p>
+</div>
+<div class="flex flex-wrap justify-center gap-6">
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors opacity-80 hover:opacity-100" href="#">Privacy Policy</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors opacity-80 hover:opacity-100" href="#">Terms of Service</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors opacity-80 hover:opacity-100" href="#">Contact Support</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors opacity-80 hover:opacity-100" href="#">Alumni Network</a>
+</div>
+</footer>
+</main>
+</div>
+</div>
+<!-- Mobile Navigation Shell -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full bg-surface shadow-lg border-t border-outline-variant z-50 flex justify-around py-3 px-2">
+<a class="flex flex-col items-center gap-1 text-on-surface-variant" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="text-[10px] font-label-sm">Home</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined" data-icon="school" data-weight="fill" style="font-variation-settings: 'FILL' 1;">school</span>
+<span class="text-[10px] font-label-sm">Courses</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-on-surface-variant" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+<span class="text-[10px] font-label-sm">Calendar</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-on-surface-variant" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="text-[10px] font-label-sm">Profile</span>
+</a>
+</nav>
+<script>
+        // Micro-interactions and subtle effects
+        document.querySelectorAll('button, a').forEach(el => {
+            el.addEventListener('mousedown', () => {
+                el.style.transform = 'scale(0.97)';
+            });
+            el.addEventListener('mouseup', () => {
+                el.style.transform = '';
+            });
+            el.addEventListener('mouseleave', () => {
+                el.style.transform = '';
+            });
+        });
+
+        // Filter button toggle logic
+        const filterButtons = document.querySelectorAll('.flex.items-center.gap-2.overflow-x-auto button');
+        filterButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterButtons.forEach(b => {
+                    b.classList.remove('bg-primary', 'text-on-primary', 'shadow-md');
+                    b.classList.add('bg-white', 'border', 'border-outline-variant', 'text-on-surface-variant');
+                });
+                btn.classList.add('bg-primary', 'text-on-primary', 'shadow-md');
+                btn.classList.remove('bg-white', 'border', 'border-outline-variant', 'text-on-surface-variant');
+            });
+        });
+    </script>
+</body></html>

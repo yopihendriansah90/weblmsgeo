@@ -27,10 +27,23 @@ class QuizFlowService
 
             $steps = $quiz->steps()->where('status', 'published')->get();
             foreach ($steps as $index => $step) {
-                QuizStepAttempt::firstOrCreate(
+                $stepAttempt = QuizStepAttempt::firstOrCreate(
                     ['quiz_attempt_id' => $attempt->id, 'quiz_step_id' => $step->id],
                     ['status' => $index === 0 ? 'active' : 'locked', 'started_at' => $index === 0 ? now() : null],
                 );
+
+                $presentation = $this->buildPresentationPayload($step);
+                if ($presentation) {
+                    $existingPayload = $stepAttempt->result_payload ?? [];
+
+                    if (! isset($existingPayload['presentation'])) {
+                        $stepAttempt->update([
+                            'result_payload' => array_merge($existingPayload, [
+                                'presentation' => $presentation,
+                            ]),
+                        ]);
+                    }
+                }
             }
 
             if (! $attempt->current_step_id && $steps->isNotEmpty()) {
@@ -39,6 +52,7 @@ class QuizFlowService
 
             StudentLearningActivity::create([
                 'student_id' => $student->id,
+                'module_id' => $quiz->module_id,
                 'quiz_id' => $quiz->id,
                 'activity_type' => 'quiz_started',
                 'metadata' => ['quiz_title' => $quiz->title],
@@ -61,6 +75,7 @@ class QuizFlowService
             $stepAttempt->answers()->delete();
 
             if ($step->type === 'essay') {
+                $existingPayload = $stepAttempt->result_payload ?? [];
                 QuizAttemptAnswer::create([
                     'quiz_step_attempt_id' => $stepAttempt->id,
                     'question_key' => 'essay',
@@ -71,7 +86,7 @@ class QuizFlowService
                 $stepAttempt->update([
                     'status' => 'pending_review',
                     'submitted_at' => now(),
-                    'result_payload' => ['message' => 'Jawaban essay menunggu penilaian guru.'],
+                    'result_payload' => array_merge($existingPayload, ['message' => 'Jawaban essay menunggu penilaian guru.']),
                 ]);
 
                 EssayReview::firstOrCreate(
@@ -80,6 +95,7 @@ class QuizFlowService
                 );
             } else {
                 $graded = $this->scoringService->grade($step, $answer);
+                $existingPayload = $stepAttempt->result_payload ?? [];
                 QuizAttemptAnswer::create([
                     'quiz_step_attempt_id' => $stepAttempt->id,
                     'question_key' => $step->type,
@@ -93,7 +109,7 @@ class QuizFlowService
                     'status' => 'auto_graded',
                     'submitted_at' => now(),
                     'score' => $graded['score'],
-                    'result_payload' => $graded['result_payload'],
+                    'result_payload' => array_merge($existingPayload, $graded['result_payload']),
                 ]);
             }
 
@@ -152,5 +168,28 @@ class QuizFlowService
             'status' => $finalScore === null ? $attempt->status : 'completed',
             'completed_at' => $finalScore === null ? $attempt->completed_at : now(),
         ]);
+    }
+
+    private function buildPresentationPayload(QuizStep $step): ?array
+    {
+        if (! in_array($step->type, ['text_matching', 'image_text_matching'], true)) {
+            return null;
+        }
+
+        $itemKeys = collect($step->content_payload['items'] ?? [])
+            ->pluck('key')
+            ->filter()
+            ->values()
+            ->all();
+
+        if ($itemKeys === []) {
+            return null;
+        }
+
+        shuffle($itemKeys);
+
+        return [
+            'item_order' => $itemKeys,
+        ];
     }
 }

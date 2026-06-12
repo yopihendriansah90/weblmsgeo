@@ -32,13 +32,34 @@
                         @error('description') <div class="invalid-feedback">{{ $message }}</div> @enderror
                     </div>
 
+                    <div class="mb-3">
+                        <label class="form-label">Isi Bab</label>
+                        <p class="text-muted small mb-2">Tulis seluruh materi bab di sini. Heading di dalam editor bisa dipakai sebagai penanda bagian materi.</p>
+                        <div wire:ignore>
+                            <textarea
+                                id="module-content-editor"
+                                data-tinymce
+                                data-sync-target="module-content-sync"
+                                class="form-control @error('content') is-invalid @enderror"
+                                rows="16"
+                            >{{ $content }}</textarea>
+                        </div>
+                        <input type="hidden" wire:model="content" id="module-content-sync">
+                        @error('content') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
+                    </div>
+
                     <div class="row">
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-4 mb-3">
                             <label class="form-label">Urutan</label>
                             <input type="number" wire:model="sort_order" class="form-control @error('sort_order') is-invalid @enderror">
                             @error('sort_order') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Estimasi Menit</label>
+                            <input type="number" wire:model="estimated_duration" class="form-control @error('estimated_duration') is-invalid @enderror">
+                            @error('estimated_duration') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
+                        <div class="col-md-4 mb-3">
                             <label class="form-label">Status</label>
                             <select wire:model="status" class="form-select @error('status') is-invalid @enderror">
                                 <option value="draft">Draf</option>

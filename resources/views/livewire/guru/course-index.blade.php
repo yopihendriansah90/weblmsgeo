@@ -42,7 +42,7 @@
                                         <h6 class="card-title mb-2 course-title">{{ $course->title }}</h6>
 
                                         <div class="d-flex justify-content-between align-items-center text-muted" style="font-size: .78rem;">
-                                            <span><i class="bi bi-folder2-open me-1"></i>{{ $course->modules_count ?? $course->modules->count() }} bab</span>
+                                            <span><i class="bi bi-folder2-open me-1"></i>{{ $course->lessons_count ?? 0 }} bab</span>
                                             <span>{{ $course->created_at->format('d M Y') }}</span>
                                         </div>
                                     </div>

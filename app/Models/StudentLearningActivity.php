@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class StudentLearningActivity extends Model
 {
-    protected $fillable = ['student_id', 'lesson_id', 'quiz_id', 'activity_type', 'metadata', 'occurred_at'];
+    protected $fillable = ['student_id', 'module_id', 'quiz_id', 'activity_type', 'metadata', 'occurred_at'];
 
     protected function casts(): array
     {
@@ -19,9 +19,9 @@ class StudentLearningActivity extends Model
         return $this->belongsTo(Student::class);
     }
 
-    public function lesson(): BelongsTo
+    public function module(): BelongsTo
     {
-        return $this->belongsTo(Lesson::class);
+        return $this->belongsTo(Module::class);
     }
 
     public function quiz(): BelongsTo

@@ -3,6 +3,7 @@
 namespace App\Livewire\Guru;
 
 use App\Models\Course;
+use App\Models\Module;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
@@ -71,6 +72,25 @@ class CourseForm extends Component
         } else {
             $this->course = Course::create($payload);
         }
+
+        Module::firstOrCreate(
+            [
+                'course_id' => $this->course->id,
+                'type' => 'quiz',
+            ],
+            [
+                'title' => 'Quiz Materi',
+                'slug' => 'quiz-materi',
+                'description' => 'Quiz akhir materi.',
+                'content' => null,
+                'estimated_duration' => null,
+                'sort_order' => 999,
+                'status' => 'published',
+                'published_at' => now(),
+                'created_by' => $this->course?->created_by ?? auth()->id(),
+                'updated_by' => auth()->id(),
+            ]
+        );
 
         if ($this->cover_image) {
             $this->course->clearMediaCollection('course_covers');

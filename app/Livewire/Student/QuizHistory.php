@@ -11,7 +11,7 @@ class QuizHistory extends Component
     public function render()
     {
         return view('livewire.student.quiz-history', [
-            'attempts' => auth()->user()->student->quizAttempts()->with('quiz.lesson.module.course')->latest()->get(),
+            'attempts' => auth()->user()->student->quizAttempts()->with('quiz.module.course')->latest()->get(),
         ]);
     }
 }

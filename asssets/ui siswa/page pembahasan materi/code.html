@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EduCampus - Advanced Quantum Computing Course</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary": "#ffffff",
+                    "surface-container-high": "#dce9ff",
+                    "tertiary-container": "#885500",
+                    "on-error-container": "#93000a",
+                    "outline": "#777587",
+                    "surface-variant": "#d3e4fe",
+                    "surface-container-low": "#eff4ff",
+                    "surface-tint": "#4d44e3",
+                    "surface": "#f8f9ff",
+                    "on-secondary-fixed-variant": "#005049",
+                    "surface-bright": "#f8f9ff",
+                    "surface-container-lowest": "#ffffff",
+                    "on-tertiary-fixed": "#2a1700",
+                    "error": "#ba1a1a",
+                    "surface-container-highest": "#d3e4fe",
+                    "inverse-on-surface": "#eaf1ff",
+                    "on-primary-container": "#dad7ff",
+                    "tertiary-fixed": "#ffddb8",
+                    "primary-fixed-dim": "#c3c0ff",
+                    "secondary-fixed": "#89f5e7",
+                    "on-error": "#ffffff",
+                    "on-primary": "#ffffff",
+                    "secondary-container": "#86f2e4",
+                    "surface-container": "#e5eeff",
+                    "background": "#f8f9ff",
+                    "primary-fixed": "#e2dfff",
+                    "primary-container": "#4f46e5",
+                    "on-surface-variant": "#464555",
+                    "tertiary": "#684000",
+                    "secondary": "#006a61",
+                    "inverse-surface": "#213145",
+                    "on-tertiary-container": "#ffd4a4",
+                    "tertiary-fixed-dim": "#ffb95f",
+                    "error-container": "#ffdad6",
+                    "on-secondary-fixed": "#00201d",
+                    "on-primary-fixed-variant": "#3323cc",
+                    "primary": "#3525cd",
+                    "on-background": "#0b1c30",
+                    "on-secondary-container": "#006f66",
+                    "on-secondary": "#ffffff",
+                    "on-primary-fixed": "#0f0069",
+                    "surface-dim": "#cbdbf5",
+                    "outline-variant": "#c7c4d8",
+                    "on-surface": "#0b1c30",
+                    "on-tertiary-fixed-variant": "#653e00",
+                    "inverse-primary": "#c3c0ff",
+                    "secondary-fixed-dim": "#6bd8cb"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "gutter": "24px",
+                    "stack-sm": "8px",
+                    "stack-lg": "32px",
+                    "base": "8px",
+                    "container-max": "1280px",
+                    "margin-desktop": "40px",
+                    "margin-mobile": "16px",
+                    "stack-md": "16px"
+            },
+            "fontFamily": {
+                    "label-sm": ["Inter"],
+                    "label-md": ["Inter"],
+                    "headline-md": ["Plus Jakarta Sans"],
+                    "headline-lg": ["Plus Jakarta Sans"],
+                    "body-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-xl": ["Plus Jakarta Sans"],
+                    "headline-lg-mobile": ["Plus Jakarta Sans"]
+            },
+            "fontSize": {
+                    "label-sm": ["12px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                    "label-md": ["14px", {"lineHeight": "1.4", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                    "headline-md": ["24px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                    "headline-lg": ["32px", {"lineHeight": "1.25", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "headline-xl": ["48px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "1.3", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            vertical-align: middle;
+        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .timeline-track::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #c7c4d8;
+            z-index: 0;
+            transform: translateY(-50%);
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(226, 232, 240, 0.5);
+        }
+
+        .side-nav-transition {
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col overflow-x-hidden">
+<!-- TopNavBar -->
+<header class="bg-surface shadow-sm docked full-width top-0 sticky z-50 flex justify-between items-center w-full px-gutter h-16">
+<div class="flex items-center gap-4">
+<button class="p-2 hover:bg-surface-container-high rounded-full transition-colors lg:hidden" id="toggleSidebar">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<div class="font-headline-md text-headline-md font-bold text-primary">EduCampus</div>
+</div>
+<div class="hidden md:flex flex-1 max-w-xl mx-8">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface-container-low border-none rounded-xl focus:ring-2 focus:ring-primary text-label-md font-label-md" placeholder="Search for lessons..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-base">
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors active:scale-95">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors active:scale-95">
+<span class="material-symbols-outlined">mail</span>
+</button>
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-surface-container-high ml-2 cursor-pointer active:scale-95 transition-transform">
+<img alt="Student Profile" data-alt="A clean, professional headshot of a young adult student looking friendly and focused. The background is a soft, blurred academic setting with modern glass architecture. The lighting is bright and natural, reflecting the calm and organized brand aesthetic of an elite digital campus environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPeKIZoafknTZ5aToTCIcYsB4QjcB62Ck2zG16f0mZTQcaDEc8wLDgyz6OUvsRTACrq8xgBL3ONAx2qimDgmgpbNcHvF96O6E7hqQl8AfQp_M9Z38eHKPql9JcLCnM6MW2CcAKcw4Xa3mnskOUVGQFLEVrWNDQEN5FC96eO4KIu_g18IZGmjLXyjxOtiPoy9JUJFy8Fc9O9sETf7xKuUBPcHaeVASdA-MRmOzt_n6-3gp82MU2ViDn9pRhHNOZzCy8zmqI6bQ7LWw"/>
+</div>
+</div>
+</header>
+<div class="flex flex-1 relative overflow-hidden">
+<!-- SideNavBar (Learning Portal) -->
+<aside class="h-[calc(100vh-64px)] w-64 hidden lg:flex flex-col sticky top-16 left-0 bg-surface-container-low side-nav-transition border-r border-outline-variant py-stack-lg z-40" id="sideNav">
+<div class="px-6 mb-stack-lg">
+<div class="font-headline-md text-headline-md text-primary truncate">Learning Portal</div>
+<div class="text-on-surface-variant text-label-sm font-label-sm opacity-70">Academic Clarity</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-4 text-on-surface-variant px-4 py-3 hover:bg-surface-container-high transition-all active:translate-x-1" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-4 bg-primary-container text-on-primary-container border-l-4 border-primary px-4 py-3 font-semibold transition-all" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">school</span>
+<span class="font-label-md text-label-md">My Courses</span>
+</a>
+<a class="flex items-center gap-4 text-on-surface-variant px-4 py-3 hover:bg-surface-container-high transition-all active:translate-x-1" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="font-label-md text-label-md">Calendar</span>
+</a>
+<a class="flex items-center gap-4 text-on-surface-variant px-4 py-3 hover:bg-surface-container-high transition-all active:translate-x-1" href="#">
+<span class="material-symbols-outlined">insights</span>
+<span class="font-label-md text-label-md">Performance</span>
+</a>
+</nav>
+<div class="px-4 mt-auto pt-stack-lg space-y-1 border-t border-outline-variant">
+<a class="flex items-center gap-4 text-on-surface-variant px-4 py-3 hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+<a class="flex items-center gap-4 text-on-surface-variant px-4 py-3 hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-label-md text-label-md">Help</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 overflow-y-auto px-margin-mobile md:px-margin-desktop pb-stack-lg bg-surface">
+<!-- Contextual Breadcrumbs & Collapse Toggle -->
+<div class="py-stack-md flex justify-between items-center">
+<div class="flex items-center gap-2 text-label-md font-label-md text-on-surface-variant">
+<span>My Courses</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-primary font-bold">Quantum Computing 101</span>
+</div>
+<button class="hidden lg:flex items-center gap-2 px-4 py-2 rounded-xl bg-surface-container-high text-on-surface-variant font-label-md hover:bg-surface-container-highest transition-all active:scale-95" id="toggleFocus">
+<span class="material-symbols-outlined" id="focusIcon">fullscreen</span>
+<span>Focus Mode</span>
+</button>
+</div>
+<!-- Horizontal Timeline / Stepper -->
+<div class="relative mb-stack-lg py-4">
+<div class="timeline-track relative w-full h-10 flex items-center justify-between">
+<!-- Step 1: Intro (Completed) -->
+<div class="relative z-10 flex flex-col items-center group cursor-pointer">
+<div class="w-10 h-10 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center shadow-md transition-all group-hover:scale-110">
+<span class="material-symbols-outlined text-[20px]">check</span>
+</div>
+<span class="absolute top-12 whitespace-nowrap text-label-sm font-label-sm text-on-surface-variant">Introduction</span>
+</div>
+<!-- Step 2: History (Completed) -->
+<div class="relative z-10 flex flex-col items-center group cursor-pointer">
+<div class="w-10 h-10 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center shadow-md transition-all group-hover:scale-110">
+<span class="material-symbols-outlined text-[20px]">check</span>
+</div>
+<span class="absolute top-12 whitespace-nowrap text-label-sm font-label-sm text-on-surface-variant">Chapter 1</span>
+</div>
+<!-- Step 3: Current (Active) -->
+<div class="relative z-10 flex flex-col items-center group">
+<div class="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center shadow-lg ring-4 ring-primary/20 scale-110">
+<span class="material-symbols-outlined text-[24px]">play_arrow</span>
+</div>
+<span class="absolute top-14 whitespace-nowrap text-label-sm font-label-sm text-primary font-bold">Chapter 2: Qubits</span>
+</div>
+<!-- Step 4: Logic Gates (Upcoming) -->
+<div class="relative z-10 flex flex-col items-center group cursor-pointer">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest text-outline flex items-center justify-center border border-outline-variant transition-all group-hover:bg-primary-container group-hover:text-on-primary-container">
+<span class="material-symbols-outlined text-[20px]">lock</span>
+</div>
+<span class="absolute top-12 whitespace-nowrap text-label-sm font-label-sm text-outline">Quiz</span>
+</div>
+<!-- Step 5: Conclusion (Upcoming) -->
+<div class="relative z-10 flex flex-col items-center group cursor-pointer">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest text-outline flex items-center justify-center border border-outline-variant transition-all group-hover:bg-primary-container group-hover:text-on-primary-container">
+<span class="material-symbols-outlined text-[20px]">lock</span>
+</div>
+<span class="absolute top-12 whitespace-nowrap text-label-sm font-label-sm text-outline">Conclusion</span>
+</div>
+</div>
+</div>
+<!-- Content Area Layout -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-gutter mt-16">
+<!-- Main Content Column -->
+<div class="xl:col-span-8">
+<!-- Video Player Section -->
+<div class="aspect-video bg-inverse-surface rounded-xl overflow-hidden relative shadow-xl group mb-stack-lg">
+<img alt="Quantum Physics Visualization" class="w-full h-full object-cover opacity-60" data-alt="A mesmerizing 3D visualization of quantum particles and wave-particle duality. Glowing particles move through a dark, abstract space filled with geometric light patterns and vibrant gradients of indigo, magenta, and cyan. The visual is high-tech, cinematic, and educational, capturing the complex beauty of advanced physics." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCtWLZVzfPGlYlZRin_WZpB998kamDxM42aueiRtUZD7WVOMkH3jJBkYQxwMAtlvWEdCwzH27Zwdth6xyLDt96wKD-WNIeTAJsxITFsi8ICpIekpRivO9dv_Xz5F9zcqHA4R0pBicPCc2epFlsDRMpSmBe5Eo5L8s1ZWQls78Dh_CzEqgAhZTkiGIXOgiPy1ZVWvzTyBDBEuO3s8q8kxUk9LITih23vvacLdlKahTktFcfEd8UiNMFn8KtdJJKpWY2c1hiUQfbOFxE"/>
+<div class="absolute inset-0 flex items-center justify-center">
+<button class="w-20 h-20 bg-primary/90 text-white rounded-full flex items-center justify-center shadow-2xl hover:scale-110 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-[48px]" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</button>
+</div>
+<!-- Video Controls Overlay (Mock) -->
+<div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent flex items-center gap-4 opacity-0 group-hover:opacity-100 transition-opacity">
+<div class="flex-1 h-1 bg-surface/30 rounded-full overflow-hidden">
+<div class="w-1/3 h-full bg-primary"></div>
+</div>
+<span class="text-white text-label-sm">12:45 / 45:00</span>
+</div>
+</div>
+<!-- Rich Text Content -->
+<article class="glass-panel p-stack-lg rounded-2xl shadow-sm space-y-stack-md">
+<h1 class="font-headline-lg text-headline-lg text-on-surface">Understanding Qubits and Superposition</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">
+                            In traditional computing, a bit is the smallest unit of data, existing as either a 0 or a 1. In quantum computing, we use quantum bits, or **qubits**. Unlike a standard bit, a qubit can exist in multiple states at once through a phenomenon called superposition.
+                        </p>
+<h2 class="font-headline-md text-headline-md text-primary mt-8">Key Concepts to Remember</h2>
+<ul class="space-y-4">
+<li class="flex items-start gap-4">
+<span class="w-8 h-8 rounded-lg bg-primary-container text-on-primary-container flex-shrink-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">bolt</span>
+</span>
+<div>
+<strong class="text-on-surface block mb-1">Superposition</strong>
+<p class="text-on-surface-variant">The ability of a quantum system to be in multiple states at the same time until it is measured.</p>
+</div>
+</li>
+<li class="flex items-start gap-4">
+<span class="w-8 h-8 rounded-lg bg-secondary-container text-on-secondary-container flex-shrink-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">join_inner</span>
+</span>
+<div>
+<strong class="text-on-surface block mb-1">Entanglement</strong>
+<p class="text-on-surface-variant">A physical phenomenon where pairs or groups of particles are generated or interact in ways such that the quantum state of each particle cannot be described independently.</p>
+</div>
+</li>
+</ul>
+<div class="bg-surface-container p-6 rounded-xl border-l-4 border-primary mt-stack-lg">
+<p class="italic text-on-surface-variant">"If you think you understand quantum mechanics, you don't understand quantum mechanics." — Richard Feynman</p>
+</div>
+</article>
+<!-- Navigation Buttons -->
+<div class="flex justify-between items-center mt-stack-lg pt-stack-md border-t border-outline-variant">
+<button class="flex items-center gap-2 px-6 py-3 rounded-xl font-label-md text-primary hover:bg-primary/10 transition-colors">
+<span class="material-symbols-outlined">arrow_back</span>
+                            Previous: Intro
+                        </button>
+<button class="flex items-center gap-2 px-8 py-3 rounded-xl bg-primary text-white font-label-md shadow-md hover:bg-primary-container transition-all active:scale-95">
+                            Next: The Quiz
+                            <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Supplementary Column (Notes/Resources) -->
+<div class="xl:col-span-4 space-y-gutter">
+<!-- Progress Card -->
+<div class="bg-surface-container-lowest p-6 rounded-2xl border border-outline-variant shadow-sm">
+<div class="flex justify-between items-center mb-4">
+<h3 class="font-label-md text-label-md text-on-surface">Course Progress</h3>
+<span class="text-primary font-bold">42%</span>
+</div>
+<div class="w-full h-2 bg-surface-container rounded-full overflow-hidden">
+<div class="w-[42%] h-full bg-primary"></div>
+</div>
+<div class="mt-4 flex gap-2">
+<div class="px-3 py-1 bg-secondary-container text-on-secondary-container rounded-full text-[10px] uppercase font-bold tracking-wider">On Track</div>
+<div class="px-3 py-1 bg-surface-container-high text-on-surface-variant rounded-full text-[10px] uppercase font-bold tracking-wider">3 Modules Left</div>
+</div>
+</div>
+<!-- Notes Widget -->
+<div class="bg-surface-container-lowest p-6 rounded-2xl border border-outline-variant shadow-sm">
+<h3 class="font-label-md text-label-md text-on-surface mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">edit_note</span>
+                            My Study Notes
+                        </h3>
+<textarea class="w-full min-h-[120px] bg-surface p-4 rounded-xl border border-outline-variant focus:ring-2 focus:ring-primary focus:border-transparent text-label-md resize-none" placeholder="Type your thoughts here..."></textarea>
+<button class="w-full mt-4 py-2 bg-surface-container-high text-on-surface-variant rounded-xl font-label-md hover:bg-surface-container-highest transition-colors">Save Notes</button>
+</div>
+<!-- Resources -->
+<div class="space-y-stack-sm">
+<h3 class="font-label-md text-label-md text-on-surface-variant px-2 uppercase tracking-widest text-[10px]">Lecture Resources</h3>
+<div class="grid gap-2">
+<a class="flex items-center gap-3 p-3 bg-white border border-outline-variant rounded-xl hover:shadow-md transition-all group" href="#">
+<span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">picture_as_pdf</span>
+<span class="text-label-md font-label-md text-on-surface">Quantum_Gates_Lecture_Slides.pdf</span>
+</a>
+<a class="flex items-center gap-3 p-3 bg-white border border-outline-variant rounded-xl hover:shadow-md transition-all group" href="#">
+<span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">attachment</span>
+<span class="text-label-md font-label-md text-on-surface">Sample_Algorithms_Code.zip</span>
+</a>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Footer -->
+<footer class="w-full mt-stack-lg bg-surface-container-highest border-t border-outline-variant py-stack-lg px-gutter flex flex-col md:flex-row justify-between items-center gap-base">
+<div class="font-label-md text-label-md font-black text-on-surface">EduCampus</div>
+<div class="flex gap-6 text-on-surface-variant font-label-sm text-label-sm">
+<a class="hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<a class="hover:text-primary transition-colors" href="#">Terms of Service</a>
+<a class="hover:text-primary transition-colors" href="#">Contact Support</a>
+<a class="hover:text-primary transition-colors" href="#">Alumni Network</a>
+</div>
+<div class="text-on-surface-variant font-label-sm text-label-sm">
+            © 2024 EduCampus Academic. All rights reserved.
+        </div>
+</footer>
+<script>
+        const sideNav = document.getElementById('sideNav');
+        const toggleFocus = document.getElementById('toggleFocus');
+        const toggleSidebar = document.getElementById('toggleSidebar');
+        const focusIcon = document.getElementById('focusIcon');
+        let isFocusMode = false;
+
+        toggleFocus.addEventListener('click', () => {
+            isFocusMode = !isFocusMode;
+            if (isFocusMode) {
+                sideNav.classList.add('lg:hidden');
+                sideNav.classList.remove('lg:flex');
+                focusIcon.innerText = 'fullscreen_exit';
+            } else {
+                sideNav.classList.add('lg:flex');
+                sideNav.classList.remove('lg:hidden');
+                focusIcon.innerText = 'fullscreen';
+            }
+        });
+
+        toggleSidebar.addEventListener('click', () => {
+            sideNav.classList.toggle('hidden');
+            sideNav.classList.toggle('fixed');
+            sideNav.classList.toggle('inset-y-0');
+            sideNav.classList.toggle('top-16');
+            sideNav.classList.toggle('z-50');
+            sideNav.classList.toggle('w-72');
+        });
+
+        // Simple tactile interaction for steps
+        document.querySelectorAll('.timeline-track > div').forEach(step => {
+            step.addEventListener('click', () => {
+                if (!step.querySelector('.bg-primary')) {
+                    const ripple = document.createElement('div');
+                    ripple.className = 'absolute inset-0 bg-primary/20 rounded-full animate-ping';
+                    step.appendChild(ripple);
+                    setTimeout(() => ripple.remove(), 600);
+                }
+            });
+        });
+    </script>
+</body></html>

@@ -8,16 +8,16 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Quiz extends Model
 {
-    protected $fillable = ['lesson_id', 'title', 'description', 'mode', 'allow_retake', 'max_attempts', 'status', 'created_by', 'updated_by'];
+    protected $fillable = ['module_id', 'title', 'description', 'mode', 'allow_retake', 'max_attempts', 'status', 'created_by', 'updated_by'];
 
     protected function casts(): array
     {
         return ['allow_retake' => 'boolean'];
     }
 
-    public function lesson(): BelongsTo
+    public function module(): BelongsTo
     {
-        return $this->belongsTo(Lesson::class);
+        return $this->belongsTo(Module::class);
     }
 
     public function steps(): HasMany

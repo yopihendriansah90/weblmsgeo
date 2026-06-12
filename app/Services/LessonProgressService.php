@@ -2,17 +2,17 @@
 
 namespace App\Services;
 
-use App\Models\Lesson;
+use App\Models\Module;
 use App\Models\LessonProgress;
 use App\Models\Student;
 use App\Models\StudentLearningActivity;
 
 class LessonProgressService
 {
-    public function open(Student $student, Lesson $lesson): LessonProgress
+    public function open(Student $student, Module $module): LessonProgress
     {
         $progress = LessonProgress::firstOrCreate(
-            ['student_id' => $student->id, 'lesson_id' => $lesson->id],
+            ['student_id' => $student->id, 'module_id' => $module->id],
             ['status' => 'not_started'],
         );
 
@@ -25,25 +25,25 @@ class LessonProgressService
 
         StudentLearningActivity::create([
             'student_id' => $student->id,
-            'lesson_id' => $lesson->id,
-            'activity_type' => 'lesson_opened',
-            'metadata' => ['lesson_title' => $lesson->title],
+            'module_id' => $module->id,
+            'activity_type' => 'module_opened',
+            'metadata' => ['module_title' => $module->title],
             'occurred_at' => now(),
         ]);
 
         return $progress;
     }
 
-    public function complete(Student $student, Lesson $lesson): LessonProgress
+    public function complete(Student $student, Module $module): LessonProgress
     {
-        $progress = $this->open($student, $lesson);
+        $progress = $this->open($student, $module);
         $progress->update(['status' => 'completed', 'completed_at' => now()]);
 
         StudentLearningActivity::create([
             'student_id' => $student->id,
-            'lesson_id' => $lesson->id,
-            'activity_type' => 'lesson_completed',
-            'metadata' => ['lesson_title' => $lesson->title],
+            'module_id' => $module->id,
+            'activity_type' => 'module_completed',
+            'metadata' => ['module_title' => $module->title],
             'occurred_at' => now(),
         ]);
 
@@ -52,7 +52,7 @@ class LessonProgressService
 
     public function percentage(Student $student): int
     {
-        $total = Lesson::where('status', 'published')->count();
+        $total = Module::where('status', 'published')->count();
 
         if ($total === 0) {
             return 0;

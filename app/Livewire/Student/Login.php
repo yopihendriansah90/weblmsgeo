@@ -68,15 +68,9 @@ class Login extends Component
 
     public function render()
     {
-        $isGuruLogin = request()->routeIs('guru.login');
-
         return view('livewire.student.login', [
-            'title' => $isGuruLogin ? 'Login Guru' : 'Login Portal LMS SIG',
-            'subtitle' => $isGuruLogin
-                ? 'Masuk ke panel guru untuk mengelola materi, kuis, dan penilaian.'
-                : 'Masuk untuk memulai sesi belajar.',
-            'switch_url' => $isGuruLogin ? route('login') : route('guru.login'),
-            'switch_label' => $isGuruLogin ? 'Masuk sebagai Siswa' : 'Masuk sebagai Guru',
+            'title' => 'Login LMS SIG',
+            'subtitle' => 'Masuk menggunakan username dan password yang terdaftar.',
         ]);
     }
 }

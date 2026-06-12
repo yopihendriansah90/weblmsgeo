@@ -17,6 +17,8 @@ class ModuleForm extends Component
     public string $title = '';
     public string $slug = '';
     public ?string $description = null;
+    public ?string $content = null;
+    public ?int $estimated_duration = null;
     public int $sort_order = 1;
     public string $status = 'draft';
 
@@ -26,10 +28,16 @@ class ModuleForm extends Component
         $this->course = $course ?? $module?->course;
         $this->module = $module;
 
+        if ($module?->isQuiz()) {
+            abort(404);
+        }
+
         if ($module) {
             $this->title = $module->title;
             $this->slug = $module->slug;
             $this->description = $module->description;
+            $this->content = $module->content;
+            $this->estimated_duration = $module->estimated_duration;
             $this->sort_order = $module->sort_order;
             $this->status = $module->status;
         }
@@ -60,6 +68,8 @@ class ModuleForm extends Component
                     ->ignore($this->module?->id),
             ],
             'description' => ['nullable', 'string'],
+            'content' => ['nullable', 'string'],
+            'estimated_duration' => ['nullable', 'integer', 'min:1'],
             'sort_order' => ['required', 'integer', 'min:1'],
             'status' => ['required', Rule::in(['draft', 'published', 'archived'])],
         ]);
@@ -67,6 +77,10 @@ class ModuleForm extends Component
         $payload = [
             ...$validated,
             'course_id' => $this->course->id,
+            'type' => 'lesson',
+            'published_at' => $validated['status'] === 'published' ? now() : null,
+            'created_by' => $this->module?->created_by ?? auth()->id(),
+            'updated_by' => auth()->id(),
         ];
 
         if ($this->module) {

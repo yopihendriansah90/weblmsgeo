@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Student;
 
-use App\Models\Lesson;
+use App\Models\Module;
 use App\Services\LessonProgressService;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -10,18 +10,19 @@ use Livewire\Component;
 #[Layout('layouts.student')]
 class LessonShow extends Component
 {
-    public Lesson $lesson;
+    public Module $module;
 
-    public function mount(Lesson $lesson, LessonProgressService $progressService): void
+    public function mount(Module $module, LessonProgressService $progressService): void
     {
-        abort_unless($lesson->status === 'published', 404);
-        $this->lesson = $lesson->load('module.course', 'publishedQuiz', 'media');
-        $progressService->open(auth()->user()->student, $lesson);
+        abort_unless($module->status === 'published', 404);
+        abort_unless(! $module->isQuiz(), 404);
+        $this->module = $module->load(['course', 'publishedQuiz.steps']);
+        $progressService->open(auth()->user()->student, $module);
     }
 
     public function complete(LessonProgressService $progressService): void
     {
-        $progressService->complete(auth()->user()->student, $this->lesson);
+        $progressService->complete(auth()->user()->student, $this->module);
         session()->flash('status', 'Materi ditandai selesai.');
     }
 

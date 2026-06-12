@@ -1,6 +1,6 @@
 <div class="login-box">
     <div class="login-logo">
-        <a href="/"><b>LMS</b> SIG</a>
+        <a href="/">{{ $title ?? 'LMS SIG' }}</a>
     </div>
     <!-- /.login-logo -->
     <div class="card">
@@ -49,10 +49,6 @@
 
             <p class="mb-1 mt-3">
                 <a href="#">Lupa password?</a>
-            </p>
-
-            <p class="mt-3 mb-0 text-center">
-                <a href="{{ $switch_url }}">{{ $switch_label }}</a>
             </p>
         </div>
         <!-- /.login-card-body -->

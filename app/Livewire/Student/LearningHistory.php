@@ -11,7 +11,7 @@ class LearningHistory extends Component
     public function render()
     {
         return view('livewire.student.learning-history', [
-            'progressItems' => auth()->user()->student->lessonProgress()->with('lesson.module.course')->latest('last_opened_at')->get(),
+            'progressItems' => auth()->user()->student->lessonProgress()->with('module.course')->latest('last_opened_at')->get(),
         ]);
     }
 }

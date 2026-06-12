@@ -18,7 +18,7 @@ return new class extends Migration
         Schema::create('student_learning_activities', function (Blueprint $table) {
             $table->id();
             $table->foreignId('student_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('lesson_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->foreignId('module_id')->nullable()->constrained()->cascadeOnDelete();
             $table->foreignId('quiz_id')->nullable()->constrained()->cascadeOnDelete();
             $table->string('activity_type');
             $table->json('metadata')->nullable();

@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Course;
-use App\Models\Lesson;
 use App\Models\Module;
 use App\Models\Quiz;
 use App\Models\QuizStep;
@@ -39,7 +38,7 @@ class DatabaseSeeder extends Seeder
             collect([
                 ['name' => 'Pak Ahmad', 'username' => 'pak.ahmad', 'email' => 'ahmad@gmail.com', 'teacher_code' => 'GEO-001', 'school_ids' => [$schools[0]->id, $schools[1]->id]],
                 ['name' => 'Bu Sari', 'username' => 'bu.sari', 'email' => 'sari@gmail.com', 'teacher_code' => 'GEO-002', 'school_ids' => [$schools[2]->id]],
-                ['name' => 'Yopi', 'username' => 'yopi', 'email' => 'yopi@gmail.com', 'teacher_code' => 'GEO-003', 'school_ids' => [$schools[0]->id, $schools[1]->id, $schools[2]->id], 'password' => 'admin'],
+                ['name' => 'Yopi', 'username' => 'yopi', 'email' => 'yopi@gmail.com', 'teacher_code' => 'GEO-003', 'school_ids' => [$schools[0]->id, $schools[1]->id, $schools[2]->id], 'password' => 'password'],
             ])->each(function (array $teacherData) use ($guruRole, $admin) {
                 $user = User::updateOrCreate(
                     ['username' => $teacherData['username']],
@@ -94,27 +93,34 @@ class DatabaseSeeder extends Seeder
 
             $module = Module::updateOrCreate(
                 ['course_id' => $course->id, 'slug' => 'pendahuluan-sig'],
-                ['title' => 'Pendahuluan SIG', 'description' => 'Dasar konsep SIG.', 'sort_order' => 1, 'status' => 'published'],
+                ['title' => 'Pendahuluan SIG', 'type' => 'lesson', 'description' => 'Dasar konsep SIG.', 'sort_order' => 1, 'status' => 'published'],
             );
 
-            $lesson = Lesson::updateOrCreate(
-                ['module_id' => $module->id, 'slug' => 'pengertian-dan-komponen-sig'],
+            $module->update([
+                'content' => '<h2>Pengertian SIG</h2><p>Sistem Informasi Geografis adalah sistem berbasis komputer untuk mengumpulkan, mengelola, menganalisis, dan menyajikan data yang memiliki referensi lokasi di permukaan bumi.</p><h2>Komponen SIG</h2><ul><li>Data spasial dan atribut.</li><li>Perangkat keras.</li><li>Perangkat lunak.</li><li>Manusia dan metode analisis.</li></ul>',
+                'estimated_duration' => 20,
+                'published_at' => now(),
+                'created_by' => $admin->id,
+                'updated_by' => $admin->id,
+            ]);
+
+            $quizModule = Module::updateOrCreate(
+                ['course_id' => $course->id, 'slug' => 'quiz-materi'],
                 [
-                    'title' => 'Pengertian dan Komponen SIG',
-                    'summary' => 'Mengenal definisi SIG, data spasial, data atribut, perangkat keras, perangkat lunak, dan manusia.',
-                    'content' => '<h2>Pengertian SIG</h2><p>Sistem Informasi Geografis adalah sistem berbasis komputer untuk mengumpulkan, mengelola, menganalisis, dan menyajikan data yang memiliki referensi lokasi di permukaan bumi.</p><h2>Komponen SIG</h2><ul><li>Data spasial dan atribut.</li><li>Perangkat keras.</li><li>Perangkat lunak.</li><li>Manusia dan metode analisis.</li></ul>',
-                    'estimated_duration' => 20,
-                    'sort_order' => 1,
-                    'is_required' => true,
+                    'title' => 'Quiz Materi',
+                    'type' => 'quiz',
+                    'description' => 'Quiz akhir materi.',
+                    'content' => null,
+                    'estimated_duration' => null,
+                    'sort_order' => 999,
                     'status' => 'published',
-                    'published_at' => now(),
                     'created_by' => $admin->id,
                     'updated_by' => $admin->id,
                 ],
             );
 
             $quiz = Quiz::updateOrCreate(
-                ['lesson_id' => $lesson->id, 'title' => 'Kuis Akhir Pengertian SIG'],
+                ['module_id' => $quizModule->id, 'title' => 'Kuis Akhir Pengertian SIG'],
                 [
                     'description' => 'Kuis berurutan berisi essay, penjodohan teks, table checklist, dan penjodohan gambar-teks.',
                     'mode' => 'practice',

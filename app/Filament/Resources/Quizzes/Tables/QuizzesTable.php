@@ -18,7 +18,7 @@ class QuizzesTable
                 TextColumn::make('index')
                     ->label('No')
                     ->rowIndex(),
-                TextColumn::make('lesson.title')->label('Subbab')->searchable(),
+                TextColumn::make('module.title')->label('Bab')->searchable(),
                 TextColumn::make('title')->label('Kuis')->searchable()->sortable(),
                 TextColumn::make('mode')->badge(),
                 TextColumn::make('steps_count')->counts('steps')->label('Step'),

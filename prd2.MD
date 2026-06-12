@@ -40,14 +40,14 @@ Perubahan utama:
 14. Materi guru menggunakan TinyMCE self-hosted GPL core.
 15. Gambar dapat diupload di tengah materi.
 16. Kuis tetap menggunakan 4 jenis: essay, penjodohan teks, table checklist, dan penjodohan gambar-teks.
-17. Kuis dikerjakan secara berurutan menggunakan sequential quiz flow.
+17. Kuis ditempatkan di akhir materi dan dikerjakan secara berurutan menggunakan sequential quiz flow.
 18. Dashboard siswa tetap menampilkan progres belajar, riwayat materi, dan riwayat kuis.
 
 ---
 
 # 2. Ringkasan Produk
 
-Web LMS Pembelajaran SIG adalah aplikasi pembelajaran daring berbasis web yang digunakan untuk menyajikan materi Sistem Informasi Geografis, mengelola data siswa dari berbagai sekolah, mengelola guru, menyusun materi pembelajaran berbasis bab dan subbab, menyediakan kuis interaktif, melakukan penilaian otomatis, menyediakan penilaian manual oleh guru, serta menampilkan riwayat pembelajaran siswa.
+Web LMS Pembelajaran SIG adalah aplikasi pembelajaran daring berbasis web yang digunakan untuk menyajikan materi Sistem Informasi Geografis, mengelola data siswa dari berbagai sekolah, mengelola guru, menyusun materi pembelajaran berbasis bab pembahasan dengan konten langsung di dalam bab, menyediakan kuis di akhir materi, melakukan penilaian otomatis, menyediakan penilaian manual oleh guru, serta menampilkan riwayat pembelajaran siswa.
 
 Sistem ini tidak menggunakan konsep multi-tenant sekolah penuh. Artinya, setiap sekolah tidak memiliki dashboard dan admin sekolah masing-masing. Sekolah hanya digunakan sebagai identitas asal siswa dan dasar pembatasan akses guru.
 
@@ -150,8 +150,8 @@ Fitur yang masuk dalam MVP:
 6. Manajemen guru.
 7. Assignment guru ke sekolah tertentu oleh Super Admin.
 8. Manajemen mata pelajaran/kursus.
-9. Manajemen bab.
-10. Manajemen subbab.
+9. Manajemen bab pembahasan.
+10. Manajemen bab dengan konten pembelajaran langsung.
 11. CMS materi dengan TinyMCE.
 12. Upload gambar di tengah materi.
 13. Upload cover materi.
@@ -161,9 +161,9 @@ Fitur yang masuk dalam MVP:
 17. Riwayat pembelajaran siswa.
 18. Riwayat kuis siswa.
 19. Kuis essay.
-20. Kuis penjodohan teks.
+20. Kuis penjodohan teks dengan soal acak per sesi.
 21. Kuis table checklist.
-22. Kuis penjodohan gambar dan teks.
+22. Kuis penjodohan gambar dan teks dengan soal acak per sesi.
 23. Sequential quiz flow.
 24. Auto grading kuis non-essay.
 25. Manual grading essay oleh guru.
@@ -565,8 +565,8 @@ Mata pelajaran/kursus digunakan untuk mengelompokkan materi pembelajaran. Untuk 
 2. Edit kursus.
 3. Upload cover kursus.
 4. Publish/unpublish kursus.
-5. Lihat daftar bab.
-6. Lihat daftar subbab.
+5. Lihat daftar bab pembahasan.
+6. Lihat daftar bab pembahasan beserta kontennya.
 7. Kelola materi dalam kursus.
 
 ---
@@ -595,7 +595,7 @@ Mata pelajaran/kursus digunakan untuk mengelompokkan materi pembelajaran. Untuk 
 
 ---
 
-# 15. Modul Bab dan Subbab
+# 15. Modul Bab Pembahasan dan Kuis Materi
 
 ## 15.1 Struktur Konten
 
@@ -604,11 +604,11 @@ Struktur pembelajaran:
 ```text
 Kursus
   ↓
-Bab
+  Bab Pembahasan
   ↓
-Subbab
+  Konten Bab (TinyMCE)
   ↓
-Kuis Akhir Subbab
+  Item Quiz Materi (sejajar dalam daftar item materi)
 ```
 
 Contoh:
@@ -616,48 +616,28 @@ Contoh:
 ```text
 Sistem Informasi Geografis
   Bab 1: Pendahuluan SIG
-    Subbab 1.1: Pengertian SIG
-    Subbab 1.2: Sumber Data SIG
-    Subbab 1.3: Komponen SIG
-    Subbab 1.4: Tahapan Kerja SIG
-    Subbab 1.5: Manfaat SIG
-    Kuis Akhir Materi
+    Konten: Pengertian SIG, sumber data SIG, komponen SIG, tahapan kerja SIG, manfaat SIG
+  Item Khusus: Quiz Materi
 ```
 
 ---
 
-## 15.2 Field Bab
+## 15.2 Field Bab Pembahasan
 
 | Field       | Tipe          | Keterangan               |
 | ----------- | ------------- | ------------------------ |
-| id          | bigint/ulid   | ID bab                   |
+| id          | bigint/ulid   | ID bab pembahasan        |
 | course_id   | foreign key   | Relasi kursus            |
-| title       | varchar       | Judul bab                |
+| title       | varchar       | Judul bab pembahasan     |
 | slug        | varchar       | URL                      |
 | description | text nullable | Deskripsi                |
+| content     | json/longtext | Isi materi bab           |
+| cover_image | media/file nullable | Cover bab pembahasan |
+| estimated_duration | integer nullable | Estimasi menit   |
 | sort_order  | integer       | Urutan                   |
 | status      | enum          | draft/published/archived |
 
 ---
-
-## 15.3 Field Subbab
-
-| Field              | Tipe                | Keterangan               |
-| ------------------ | ------------------- | ------------------------ |
-| id                 | bigint/ulid         | ID subbab                |
-| module_id          | foreign key         | Relasi bab               |
-| title              | varchar             | Judul subbab             |
-| slug               | varchar             | URL                      |
-| summary            | text nullable       | Ringkasan                |
-| content            | json/longtext       | Isi materi               |
-| cover_image        | media/file nullable | Cover                    |
-| estimated_duration | integer nullable    | Estimasi menit           |
-| sort_order         | integer             | Urutan                   |
-| is_required        | boolean             | Wajib/tidak              |
-| status             | enum                | draft/published/archived |
-| published_at       | timestamp nullable  | Waktu publish            |
-| created_by         | foreign key         | Pembuat                  |
-| updated_by         | foreign key         | Pengubah                 |
 
 ---
 
@@ -669,9 +649,10 @@ CMS materi menggunakan:
 
 1. TinyMCE self-hosted GPL core.
 2. Spatie Media Library untuk upload media.
-3. FileUpload untuk cover materi.
+3. FileUpload untuk cover bab pembahasan.
 4. RichContentRenderer untuk menampilkan materi di portal siswa.
-5. Field media terpisah untuk gambar quiz dan lampiran.
+5. Quiz dikelola sebagai item khusus di daftar materi, tetapi step dan media quiz tetap terpisah dari konten TinyMCE.
+6. Pada kuis penjodohan, urutan soal acak per attempt namun konsisten selama sesi yang sama.
 
 ---
 
@@ -688,9 +669,8 @@ Guru atau Super Admin dapat:
 7. Menambahkan kutipan.
 8. Upload gambar di tengah materi.
 9. Resize gambar inline.
-10. Upload lampiran.
-11. Preview materi.
-12. Publish/unpublish materi.
+10. Preview materi.
+11. Publish/unpublish materi.
 
 ---
 
@@ -702,7 +682,7 @@ Business rule:
 2. Gambar dapat muncul di awal, tengah, atau akhir pembahasan.
 3. Gambar inline dapat di-resize.
 4. Aspect ratio gambar inline tetap proporsional.
-5. Cover materi tidak dimasukkan ke TinyMCE.
+5. Cover bab pembahasan tidak dimasukkan ke TinyMCE.
 6. Gambar soal kuis tidak dimasukkan ke TinyMCE.
 7. Gambar soal kuis menggunakan media khusus kuis.
 8. File upload dibatasi berdasarkan tipe dan ukuran.
@@ -725,25 +705,25 @@ tinymce.init({
 
 ## 16.5 Cover Materi
 
-Cover materi menggunakan field terpisah:
+Cover bab pembahasan menggunakan field terpisah:
 
 ```php
 FileUpload::make('cover_image')
-    ->label('Cover Materi')
+    ->label('Cover Bab Pembahasan')
     ->image()
     ->imageEditor()
     ->imageAspectRatio('16:9')
     ->automaticallyOpenImageEditorForAspectRatio()
-    ->directory('lesson-covers');
+    ->directory('module-covers');
 ```
 
 ---
 
-# 17. Modul Kuis
+# 17. Modul Kuis Materi
 
 ## 17.1 Konsep Umum
 
-Kuis dibuat pada akhir subbab atau akhir materi. Kuis dikerjakan secara berurutan dalam beberapa step.
+Quiz Materi dibuat satu kali sebagai item khusus di daftar materi. Item ini berdiri sejajar dengan bab pembahasan, namun fungsinya adalah membuka manajemen quiz di akhir materi. Quiz dikerjakan secara berurutan dalam beberapa step.
 
 Jenis kuis:
 
@@ -856,31 +836,41 @@ Kamu tetap dapat melanjutkan ke kuis berikutnya sambil menunggu hasil penilaian.
 
 ## 19.1 Deskripsi
 
-Kuis ini menampilkan item teks dan pilihan jawaban teks. Siswa harus menjodohkan item dengan kategori yang tepat.
+Kuis ini menampilkan item soal dalam bentuk kartu. Setiap kartu menampilkan label soal dan dropdown jawaban. Siswa memilih pasangan yang tepat untuk setiap item.
 
 ---
 
 ## 19.2 Flow
 
 1. Siswa membaca instruksi.
-2. Siswa menjodohkan item.
-3. Siswa klik “Kirim Jawaban”.
-4. Sistem memeriksa otomatis.
-5. Sistem menampilkan jawaban benar dan salah.
-6. Sistem menampilkan skor.
-7. Sistem menampilkan tombol “Next”.
+2. Siswa mengerjakan item soal yang tampil sebagai kartu.
+3. Setiap kartu berisi label soal dan dropdown jawaban.
+4. Siswa memilih jawaban langsung pada kartu soal.
+5. Siswa klik “Kirim Jawaban”.
+6. Sistem memeriksa otomatis.
+7. Sistem menampilkan jawaban benar dan salah.
+8. Sistem menampilkan skor.
+9. Sistem menampilkan tombol “Next”.
 
 ---
 
 ## 19.3 Business Rule
 
 1. Setiap item memiliki satu pasangan benar.
-2. Pilihan jawaban dapat diacak.
-3. Jawaban disimpan dalam JSON.
-4. Jawaban benar diberi warna hijau.
-5. Jawaban salah diberi warna merah.
-6. Nilai dihitung otomatis.
-7. Sistem dapat menampilkan jawaban benar setelah submit.
+2. Opsi jawaban diberi kode otomatis.
+3. Urutan item diacak saat attempt dimulai dan disimpan agar konsisten selama sesi berjalan.
+4. Jawaban disimpan dalam JSON.
+5. Jawaban benar diberi warna hijau.
+6. Jawaban salah diberi warna merah.
+7. Nilai dihitung otomatis.
+8. Sistem dapat menampilkan jawaban benar setelah submit.
+
+## 19.4 Randomisasi Sesi
+
+1. Randomisasi berlaku pada urutan item soal, bukan pada jawaban benar.
+2. Setiap attempt siswa dapat memiliki urutan soal yang berbeda.
+3. Saat halaman di-refresh, urutan item tidak berubah selama attempt yang sama.
+4. Guru tetap menyimpan data soal dengan urutan asli di backend.
 
 ---
 
@@ -1083,8 +1073,8 @@ Riwayat pembelajaran mencatat aktivitas siswa saat membuka, membaca, dan menyele
 | Field           | Keterangan                             |
 | --------------- | -------------------------------------- |
 | Mata pelajaran  | Nama kursus                            |
-| Bab             | Nama bab                               |
-| Subbab          | Nama subbab                            |
+| Bab Pembahasan  | Nama bab pembahasan                    |
+| Kuis            | Kuis akhir materi                      |
 | Status          | Belum dibuka/sedang dipelajari/selesai |
 | Terakhir dibuka | Waktu terakhir                         |
 | Durasi belajar  | Estimasi atau durasi aktual            |
@@ -1115,7 +1105,7 @@ Riwayat kuis menampilkan daftar kuis yang sudah, sedang, atau belum dikerjakan s
 | Field              | Keterangan                   |
 | ------------------ | ---------------------------- |
 | Mata pelajaran     | Nama kursus                  |
-| Subbab             | Nama subbab                  |
+| Bab Pembahasan     | Nama bab pembahasan          |
 | Kuis               | Nama kuis                    |
 | Status             | Belum/Sedang/Pending/Selesai |
 | Nilai otomatis     | Nilai kuis non-essay         |
@@ -1340,7 +1330,7 @@ Catatan:
 | Field        | Tipe             | Keterangan               |
 | ------------ | ---------------- | ------------------------ |
 | id           | bigint/ulid      | ID quiz session          |
-| lesson_id    | foreign key      | Relasi subbab            |
+| module_id    | foreign key      | Relasi bab pembahasan    |
 | title        | varchar          | Judul kuis               |
 | description  | text nullable    | Deskripsi                |
 | mode         | enum             | practice/final           |
@@ -1521,16 +1511,15 @@ Tanggung jawab:
 4. Data Guru
 5. Assignment Guru
 6. Materi/Kursus
-7. Bab
-8. Subbab
-9. Kuis
-10. Hasil Kuis
-11. Penilaian Essay
-12. Laporan Nilai
-13. Laporan Progres
-14. Role & Permission
-15. Activity Log
-16. Settings
+7. Bab Pembahasan
+8. Kuis
+9. Hasil Kuis
+10. Penilaian Essay
+11. Laporan Nilai
+12. Laporan Progres
+13. Role & Permission
+14. Activity Log
+15. Settings
 
 ---
 
@@ -1593,23 +1582,22 @@ flowchart TD
 flowchart TD
     A([Dashboard Siswa]) --> B[Pilih Mata Pelajaran]
     B --> C[Pilih Bab]
-    C --> D[Pilih Subbab]
-    D --> E{Materi Published?}
-    E -- Tidak --> F[Tampilkan pesan materi belum tersedia]
-    E -- Ya --> G[Tampilkan halaman materi]
-    G --> H[Render konten materi]
-    H --> I[Tampilkan teks, gambar inline, dan lampiran]
-    I --> J[Catat aktivitas membuka materi]
-    J --> K{Siswa selesai membaca?}
-    K -- Belum --> L[Simpan status in_progress]
-    L --> M[Kembali ke dashboard]
-    K -- Ya --> N[Klik Tandai Selesai]
-    N --> O[Simpan lesson_progress completed]
-    O --> P{Ada kuis?}
-    P -- Ya --> Q[Tampilkan tombol Mulai Kuis]
-    P -- Tidak --> R[Tampilkan tombol Lanjut Materi Berikutnya]
-    Q --> S([Masuk Flow Kuis])
-    R --> T([Selesai])
+    C --> D{Bab Published?}
+    D -- Tidak --> E[Tampilkan pesan materi belum tersedia]
+    D -- Ya --> F[Tampilkan halaman bab]
+    F --> G[Render konten TinyMCE]
+    G --> H[Tampilkan teks, gambar inline, dan media lain]
+    H --> I[Catat aktivitas membuka bab]
+    I --> J{Siswa selesai membaca?}
+    J -- Belum --> K[Simpan status in_progress]
+    K --> L[Kembali ke dashboard]
+    J -- Ya --> M[Klik Tandai Selesai]
+    M --> N[Simpan lesson_progress completed]
+    N --> O{Ada kuis di akhir materi?}
+    O -- Ya --> P[Tampilkan tombol Mulai Kuis Materi]
+    O -- Tidak --> Q[Tampilkan tombol Materi Berikutnya]
+    P --> R([Masuk Flow Kuis])
+    Q --> S([Selesai])
 ```
 
 ---
@@ -1628,7 +1616,7 @@ flowchart TD
     H --> I[Klik Next]
 
     I --> J[Step 2: Penjodohan Teks]
-    J --> K[Siswa menjodohkan item teks]
+    J --> K[Siswa menjawab kartu soal dengan urutan acak per attempt]
     K --> L[Klik Kirim Jawaban]
     L --> M[Sistem auto grading]
     M --> N[Tampilkan benar/salah dan skor]
@@ -1663,7 +1651,7 @@ flowchart TD
     A([Dashboard Siswa]) --> B[Pilih Riwayat Pembelajaran]
     B --> C[Sistem mengambil lesson_progress]
     C --> D[Sistem mengambil student_learning_activities]
-    D --> E[Tampilkan daftar materi]
+    D --> E[Tampilkan daftar materi dan bab]
     E --> F[Tampilkan status materi]
     F --> G{Pilih materi?}
     G -- Ya --> H[Buka detail materi]
@@ -1834,19 +1822,22 @@ flowchart LR
 4. Cover materi menggunakan field terpisah.
 5. Siswa dapat membaca materi published.
 6. Sistem mencatat progres materi siswa.
+7. Quiz ditempatkan di akhir materi dan menjadi bagian dari halaman materi yang sama.
 
 ---
 
 ## 37.5 Kuis
 
-1. Siswa mengerjakan kuis berurutan.
+1. Siswa mengerjakan quiz dari item quiz khusus di dalam materi.
 2. Essay terkirim ke guru.
 3. Siswa dapat lanjut setelah essay terkirim.
 4. Kuis objektif dinilai otomatis.
 5. Hasil benar/salah tampil setelah submit.
-6. Kuis 3 tetap checklist dengan single answer per row.
-7. Kuis 4 mendukung gambar dan teks.
-8. Ringkasan hasil tampil setelah semua kuis selesai.
+6. Kuis penjodohan teks menampilkan kartu soal dengan dropdown jawaban.
+7. Urutan soal penjodohan acak per attempt namun tetap konsisten selama sesi.
+8. Kuis 3 tetap checklist dengan single answer per row.
+9. Kuis 4 mendukung gambar dan teks.
+10. Ringkasan hasil tampil setelah semua kuis selesai.
 
 ---
 
@@ -1859,6 +1850,8 @@ flowchart LR
 5. Siswa dapat melihat riwayat pembelajaran.
 6. Siswa dapat melihat riwayat kuis.
 7. Siswa dapat lanjut belajar dari dashboard.
+8. Dashboard siswa menggunakan tampilan custom yang berbeda dari panel guru/AdminLTE.
+9. Dashboard menampilkan ringkasan jawaban salah terakhir untuk membantu tracking belajar.
 
 ---
 
@@ -1891,13 +1884,11 @@ flowchart LR
 ## Phase 3 — CMS Materi
 
 1. Manajemen kursus.
-2. Manajemen bab.
-3. Manajemen subbab.
-4. TinyMCE materi.
-5. Upload gambar inline.
-6. Upload cover.
-7. Upload lampiran.
-8. Publish materi.
+2. Manajemen bab pembahasan.
+3. TinyMCE materi di dalam bab pembahasan.
+4. Upload gambar inline.
+5. Upload cover bab pembahasan.
+6. Publish materi.
 
 ---
 
@@ -1909,6 +1900,7 @@ flowchart LR
 4. Riwayat pembelajaran.
 5. Riwayat kuis.
 6. Nilai siswa.
+7. Tracking jawaban salah pada dashboard siswa.
 
 ---
 
@@ -1918,7 +1910,7 @@ flowchart LR
 2. Kuis penjodohan teks.
 3. Kuis table checklist.
 4. Kuis gambar dan teks.
-5. Sequential quiz flow.
+5. Sequential quiz flow dari item quiz khusus di dalam materi.
 6. Auto grading.
 7. Manual grading essay.
 
