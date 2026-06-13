@@ -157,7 +157,7 @@ class QuizForm extends Component
             ],
             'table_checklist' => [
                 'title' => 'Checklist Tabel',
-                'instruction' => 'Pilih satu kategori paling tepat untuk setiap baris.',
+                'instruction' => 'Isi label kolom di atas, tulis pernyataan pada baris, lalu pilih kolom yang benar di setiap baris.',
                 'columns' => [
                     $this->blankRow('table_checklist', 'columns'),
                     $this->blankRow('table_checklist', 'columns'),
