@@ -7,13 +7,17 @@ use App\Models\Quiz;
 use App\Models\QuizStep;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 
 #[Layout('layouts.guru')]
 class QuizForm extends Component
 {
+    use WithFileUploads;
+
     public Module $module;
     public ?Quiz $quiz = null;
 
@@ -26,6 +30,7 @@ class QuizForm extends Component
     public string $activeTab = 'essay';
 
     public array $stepForms = [];
+    public array $imageUploads = [];
 
     public function setActiveTab(string $tab): void
     {
@@ -64,6 +69,10 @@ class QuizForm extends Component
     {
         $this->activeTab = $type;
         $this->stepForms[$type][$section][] = $this->blankRow($type, $section);
+
+        if ($type === 'image_text_matching' && $section === 'pairs') {
+            $this->imageUploads[] = null;
+        }
     }
 
     public function removeRow(string $type, string $section, int $index): void
@@ -79,6 +88,14 @@ class QuizForm extends Component
 
         if ($this->stepForms[$type][$section] === []) {
             $this->stepForms[$type][$section][] = $this->blankRow($type, $section);
+        }
+
+        if ($type === 'image_text_matching' && $section === 'pairs') {
+            $this->imageUploads = array_values($this->imageUploads);
+
+            if ($this->imageUploads === []) {
+                $this->imageUploads[] = null;
+            }
         }
     }
 
@@ -103,6 +120,9 @@ class QuizForm extends Component
 
             foreach ($this->stepDefinitions() as $type => $definition) {
                 $form = $this->stepForms[$type];
+                if ($type === 'image_text_matching') {
+                    $form = $this->prepareImageTextMatchingForm($form);
+                }
 
                 QuizStep::updateOrCreate(
                     ['quiz_id' => $this->quiz->id, 'type' => $type],
@@ -171,14 +191,10 @@ class QuizForm extends Component
             ],
             'image_text_matching' => [
                 'title' => 'Penjodohan Gambar-Teks',
-                'instruction' => 'Pasangkan objek visual dengan kategori yang tepat.',
-                'options' => [
-                    $this->blankRow('image_text_matching', 'options'),
-                    $this->blankRow('image_text_matching', 'options'),
-                ],
-                'items' => [
-                    $this->blankRow('image_text_matching', 'items'),
-                    $this->blankRow('image_text_matching', 'items'),
+                'instruction' => 'Isi soal, pilih jawaban, lalu unggah gambar untuk setiap pasangan.',
+                'pairs' => [
+                    $this->blankRow('image_text_matching', 'pairs'),
+                    $this->blankRow('image_text_matching', 'pairs'),
                 ],
             ],
         ];
@@ -272,28 +288,37 @@ class QuizForm extends Component
     private function hydrateImageTextMatching(QuizStep $step): void
     {
         $payload = $step->content_payload ?? [];
+        $pairs = collect($payload['pairs'] ?? []);
+        $items = collect($payload['items'] ?? []);
+        $options = collect($payload['options'] ?? []);
 
-        $this->stepForms['image_text_matching']['options'] = collect($payload['options'] ?? [])
-            ->map(fn (array $row): array => [
-                'key' => $row['key'] ?? '',
-                'label' => $row['label'] ?? '',
-            ])
-            ->whenEmpty(fn () => collect([$this->blankRow('image_text_matching', 'options')]))
-            ->all();
-
-        $this->stepForms['image_text_matching']['items'] = collect($payload['items'] ?? [])
-            ->map(function (array $row) use ($payload): array {
-                $pair = collect($payload['pairs'] ?? [])->firstWhere('item_key', $row['key'] ?? null);
+        if ($pairs->isEmpty() && $items->isNotEmpty() && $options->isNotEmpty()) {
+            $pairs = $items->values()->map(function (array $item, int $index) use ($options): array {
+                $option = $options->values()->get($index) ?? [];
 
                 return [
-                    'key' => $row['key'] ?? '',
-                    'label' => $row['label'] ?? '',
-                    'image_url' => $row['image_url'] ?? '',
-                    'alt' => $row['alt'] ?? '',
-                    'correct_option_key' => $pair['correct_option_key'] ?? '',
+                    'question_label' => $item['label'] ?? $item['question_label'] ?? '',
+                    'answer_label' => $option['label'] ?? '',
+                    'image_url' => $item['image_url'] ?? '',
+                ];
+            });
+        }
+
+        $this->stepForms['image_text_matching']['pairs'] = $pairs
+            ->map(function (array $pair) use ($items, $options): array {
+                $questionLabel = $pair['question_label'] ?? $pair['label'] ?? '';
+                $answerLabel = $pair['answer_label'] ?? '';
+                $item = $items->firstWhere('label', $questionLabel) ?? $items->firstWhere('question_label', $questionLabel) ?? [];
+                $option = $options->firstWhere('label', $answerLabel) ?? [];
+
+                return [
+                    'question_label' => $questionLabel,
+                    'answer_label' => $answerLabel,
+                    'image_url' => $pair['image_url'] ?? $item['image_url'] ?? '',
+                    'correct_option_key' => $pair['correct_option_key'] ?? $option['key'] ?? '',
                 ];
             })
-            ->whenEmpty(fn () => collect([$this->blankRow('image_text_matching', 'items')]))
+            ->whenEmpty(fn () => collect([$this->blankRow('image_text_matching', 'pairs')]))
             ->all();
     }
 
@@ -327,13 +352,34 @@ class QuizForm extends Component
 
             'stepForms.image_text_matching.title' => ['required', 'string', 'max:255'],
             'stepForms.image_text_matching.instruction' => ['nullable', 'string'],
-            'stepForms.image_text_matching.options' => ['array'],
-            'stepForms.image_text_matching.options.*.label' => ['required', 'string'],
-            'stepForms.image_text_matching.items' => ['array'],
-            'stepForms.image_text_matching.items.*.label' => ['required', 'string'],
-            'stepForms.image_text_matching.items.*.image_url' => ['required', 'url'],
-            'stepForms.image_text_matching.items.*.alt' => ['required', 'string'],
-            'stepForms.image_text_matching.items.*.correct_option_key' => ['required', 'string'],
+            'stepForms.image_text_matching.pairs' => ['array'],
+            'stepForms.image_text_matching.pairs.*.question_label' => ['required', 'string'],
+            'stepForms.image_text_matching.pairs.*.answer_label' => ['required', 'string'],
+            'imageUploads' => ['array'],
+            'imageUploads.*' => ['nullable', 'image', 'max:5120'],
+        ];
+    }
+
+    protected function messages(): array
+    {
+        return [
+            'title.required' => 'Judul quiz wajib diisi.',
+            'mode.required' => 'Mode quiz wajib dipilih.',
+            'max_attempts.min' => 'Maksimal percobaan minimal 1.',
+            'status.required' => 'Status quiz wajib dipilih.',
+            'stepForms.essay.title.required' => 'Judul step esai wajib diisi.',
+            'stepForms.essay.question.required' => 'Pertanyaan esai wajib diisi.',
+            'stepForms.text_matching.title.required' => 'Judul step penjodohan teks wajib diisi.',
+            'stepForms.text_matching.pairs.*.question_label.required' => 'Label soal wajib diisi.',
+            'stepForms.text_matching.pairs.*.answer_label.required' => 'Label jawaban wajib diisi.',
+            'stepForms.table_checklist.title.required' => 'Judul step checklist tabel wajib diisi.',
+            'stepForms.table_checklist.columns.*.label.required' => 'Label kolom wajib diisi.',
+            'stepForms.table_checklist.rows.*.label.required' => 'Pernyataan wajib diisi.',
+            'stepForms.table_checklist.rows.*.correct_column_id.required' => 'Kolom yang benar wajib dipilih.',
+            'stepForms.image_text_matching.title.required' => 'Judul step penjodohan gambar-teks wajib diisi.',
+            'stepForms.image_text_matching.pairs.*.question_label.required' => 'Soal wajib diisi.',
+            'stepForms.image_text_matching.pairs.*.answer_label.required' => 'Label jawaban wajib diisi.',
+            'imageUploads.*.image' => 'File gambar harus berupa gambar.',
         ];
     }
 
@@ -396,27 +442,30 @@ class QuizForm extends Component
                     ->all(),
             ],
             'image_text_matching' => [
-                'options' => collect($this->normalizeList($form['options'] ?? [], ['label']))
+                'options' => collect($this->normalizeList($form['pairs'] ?? [], ['question_label', 'answer_label']))
                     ->values()
-                    ->map(fn (array $option, int $index): array => [
+                    ->map(fn (array $pair, int $index): array => [
                         'key' => $this->alphabetKey($index),
-                        'label' => $option['label'],
+                        'label' => $pair['answer_label'],
                     ])
                     ->all(),
-                'items' => collect($this->normalizeList($form['items'] ?? [], ['label', 'image_url', 'alt', 'correct_option_key']))
+                'items' => collect($this->normalizeList($form['pairs'] ?? [], ['question_label', 'answer_label', 'image_url']))
                     ->values()
-                    ->map(fn (array $item, int $index): array => [
+                    ->map(fn (array $pair, int $index): array => [
                         'key' => $this->numberKey($index),
-                        'label' => $item['label'],
-                        'image_url' => $item['image_url'],
-                        'alt' => $item['alt'],
+                        'label' => $pair['question_label'],
+                        'image_url' => $pair['image_url'] ?? '',
+                        'alt' => $pair['question_label'],
                     ])
                     ->all(),
-                'pairs' => collect($this->normalizeList($form['items'] ?? [], ['label', 'image_url', 'alt', 'correct_option_key']))
+                'pairs' => collect($this->normalizeList($form['pairs'] ?? [], ['question_label', 'answer_label', 'image_url']))
                     ->values()
-                    ->map(fn (array $item, int $index): array => [
+                    ->map(fn (array $pair, int $index): array => [
                         'item_key' => $this->numberKey($index),
-                        'correct_option_key' => $item['correct_option_key'],
+                        'correct_option_key' => $this->alphabetKey($index),
+                        'question_label' => $pair['question_label'],
+                        'answer_label' => $pair['answer_label'],
+                        'image_url' => $pair['image_url'] ?? '',
                     ])
                     ->all(),
             ],
@@ -453,8 +502,7 @@ class QuizForm extends Component
             'text_matching.pairs' => ['question_label' => '', 'answer_label' => ''],
             'table_checklist.columns' => ['label' => ''],
             'table_checklist.rows' => ['label' => '', 'correct_column_id' => ''],
-            'image_text_matching.options' => ['label' => ''],
-            'image_text_matching.items' => ['label' => '', 'image_url' => '', 'alt' => '', 'correct_option_key' => ''],
+            'image_text_matching.pairs' => ['question_label' => '', 'answer_label' => '', 'image_url' => ''],
             default => [],
         };
     }
@@ -517,5 +565,32 @@ class QuizForm extends Component
         $index = $generatedKeys->search($selectedKey);
 
         return $index === false ? 0 : (int) $index;
+    }
+
+    private function prepareImageTextMatchingForm(array $form): array
+    {
+        $pairs = collect($form['pairs'] ?? [])
+            ->values()
+            ->map(function (array $pair, int $index): array {
+                $upload = $this->imageUploads[$index] ?? null;
+                $imageUrl = $pair['image_url'] ?? '';
+
+                if ($upload) {
+                    $path = $upload->storePublicly('quiz-images', 'public');
+                    $imageUrl = Storage::url($path);
+                }
+
+                return [
+                    'question_label' => $pair['question_label'] ?? '',
+                    'answer_label' => $pair['answer_label'] ?? '',
+                    'image_url' => $imageUrl,
+                ];
+            })
+            ->all();
+
+        return [
+            ...$form,
+            'pairs' => $pairs,
+        ];
     }
 }

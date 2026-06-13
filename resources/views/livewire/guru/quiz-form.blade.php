@@ -11,6 +11,17 @@
 
             <form wire:submit.prevent="save">
                 <div class="card-body guru-panel-body">
+                    @if($errors->any())
+                        <div class="alert alert-danger border-0">
+                            <div class="fw-semibold mb-1">Periksa kembali isian berikut:</div>
+                            <ul class="mb-0 ps-3">
+                                @foreach($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
                     <div class="row">
                         <div class="col-lg-6 mb-3">
                             <label class="form-label">Materi</label>
@@ -222,66 +233,48 @@
                                     <textarea wire:model="stepForms.image_text_matching.instruction" rows="2" class="form-control"></textarea>
                                 </div>
 
-                                <div class="row g-3">
-                                    <div class="col-lg-5">
-                                        <div class="d-flex justify-content-between align-items-center mb-2">
-                                            <label class="form-label mb-0">Pilihan Teks</label>
-                                            <button type="button" class="btn btn-sm btn-outline-secondary" wire:click="addRow('image_text_matching', 'options')">+ Baris</button>
-                                        </div>
-                                        <div class="d-grid gap-2">
-                                            @foreach($stepForms['image_text_matching']['options'] as $index => $option)
-                                                <div wire:key="image-matching-option-{{ $index }}" class="border rounded-3 p-3">
-                                                    <div class="d-flex align-items-center justify-content-between gap-2 mb-2">
-                                                        <span class="badge rounded-pill bg-secondary-subtle text-secondary border border-secondary-subtle">Pilihan {{ $this->displayAlphabetKey($index) }}</span>
-                                                        <button type="button" class="btn btn-sm btn-outline-danger" wire:click="removeRow('image_text_matching', 'options', {{ $index }})">Hapus</button>
-                                                    </div>
-                                                    <label class="form-label small">Label Opsi</label>
-                                                    <input type="text" wire:model="stepForms.image_text_matching.options.{{ $index }}.label" class="form-control form-control-sm">
+                                <div class="alert alert-light border">
+                                    Isi soal, pilih jawaban, lalu unggah gambar untuk setiap pasangan.
+                                </div>
+
+                                <div class="d-flex flex-wrap gap-2">
+                                    <button type="button" class="btn btn-sm btn-outline-secondary" wire:click="addRow('image_text_matching', 'pairs')">+ Pasangan</button>
+                                </div>
+
+                                <div class="d-grid gap-2">
+                                    @foreach($stepForms['image_text_matching']['pairs'] as $index => $pair)
+                                        <div wire:key="image-matching-pair-{{ $index }}" class="border rounded-3 p-3">
+                                            <div class="d-flex align-items-center justify-content-between gap-2 mb-2">
+                                                <span class="badge rounded-pill bg-secondary-subtle text-secondary border border-secondary-subtle">Pasangan {{ $index + 1 }}</span>
+                                                <button type="button" class="btn btn-sm btn-outline-danger" wire:click="removeRow('image_text_matching', 'pairs', {{ $index }})">Hapus</button>
+                                            </div>
+                                            <div class="row g-2">
+                                                <div class="col-md-4">
+                                                    <label class="form-label small">Soal</label>
+                                                    <input type="text" wire:model="stepForms.image_text_matching.pairs.{{ $index }}.question_label" class="form-control form-control-sm">
                                                 </div>
-                                            @endforeach
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-7">
-                                        <div class="d-flex justify-content-between align-items-center mb-2">
-                                            <label class="form-label mb-0">Item Gambar</label>
-                                            <button type="button" class="btn btn-sm btn-outline-secondary" wire:click="addRow('image_text_matching', 'items')">+ Baris</button>
-                                        </div>
-                                        <div class="d-grid gap-2">
-                                            @foreach($stepForms['image_text_matching']['items'] as $index => $item)
-                                                <div wire:key="image-matching-item-{{ $index }}" class="border rounded-3 p-3">
-                                                    <div class="d-flex align-items-center justify-content-between gap-2 mb-2">
-                                                        <span class="badge rounded-pill bg-secondary-subtle text-secondary border border-secondary-subtle">Gambar {{ $index + 1 }}</span>
-                                                        <button type="button" class="btn btn-sm btn-outline-danger" wire:click="removeRow('image_text_matching', 'items', {{ $index }})">Hapus</button>
-                                                    </div>
-                                                    <div class="row g-2">
-                                                        <div class="col-md-6">
-                                                            <label class="form-label small">Label Item</label>
-                                                            <input type="text" wire:model="stepForms.image_text_matching.items.{{ $index }}.label" class="form-control form-control-sm">
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <label class="form-label small">Jawaban Benar</label>
-                                                            <select wire:model="stepForms.image_text_matching.items.{{ $index }}.correct_option_key" class="form-select form-select-sm">
-                                                                <option value="">Pilih jawaban</option>
-                                                                @foreach($stepForms['image_text_matching']['options'] as $optionIndex => $option)
-                                                                    <option value="{{ $this->displayAlphabetKey($optionIndex) }}">
-                                                                        {{ $this->displayAlphabetKey($optionIndex) }} - {{ $option['label'] ?: 'Pilihan '.($optionIndex + 1) }}
-                                                                    </option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <label class="form-label small">URL Gambar</label>
-                                                            <input type="text" wire:model="stepForms.image_text_matching.items.{{ $index }}.image_url" class="form-control form-control-sm">
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <label class="form-label small">Alt</label>
-                                                            <input type="text" wire:model="stepForms.image_text_matching.items.{{ $index }}.alt" class="form-control form-control-sm">
-                                                        </div>
-                                                    </div>
+                                                <div class="col-md-4">
+                                                    <label class="form-label small">Jawaban</label>
+                                                    <input type="text" wire:model="stepForms.image_text_matching.pairs.{{ $index }}.answer_label" class="form-control form-control-sm">
                                                 </div>
-                                            @endforeach
+                                                <div class="col-md-4">
+                                                    <label class="form-label small">Unggah gambar</label>
+                                                    <input type="file" wire:model="imageUploads.{{ $index }}" class="form-control form-control-sm" accept="image/*">
+                                                    @error('imageUploads.'.$index) <div class="text-danger small mt-1">{{ $message }}</div> @enderror
+                                                    @php($previewImage = $imageUploads[$index] ?? ($pair['image_url'] ?? null))
+                                                    @if($previewImage)
+                                                        <div class="mt-2 overflow-hidden rounded-3 border" style="max-width: 220px;">
+                                                            <img
+                                                                src="{{ is_object($previewImage) ? $previewImage->temporaryUrl() : $previewImage }}"
+                                                                alt="Pratinjau gambar"
+                                                                class="img-fluid w-100"
+                                                            >
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
+                                    @endforeach
                                 </div>
                             </div>
                         </div>
