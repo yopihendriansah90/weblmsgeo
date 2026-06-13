@@ -101,13 +101,6 @@
                                     <textarea wire:model="stepForms.essay.question" rows="4" class="form-control @error('stepForms.essay.question') is-invalid @enderror"></textarea>
                                     @error('stepForms.essay.question') <div class="invalid-feedback">{{ $message }}</div> @enderror
                                 </div>
-                                <div>
-                                    <label class="form-label">Status Step</label>
-                                    <select wire:model="stepForms.essay.status" class="form-select @error('stepForms.essay.status') is-invalid @enderror">
-                                        <option value="draft">Draf</option>
-                                        <option value="published">Dipublikasikan</option>
-                                    </select>
-                                </div>
                             </div>
                         </div>
 
@@ -162,22 +155,22 @@
                                     <textarea wire:model="stepForms.table_checklist.instruction" rows="2" class="form-control"></textarea>
                                 </div>
 
+                                <div class="alert alert-light border">
+                                    Isi <strong>Label Kolom</strong> di kiri, lalu isi <strong>Pernyataan</strong> di kanan dan pilih label kolom yang benar.
+                                </div>
+
                                 <div class="row g-3">
                                     <div class="col-lg-6">
                                         <div class="d-flex justify-content-between align-items-center mb-2">
-                                            <label class="form-label mb-0">Kolom</label>
-                                            <button type="button" class="btn btn-sm btn-outline-secondary" wire:click="addRow('table_checklist', 'columns')">+ Baris</button>
+                                            <label class="form-label mb-0">Label Kolom</label>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary" wire:click="addRow('table_checklist', 'columns')">+ Kolom</button>
                                         </div>
                                         <div class="d-grid gap-2">
                                             @foreach($stepForms['table_checklist']['columns'] as $index => $column)
                                                 <div wire:key="table-checklist-column-{{ $index }}" class="border rounded-3 p-3">
                                                     <div class="row g-2">
                                                         <div class="col-12">
-                                                            <label class="form-label small">ID Kolom</label>
-                                                            <input type="text" wire:model="stepForms.table_checklist.columns.{{ $index }}.id" class="form-control form-control-sm">
-                                                        </div>
-                                                        <div class="col-12">
-                                                            <label class="form-label small">Label Kolom</label>
+                                                            <label class="form-label small">Label kolom</label>
                                                             <input type="text" wire:model="stepForms.table_checklist.columns.{{ $index }}.label" class="form-control form-control-sm">
                                                         </div>
                                                     </div>
@@ -190,24 +183,27 @@
                                     </div>
                                     <div class="col-lg-6">
                                         <div class="d-flex justify-content-between align-items-center mb-2">
-                                            <label class="form-label mb-0">Baris Soal</label>
-                                            <button type="button" class="btn btn-sm btn-outline-secondary" wire:click="addRow('table_checklist', 'rows')">+ Baris</button>
+                                            <label class="form-label mb-0">Pernyataan</label>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary" wire:click="addRow('table_checklist', 'rows')">+ Pernyataan</button>
                                         </div>
                                         <div class="d-grid gap-2">
                                             @foreach($stepForms['table_checklist']['rows'] as $index => $row)
                                                 <div wire:key="table-checklist-row-{{ $index }}" class="border rounded-3 p-3">
                                                     <div class="row g-2">
                                                         <div class="col-12">
-                                                            <label class="form-label small">ID Baris</label>
-                                                            <input type="text" wire:model="stepForms.table_checklist.rows.{{ $index }}.id" class="form-control form-control-sm">
-                                                        </div>
-                                                        <div class="col-12">
-                                                            <label class="form-label small">Label Baris</label>
+                                                            <label class="form-label small">Pernyataan</label>
                                                             <input type="text" wire:model="stepForms.table_checklist.rows.{{ $index }}.label" class="form-control form-control-sm">
                                                         </div>
                                                         <div class="col-12">
-                                                            <label class="form-label small">ID Kolom Benar</label>
-                                                            <input type="text" wire:model="stepForms.table_checklist.rows.{{ $index }}.correct_column_id" class="form-control form-control-sm">
+                                                            <label class="form-label small">Label kolom benar</label>
+                                                            <select wire:model="stepForms.table_checklist.rows.{{ $index }}.correct_column_id" class="form-select form-select-sm">
+                                                                <option value="">Pilih label kolom</option>
+                                                                @foreach($stepForms['table_checklist']['columns'] as $columnIndex => $column)
+                                                                    <option value="{{ $this->displayAlphabetKey($columnIndex) }}">
+                                                                        {{ $this->displayAlphabetKey($columnIndex) }} - {{ $column['label'] ?: 'Kolom '.($columnIndex + 1) }}
+                                                                    </option>
+                                                                @endforeach
+                                                            </select>
                                                         </div>
                                                     </div>
                                                     <div class="mt-2 text-end">

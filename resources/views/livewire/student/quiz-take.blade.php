@@ -21,8 +21,16 @@
                 <p class="mt-3 text-sm leading-6 text-slate-600 sm:text-base">{{ $quiz->description }}</p>
             </div>
             <div class="flex flex-wrap gap-2">
-                <span class="rounded-full bg-indigo-100 px-4 py-2 text-sm font-medium text-indigo-700">{{ $attempt->status }}</span>
-                <span class="rounded-full bg-slate-100 px-4 py-2 text-sm font-medium text-slate-600">{{ $steps->count() }} step</span>
+                @php
+                    $attemptStatusLabel = match ($attempt->status) {
+                        'in_progress' => 'Sedang berlangsung',
+                        'pending_review' => 'Menunggu penilaian',
+                        'completed' => 'Selesai',
+                        default => 'Dalam proses',
+                    };
+                @endphp
+                <span class="rounded-full bg-indigo-100 px-4 py-2 text-sm font-medium text-indigo-700">{{ $attemptStatusLabel }}</span>
+                <span class="rounded-full bg-slate-100 px-4 py-2 text-sm font-medium text-slate-600">{{ $steps->count() }} langkah</span>
             </div>
         </div>
     </section>
@@ -32,8 +40,17 @@
             <p class="px-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-indigo-700">Langkah Quiz</p>
             <div class="mt-4 space-y-2">
                 @foreach($steps as $step)
-                    @php($stepAttempt = $stepAttempts->get($step->id))
-                    @php($isActive = $activeStepId === $step->id)
+                    @php
+                        $stepAttempt = $stepAttempts->get($step->id);
+                        $isActive = $activeStepId === $step->id;
+                        $stepStatusLabel = match ($stepAttempt?->status ?? 'locked') {
+                            'active' => 'Sedang dikerjakan',
+                            'pending_review' => 'Menunggu penilaian',
+                            'auto_graded' => 'Sudah dinilai',
+                            'completed' => 'Selesai',
+                            default => 'Belum dibuka',
+                        };
+                    @endphp
                     <button
                         wire:click="setActiveStep({{ $step->id }})"
                         class="flex w-full items-start gap-3 rounded-[18px] border px-3 py-3 text-left transition {{ $isActive ? 'border-indigo-300 bg-indigo-50 shadow-sm' : 'border-slate-200 bg-slate-50 hover:border-indigo-300 hover:bg-white' }}"
@@ -44,7 +61,7 @@
                         </span>
                         <span class="min-w-0">
                             <span class="block truncate text-sm font-semibold text-slate-900">{{ $step->title }}</span>
-                            <span class="text-xs text-slate-500">{{ $stepAttempt?->status ?? 'locked' }}</span>
+                            <span class="text-xs text-slate-500">{{ $stepStatusLabel }}</span>
                         </span>
                     </button>
                 @endforeach
@@ -53,8 +70,10 @@
 
         <section class="space-y-6 xl:col-span-9">
             @if($activeStep)
-                @php($payload = $activeStep->content_payload ?? [])
-                @php($activeAttempt = $stepAttempts->get($activeStep->id))
+                @php
+                    $payload = $activeStep->content_payload ?? [];
+                    $activeAttempt = $stepAttempts->get($activeStep->id);
+                @endphp
 
                 <div class="rounded-[24px] border border-slate-200/80 bg-white p-5 shadow-sm">
                     <div class="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
@@ -63,7 +82,16 @@
                             <h2 class="mt-1 text-2xl font-semibold text-slate-900">{{ $activeStep->title }}</h2>
                             <p class="mt-2 text-sm leading-6 text-slate-600">{{ $activeStep->instruction }}</p>
                         </div>
-                        <span class="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">{{ $activeStep->type }}</span>
+                        @php
+                            $stepTypeLabel = match ($activeStep->type) {
+                                'essay' => 'Esai',
+                                'text_matching' => 'Penjodohan Teks',
+                                'image_text_matching' => 'Penjodohan Gambar-Teks',
+                                'table_checklist' => 'Checklist Tabel',
+                                default => ucwords(str_replace('_', ' ', $activeStep->type)),
+                            };
+                        @endphp
+                        <span class="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">{{ $stepTypeLabel }}</span>
                     </div>
 
                     @if($errorMessage)
@@ -81,6 +109,7 @@
                             <table class="w-full border-separate border-spacing-0 text-sm">
                                 <thead>
                                     <tr class="text-left">
+                                        <th class="border-b border-slate-200 px-3 py-3 font-semibold text-slate-700">No.</th>
                                         <th class="border-b border-slate-200 px-3 py-3 font-semibold text-slate-700">Pernyataan</th>
                                         @foreach(($payload['columns'] ?? []) as $column)
                                             <th class="border-b border-slate-200 px-3 py-3 text-center font-semibold text-slate-700">{{ $column['label'] }}</th>
@@ -90,10 +119,16 @@
                                 <tbody>
                                     @foreach(($payload['rows'] ?? []) as $row)
                                         <tr class="align-top">
+                                            <td class="border-b border-slate-100 px-3 py-3 font-medium text-slate-500">{{ $loop->iteration }}</td>
                                             <td class="border-b border-slate-100 px-3 py-3 font-medium text-slate-900">{{ $row['label'] }}</td>
                                             @foreach(($payload['columns'] ?? []) as $column)
                                                 <td class="border-b border-slate-100 px-3 py-3 text-center">
-                                                    <input type="radio" wire:model="answer.rows.{{ $row['id'] }}" value="{{ $column['id'] }}" class="h-4 w-4 border-slate-300 text-indigo-600 focus:ring-indigo-200">
+                                                    <input
+                                                        type="radio"
+                                                        wire:model="answer.rows.{{ $row['id'] }}"
+                                                        value="{{ $column['id'] }}"
+                                                        class="h-5 w-5 appearance-none rounded-md border-2 border-slate-300 bg-white text-indigo-600 transition checked:border-indigo-600 checked:bg-indigo-600 focus:ring-2 focus:ring-indigo-200"
+                                                    >
                                                 </td>
                                             @endforeach
                                         </tr>
@@ -112,7 +147,7 @@
                                                     <p class="text-sm font-semibold text-slate-900">{{ $item['label'] }}</p>
                                                 </div>
 
-                                                <select wire:model="answer.matches.{{ $item['key'] }}" class="w-full max-w-[160px] rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100">
+                                                <select wire:model="answer.matches.{{ $item['key'] }}" class="w-full max-w-[120px] rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100">
                                                     <option value="">Pilih huruf</option>
                                                     @foreach(($payload['options'] ?? []) as $option)
                                                         <option value="{{ $option['key'] }}">{{ $option['key'] }}</option>
@@ -125,14 +160,16 @@
 
                                 <div class="rounded-[22px] border border-slate-200 bg-white p-4 shadow-sm xl:col-span-5">
                                     <p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-indigo-700">Daftar Jawaban</p>
-                                    <h3 class="mt-1 text-lg font-semibold text-slate-900">Pilih huruf dari kolom ini</h3>
                                     <div class="mt-4 space-y-3">
                                         @foreach(($payload['options'] ?? []) as $option)
                                             <div class="flex items-start gap-3 rounded-[18px] border border-slate-200 bg-slate-50 p-4">
                                                 <span class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-sm font-semibold text-white">
                                                     {{ $option['key'] }}
                                                 </span>
-                                                <p class="text-sm leading-6 text-slate-700">{{ $option['label'] }}</p>
+                                                <div class="min-w-0">
+                                                    <p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-indigo-700">Jawaban {{ $option['key'] }}</p>
+                                                    <p class="text-sm leading-6 text-slate-700">{{ $option['label'] }}</p>
+                                                </div>
                                             </div>
                                         @endforeach
                                     </div>
@@ -161,44 +198,56 @@
                     @endif
                 </div>
 
-                @if(isset($activeAttempt->result_payload['message']) || isset($activeAttempt->result_payload['correct']))
-                    <div class="rounded-[24px] border border-slate-200/80 bg-white p-5 shadow-sm">
+                @php
+                    $resultPayload = $activeAttempt->result_payload ?? [];
+                    $resultCorrect = (int) data_get($resultPayload, 'correct', 0);
+                    $resultTotal = (int) data_get($resultPayload, 'total', 0);
+                    $hasResultMessage = filled(data_get($resultPayload, 'message'));
+                    $hasResultScore = array_key_exists('correct', $resultPayload);
+                    $showResultPanel = $hasResultMessage || $hasResultScore;
+                    $resultStatusLabel = $resultTotal > 0 ? 'Tepat ' . $resultCorrect . ' dari ' . $resultTotal : null;
+                    $selectedLabel = in_array($activeStep->type, ['table_checklist'], true) ? 'Pilihan Anda' : 'Jawaban Anda';
+                    $correctLabel = in_array($activeStep->type, ['table_checklist'], true) ? 'Kunci jawaban' : 'Kunci jawaban';
+                @endphp
+
+                @if($showResultPanel)
+                    <div id="quiz-feedback-panel" tabindex="-1" class="rounded-[24px] border border-slate-200/80 bg-white p-5 shadow-sm scroll-mt-24 motion-safe:animate-[quizFeedbackIn_380ms_ease-out]">
                         <div class="flex items-center justify-between gap-3">
                             <div>
                                 <p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-indigo-700">Hasil</p>
-                                <h3 class="mt-1 text-2xl font-semibold text-slate-900">Umpan balik jawaban</h3>
+                                <h3 class="mt-1 text-2xl font-semibold text-slate-900">Ringkasan Penilaian</h3>
                             </div>
-                            @if(isset($activeAttempt->result_payload['correct']))
+                            @if($resultStatusLabel)
                                 <span class="rounded-full bg-indigo-100 px-3 py-1 text-sm font-semibold text-indigo-700">
-                                    {{ $activeAttempt->result_payload['correct'] ?? 0 }} / {{ $activeAttempt->result_payload['total'] ?? 0 }}
+                                    {{ $resultStatusLabel }}
                                 </span>
                             @endif
                         </div>
 
-                        @if(isset($activeAttempt->result_payload['message']))
+                        @if($hasResultMessage)
                             <p class="mt-4 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
-                                {{ $activeAttempt->result_payload['message'] }}
+                                Jawaban esai telah dikirim dan menunggu penilaian guru.
                             </p>
                         @else
                             <p class="mt-4 text-sm text-slate-600">
-                                Benar {{ $activeAttempt->result_payload['correct'] ?? 0 }} dari {{ $activeAttempt->result_payload['total'] ?? 0 }}. Skor: {{ $activeAttempt->score }}
+                                Skor akhir: {{ $activeAttempt->score }}.
                             </p>
                             <div class="mt-4 space-y-3">
-                                @foreach($activeAttempt->result_payload['items'] ?? [] as $item)
+                                @foreach(data_get($resultPayload, 'items', []) as $item)
                                     <div class="rounded-[18px] border p-4 {{ ($item['is_correct'] ?? false) ? 'border-emerald-200 bg-emerald-50' : 'border-red-200 bg-red-50' }}">
                                         <div class="flex flex-wrap items-center justify-between gap-2">
                                             <p class="font-semibold text-slate-900">{{ $item['item_label'] ?? $item['row_label'] ?? $item['item_key'] ?? $item['row_id'] }}</p>
                                             <span class="rounded-full px-3 py-1 text-xs font-semibold text-white {{ ($item['is_correct'] ?? false) ? 'bg-emerald-600' : 'bg-red-600' }}">
-                                                {{ ($item['is_correct'] ?? false) ? 'Benar' : 'Salah' }}
+                                                {{ ($item['is_correct'] ?? false) ? 'Tepat' : 'Perlu ditinjau' }}
                                             </span>
                                         </div>
 
                                         @if($activeStep->type === 'table_checklist')
-                                            <p class="mt-3 text-sm text-slate-700">Jawabanmu: <strong>{{ $item['selected_column_label'] ?? '-' }}</strong></p>
-                                            <p class="text-sm text-slate-700">Jawaban benar: <strong>{{ $item['correct_column_label'] ?? '-' }}</strong></p>
+                                            <p class="mt-3 text-sm text-slate-700">{{ $selectedLabel }}: <strong>{{ $item['selected_column_label'] ?? '-' }}</strong></p>
+                                            <p class="text-sm text-slate-700">{{ $correctLabel }}: <strong>{{ $item['correct_column_label'] ?? '-' }}</strong></p>
                                         @else
-                                            <p class="mt-3 text-sm text-slate-700">Jawabanmu: <strong>{{ $item['selected_option_label'] ?? '-' }}</strong></p>
-                                            <p class="text-sm text-slate-700">Jawaban benar: <strong>{{ $item['correct_option_label'] ?? '-' }}</strong></p>
+                                            <p class="mt-3 text-sm text-slate-700">{{ $selectedLabel }}: <strong>{{ $item['selected_option_label'] ?? '-' }}</strong></p>
+                                            <p class="text-sm text-slate-700">{{ $correctLabel }}: <strong>{{ $item['correct_option_label'] ?? '-' }}</strong></p>
                                         @endif
                                     </div>
                                 @endforeach
@@ -207,14 +256,16 @@
                     </div>
                 @endif
 
-                <div class="flex items-center justify-between gap-3">
-                    <div>
-                        @if(! in_array($activeAttempt?->status, ['auto_graded', 'pending_review', 'completed'], true))
-                            <button wire:click="submit" class="inline-flex items-center justify-center rounded-full bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm shadow-indigo-600/20 transition hover:bg-indigo-700">
-                                Kirim Jawaban
-                            </button>
-                        @endif
-                    </div>
+                <div class="flex items-center justify-end gap-3">
+                    @if(! in_array($activeAttempt?->status, ['auto_graded', 'pending_review', 'completed'], true))
+                        <button wire:click="submit" wire:loading.attr="disabled" wire:target="submit" class="inline-flex items-center justify-center rounded-full bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm shadow-indigo-600/20 transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-70">
+                            <span wire:loading.remove wire:target="submit">Kirim Jawaban</span>
+                            <span wire:loading wire:target="submit" class="inline-flex items-center gap-2">
+                                <span class="inline-flex h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white"></span>
+                                Memproses
+                            </span>
+                        </button>
+                    @endif
 
                     @if(in_array($activeAttempt?->status, ['auto_graded', 'pending_review', 'completed'], true))
                         @if($this->isLastStep())
@@ -223,14 +274,14 @@
                                     Kembali ke Materi
                                     <span class="material-symbols-outlined text-[18px]">menu_book</span>
                                 </a>
-                                <a href="{{ route('student.dashboard') }}" class="inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-cyan-500 to-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-indigo-500/20 transition hover:from-cyan-400 hover:to-indigo-700 hover:shadow-xl hover:shadow-indigo-500/30">
+                                <a href="{{ route('student.dashboard') }}" class="inline-flex items-center justify-center gap-2 rounded-full bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-indigo-600/20 transition hover:bg-indigo-700 hover:shadow-xl hover:shadow-indigo-600/30">
                                     Kembali ke Beranda
                                     <span class="material-symbols-outlined text-[18px]">home</span>
                                 </a>
                             </div>
                         @else
                             <button wire:click="next" class="inline-flex items-center justify-center gap-2 rounded-full bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm shadow-indigo-600/20 transition hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-600/30">
-                                Next Soal
+                                Soal Selanjutnya
                                 <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
                             </button>
                         @endif
@@ -241,3 +292,33 @@
 
     </div>
 </div>
+
+@push('styles')
+    <style>
+        @keyframes quizFeedbackIn {
+            from {
+                opacity: 0;
+                transform: translateY(14px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+@endpush
+
+@push('scripts')
+    <script>
+        window.addEventListener('quiz-feedback-ready', () => {
+            const panel = document.getElementById('quiz-feedback-panel');
+
+            if (!panel) {
+                return;
+            }
+
+            panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            panel.focus({ preventScroll: true });
+        });
+    </script>
+@endpush

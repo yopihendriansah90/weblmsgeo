@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\Models\Course;
-use App\Models\Lesson;
 use App\Models\Module;
 use App\Models\Quiz;
 use App\Models\QuizStep;
@@ -87,9 +86,14 @@ class QuizFlowTest extends TestCase
     private function quiz(): Quiz
     {
         $course = Course::create(['title' => 'SIG Test', 'slug' => 'sig-test', 'status' => 'published']);
-        $module = Module::create(['course_id' => $course->id, 'title' => 'Bab Test', 'slug' => 'bab-test', 'status' => 'published']);
-        $lesson = Lesson::create(['module_id' => $module->id, 'title' => 'Materi Test', 'slug' => 'materi-test', 'status' => 'published']);
-        $quiz = Quiz::create(['lesson_id' => $lesson->id, 'title' => 'Quiz Test', 'status' => 'published']);
+        $module = Module::create([
+            'course_id' => $course->id,
+            'type' => 'quiz',
+            'title' => 'Quiz Materi Test',
+            'slug' => 'quiz-materi-test',
+            'status' => 'published',
+        ]);
+        $quiz = Quiz::create(['module_id' => $module->id, 'title' => 'Quiz Test', 'status' => 'published']);
 
         QuizStep::create([
             'quiz_id' => $quiz->id,

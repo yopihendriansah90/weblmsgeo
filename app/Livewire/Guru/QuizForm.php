@@ -116,7 +116,7 @@ class QuizForm extends Component
                         'is_required' => true,
                         'show_result_after_submit' => true,
                         'allow_next_after_submit' => true,
-                        'status' => $form['status'],
+                        'status' => 'published',
                     ]
                 );
             }
@@ -144,13 +144,11 @@ class QuizForm extends Component
             'essay' => [
                 'title' => 'Essay',
                 'instruction' => 'Jawab dengan singkat dan jelas.',
-                'status' => 'draft',
                 'question' => 'Jelaskan...',
             ],
             'text_matching' => [
                 'title' => 'Penjodohan Teks',
                 'instruction' => 'Pasangkan soal dengan jawaban yang tepat.',
-                'status' => 'draft',
                 'pairs' => [
                     $this->blankRow('text_matching', 'pairs'),
                     $this->blankRow('text_matching', 'pairs'),
@@ -158,9 +156,8 @@ class QuizForm extends Component
                 ],
             ],
             'table_checklist' => [
-                'title' => 'Table Checklist',
+                'title' => 'Checklist Tabel',
                 'instruction' => 'Pilih satu kategori paling tepat untuk setiap baris.',
-                'status' => 'draft',
                 'columns' => [
                     $this->blankRow('table_checklist', 'columns'),
                     $this->blankRow('table_checklist', 'columns'),
@@ -175,7 +172,6 @@ class QuizForm extends Component
             'image_text_matching' => [
                 'title' => 'Penjodohan Gambar-Teks',
                 'instruction' => 'Pasangkan objek visual dengan kategori yang tepat.',
-                'status' => 'draft',
                 'options' => [
                     $this->blankRow('image_text_matching', 'options'),
                     $this->blankRow('image_text_matching', 'options'),
@@ -197,7 +193,6 @@ class QuizForm extends Component
 
             $this->stepForms[$step->type]['title'] = $step->title;
             $this->stepForms[$step->type]['instruction'] = $step->instruction;
-            $this->stepForms[$step->type]['status'] = $step->status;
 
             match ($step->type) {
                 'essay' => $this->stepForms[$step->type]['question'] = $step->content_payload['question'] ?? '',
@@ -253,7 +248,6 @@ class QuizForm extends Component
 
         $this->stepForms['table_checklist']['columns'] = collect($payload['columns'] ?? [])
             ->map(fn (array $row): array => [
-                'id' => $row['id'] ?? '',
                 'label' => $row['label'] ?? '',
             ])
             ->whenEmpty(fn () => collect([$this->blankRow('table_checklist', 'columns')]))
@@ -262,11 +256,13 @@ class QuizForm extends Component
         $this->stepForms['table_checklist']['rows'] = collect($payload['rows'] ?? [])
             ->map(function (array $row) use ($payload): array {
                 $correctCell = collect($payload['correct_cells'] ?? [])->firstWhere('row_id', $row['id'] ?? null);
+                $columnIndex = collect($payload['columns'] ?? [])
+                    ->values()
+                    ->search(fn (array $column): bool => ($column['id'] ?? null) === ($correctCell['column_id'] ?? null));
 
                 return [
-                    'id' => $row['id'] ?? '',
                     'label' => $row['label'] ?? '',
-                    'correct_column_id' => $correctCell['column_id'] ?? '',
+                    'correct_column_id' => $columnIndex === false ? '' : $this->tableChecklistColumnKey((int) $columnIndex),
                 ];
             })
             ->whenEmpty(fn () => collect([$this->blankRow('table_checklist', 'rows')]))
@@ -314,24 +310,23 @@ class QuizForm extends Component
             'stepForms.essay.title' => ['required', 'string', 'max:255'],
             'stepForms.essay.instruction' => ['nullable', 'string'],
             'stepForms.essay.question' => ['required', 'string'],
-            'stepForms.essay.status' => ['required', Rule::in(['draft', 'published'])],
 
             'stepForms.text_matching.title' => ['required', 'string', 'max:255'],
             'stepForms.text_matching.instruction' => ['nullable', 'string'],
-            'stepForms.text_matching.status' => ['required', Rule::in(['draft', 'published'])],
             'stepForms.text_matching.pairs' => ['array'],
             'stepForms.text_matching.pairs.*.question_label' => ['required', 'string'],
             'stepForms.text_matching.pairs.*.answer_label' => ['required', 'string'],
 
             'stepForms.table_checklist.title' => ['required', 'string', 'max:255'],
             'stepForms.table_checklist.instruction' => ['nullable', 'string'],
-            'stepForms.table_checklist.status' => ['required', Rule::in(['draft', 'published'])],
             'stepForms.table_checklist.columns' => ['array'],
+            'stepForms.table_checklist.columns.*.label' => ['required', 'string'],
             'stepForms.table_checklist.rows' => ['array'],
+            'stepForms.table_checklist.rows.*.label' => ['required', 'string'],
+            'stepForms.table_checklist.rows.*.correct_column_id' => ['required', 'string'],
 
             'stepForms.image_text_matching.title' => ['required', 'string', 'max:255'],
             'stepForms.image_text_matching.instruction' => ['nullable', 'string'],
-            'stepForms.image_text_matching.status' => ['required', Rule::in(['draft', 'published'])],
             'stepForms.image_text_matching.options' => ['array'],
             'stepForms.image_text_matching.options.*.label' => ['required', 'string'],
             'stepForms.image_text_matching.items' => ['array'],
@@ -374,18 +369,30 @@ class QuizForm extends Component
                     ->all(),
             ],
             'table_checklist' => [
-                'columns' => $this->normalizeList($form['columns'] ?? [], ['id', 'label']),
-                'rows' => collect($this->normalizeList($form['rows'] ?? [], ['id', 'label', 'correct_column_id']))
-                    ->map(fn (array $row): array => [
-                        'id' => $row['id'],
+                'columns' => collect($this->normalizeList($form['columns'] ?? [], ['label']))
+                    ->values()
+                    ->map(fn (array $row, int $index): array => [
+                        'id' => $this->tableChecklistColumnKey($index),
                         'label' => $row['label'],
                     ])
                     ->all(),
-                'correct_cells' => collect($this->normalizeList($form['rows'] ?? [], ['id', 'label', 'correct_column_id']))
-                    ->map(fn (array $row): array => [
-                        'row_id' => $row['id'],
-                        'column_id' => $row['correct_column_id'],
+                'rows' => collect($this->normalizeList($form['rows'] ?? [], ['label', 'correct_column_id']))
+                    ->values()
+                    ->map(fn (array $row, int $index): array => [
+                        'id' => $this->tableChecklistRowKey($index),
+                        'label' => $row['label'],
                     ])
+                    ->all(),
+                'correct_cells' => collect($this->normalizeList($form['rows'] ?? [], ['label', 'correct_column_id']))
+                    ->values()
+                    ->map(function (array $row, int $index) use ($form): array {
+                        $columnIndex = $this->resolveChecklistColumnIndex($form['columns'] ?? [], $row['correct_column_id']);
+
+                        return [
+                            'row_id' => $this->tableChecklistRowKey($index),
+                            'column_id' => $this->tableChecklistColumnKey($columnIndex),
+                        ];
+                    })
                     ->all(),
             ],
             'image_text_matching' => [
@@ -444,8 +451,8 @@ class QuizForm extends Component
         return match ($type.'.'.$section) {
             'essay.question' => ['question' => ''],
             'text_matching.pairs' => ['question_label' => '', 'answer_label' => ''],
-            'table_checklist.columns' => ['id' => '', 'label' => ''],
-            'table_checklist.rows' => ['id' => '', 'label' => '', 'correct_column_id' => ''],
+            'table_checklist.columns' => ['label' => ''],
+            'table_checklist.rows' => ['label' => '', 'correct_column_id' => ''],
             'image_text_matching.options' => ['label' => ''],
             'image_text_matching.items' => ['label' => '', 'image_url' => '', 'alt' => '', 'correct_option_key' => ''],
             default => [],
@@ -489,5 +496,26 @@ class QuizForm extends Component
     public function displayNumberKey(int $index): string
     {
         return $this->numberKey($index);
+    }
+
+    private function tableChecklistColumnKey(int $index): string
+    {
+        return $this->alphabetKey($index);
+    }
+
+    private function tableChecklistRowKey(int $index): string
+    {
+        return 'row_'.($index + 1);
+    }
+
+    private function resolveChecklistColumnIndex(array $columns, string $selectedKey): int
+    {
+        $generatedKeys = collect($columns)
+            ->values()
+            ->map(fn ($column, int $index): string => $this->tableChecklistColumnKey($index));
+
+        $index = $generatedKeys->search($selectedKey);
+
+        return $index === false ? 0 : (int) $index;
     }
 }

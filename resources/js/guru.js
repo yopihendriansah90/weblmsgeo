@@ -25,6 +25,9 @@ const notify = ({ type = 'success', message = '' } = {}) => {
     });
 };
 
+window.guruNotify = notify;
+window.guruToast = toast;
+
 const confirmDelete = async (detail = {}) => {
     const {
         title = 'Hapus data ini?',

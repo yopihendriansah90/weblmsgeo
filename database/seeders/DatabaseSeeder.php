@@ -59,10 +59,10 @@ class DatabaseSeeder extends Seeder
             });
 
             collect([
-                ['name' => 'Andini Pratama', 'username' => 'andini_08', 'school_id' => $schools[0]->id, 'class_name' => 'VIII A', 'nisn' => '100001'],
-                ['name' => 'Rizky Maulana', 'username' => 'rizky.smp1', 'school_id' => $schools[0]->id, 'class_name' => 'VIII B', 'nisn' => '100002'],
-                ['name' => 'Geo Xaverius', 'username' => 'geo-x-001', 'school_id' => $schools[1]->id, 'class_name' => 'IX A', 'nisn' => '100003'],
-                ['name' => 'Nadia Kartika', 'username' => 'nadia.sig', 'school_id' => $schools[2]->id, 'class_name' => 'X IPS 1', 'nisn' => '100004'],
+                ['name' => 'Andini Pratama', 'username' => 'andini', 'school_id' => $schools[0]->id, 'class_name' => 'VIII A', 'nisn' => '100001'],
+                ['name' => 'Rizky Maulana', 'username' => 'rizky', 'school_id' => $schools[0]->id, 'class_name' => 'VIII B', 'nisn' => '100002'],
+                ['name' => 'Geo Xaverius', 'username' => 'geo', 'school_id' => $schools[1]->id, 'class_name' => 'IX A', 'nisn' => '100003'],
+                ['name' => 'Nadia Kartika', 'username' => 'nadia', 'school_id' => $schools[2]->id, 'class_name' => 'X IPS 1', 'nisn' => '100004'],
             ])->each(function (array $studentData) use ($siswaRole) {
                 $user = User::updateOrCreate(
                     ['username' => $studentData['username']],

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\LessonProgress;
 use App\Models\Quiz;
+use App\Models\QuizAttempt;
 use App\Models\Student;
 
 class StudentDashboardService
@@ -14,6 +15,7 @@ class StudentDashboardService
     {
         $attempts = $student->quizAttempts()->with(['quiz.module.course', 'stepAttempts.quizStep'])->latest()->get();
         $latestAttemptsByQuizId = $attempts->groupBy('quiz_id')->map(fn ($group) => $group->first());
+        $latestCompletedAttempt = $attempts->first(fn (QuizAttempt $attempt): bool => $attempt->final_score !== null);
         $recentMaterials = LessonProgress::query()
             ->where('student_id', $student->id)
             ->whereHas('module', fn ($query) => $query->where('type', 'lesson'))
@@ -33,7 +35,15 @@ class StudentDashboardService
                 ->latest('last_opened_at')
                 ->first()?->module,
             'recent_materials' => $recentMaterials,
-            'available_quizzes' => Quiz::where('status', 'published')->with('module.course')->get(),
+            'available_quizzes' => Quiz::query()
+                ->where('status', 'published')
+                ->whereHas('module', function ($query): void {
+                    $query->where('type', 'quiz')
+                        ->where('status', 'published')
+                        ->whereHas('course', fn ($courseQuery) => $courseQuery->where('status', 'published'));
+                })
+                ->with('module.course')
+                ->get(),
             'quiz_states' => $latestAttemptsByQuizId->map(fn ($attempt): array => [
                 'status' => $attempt->status,
                 'final_score' => $attempt->final_score,
@@ -42,7 +52,7 @@ class StudentDashboardService
             ]),
             'attempts' => $attempts,
             'pending_essays' => $attempts->where('status', 'pending_review'),
-            'latest_score' => $attempts->whereNotNull('final_score')->first()?->final_score,
+            'latest_score' => $latestCompletedAttempt?->final_score,
             'wrong_answers' => $this->extractWrongAnswers($attempts),
         ];
     }

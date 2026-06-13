@@ -25,7 +25,7 @@ class QuizFlowService
                 ['started_at' => now()],
             );
 
-            $steps = $quiz->steps()->where('status', 'published')->get();
+            $steps = $quiz->steps()->get();
             foreach ($steps as $index => $step) {
                 $stepAttempt = QuizStepAttempt::firstOrCreate(
                     ['quiz_attempt_id' => $attempt->id, 'quiz_step_id' => $step->id],
@@ -86,7 +86,7 @@ class QuizFlowService
                 $stepAttempt->update([
                     'status' => 'pending_review',
                     'submitted_at' => now(),
-                    'result_payload' => array_merge($existingPayload, ['message' => 'Jawaban essay menunggu penilaian guru.']),
+                    'result_payload' => array_merge($existingPayload, ['message' => 'Jawaban esai telah dikirim dan menunggu penilaian guru.']),
                 ]);
 
                 EssayReview::firstOrCreate(
@@ -123,7 +123,6 @@ class QuizFlowService
     public function unlockNextStep(QuizAttempt $attempt, QuizStep $step): void
     {
         $next = $attempt->quiz->steps()
-            ->where('status', 'published')
             ->where('sort_order', '>', $step->sort_order)
             ->orderBy('sort_order')
             ->first();

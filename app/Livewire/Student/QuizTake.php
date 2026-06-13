@@ -53,6 +53,7 @@ class QuizTake extends Component
         try {
             $flowService->submitStep($this->attempt->fresh(['quiz.steps', 'stepAttempts']), $step, $this->normalizedAnswer($step));
             $this->attempt = $this->attempt->fresh(['quiz.steps', 'stepAttempts.quizStep', 'stepAttempts.answers', 'stepAttempts.essayReview']);
+            $this->dispatch('quiz-feedback-ready');
         } catch (\Throwable $exception) {
             $this->errorMessage = $exception->getMessage();
         }
@@ -105,7 +106,7 @@ class QuizTake extends Component
     public function render()
     {
         return view('livewire.student.quiz-take', [
-            'steps' => $this->quiz->steps()->where('status', 'published')->get(),
+            'steps' => $this->quiz->steps,
             'stepAttempts' => $this->attempt->stepAttempts()->with(['quizStep', 'answers', 'essayReview'])->get()->keyBy('quiz_step_id'),
             'activeStep' => QuizStep::find($this->activeStepId),
         ]);
