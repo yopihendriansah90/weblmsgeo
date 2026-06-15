@@ -61,7 +61,7 @@ class EssayReviewResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return static::currentUserIsTeacherOrAdmin();
+        return static::currentUserIsTeacherOnly();
     }
 
     public static function canCreate(): bool
@@ -72,5 +72,10 @@ class EssayReviewResource extends Resource
     public static function canDeleteAny(): bool
     {
         return false;
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return static::currentUserIsTeacherOnly();
     }
 }

@@ -20,4 +20,9 @@ trait HasPanelRoleAccess
     {
         return static::currentUserCanAccess(['super_admin', 'guru']);
     }
+
+    protected static function currentUserIsTeacherOnly(): bool
+    {
+        return static::currentUserCanAccess(['guru']);
+    }
 }

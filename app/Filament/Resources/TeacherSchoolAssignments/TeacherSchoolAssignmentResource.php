@@ -21,7 +21,13 @@ class TeacherSchoolAssignmentResource extends Resource
 
     protected static ?string $model = TeacherSchoolAssignment::class;
 
-    protected static ?string $navigationLabel = 'Assignment Guru';
+    protected static string|\UnitEnum|null $navigationGroup = 'Pengaturan Website';
+
+    protected static ?string $navigationLabel = 'Assign Guru ke Sekolah';
+
+    protected static ?string $modelLabel = 'assign guru ke sekolah';
+
+    protected static ?string $pluralModelLabel = 'assign guru ke sekolah';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 

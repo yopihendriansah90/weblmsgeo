@@ -24,6 +24,14 @@ class StudentResource extends Resource
 
     protected static ?string $model = Student::class;
 
+    protected static string|\UnitEnum|null $navigationGroup = 'Pengaturan Website';
+
+    protected static ?string $navigationLabel = 'Siswa';
+
+    protected static ?string $modelLabel = 'siswa';
+
+    protected static ?string $pluralModelLabel = 'siswa';
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     public static function form(Schema $schema): Schema

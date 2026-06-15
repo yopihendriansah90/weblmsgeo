@@ -13,7 +13,19 @@ class TeacherSchoolAssignmentForm
     {
         return $schema
             ->components([
-                Select::make('teacher_id')->options(fn () => Teacher::with('user')->get()->pluck('user.name', 'id'))->label('Guru')->required()->searchable(),
+                Select::make('teacher_id')
+                    ->options(fn () => Teacher::query()
+                        ->with('user')
+                        ->where('status', 'active')
+                        ->get()
+                        ->sortBy(fn (Teacher $teacher) => $teacher->user?->name)
+                        ->mapWithKeys(fn (Teacher $teacher) => [
+                            $teacher->id => trim(($teacher->user?->name ?? 'Tanpa Nama').' - '.($teacher->teacher_code ?? 'Tanpa Kode')),
+                        ]))
+                    ->label('Guru')
+                    ->required()
+                    ->searchable()
+                    ->preload(),
                 Select::make('school_id')->relationship('school', 'name')->label('Sekolah')->required()->searchable()->preload(),
                 Select::make('status')->options(['active' => 'Aktif', 'inactive' => 'Nonaktif'])->required()->default('active'),
                 Textarea::make('revoke_reason')->label('Alasan pencabutan')->columnSpanFull(),

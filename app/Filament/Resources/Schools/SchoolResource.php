@@ -21,6 +21,14 @@ class SchoolResource extends Resource
 
     protected static ?string $model = School::class;
 
+    protected static string|\UnitEnum|null $navigationGroup = 'Pengaturan Website';
+
+    protected static ?string $navigationLabel = 'Sekolah';
+
+    protected static ?string $modelLabel = 'sekolah';
+
+    protected static ?string $pluralModelLabel = 'sekolah';
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     public static function form(Schema $schema): Schema

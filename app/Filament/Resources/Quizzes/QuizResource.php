@@ -53,6 +53,11 @@ class QuizResource extends Resource
 
     public static function canViewAny(): bool
     {
-        return static::currentUserIsTeacherOrAdmin();
+        return static::currentUserIsTeacherOnly();
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return static::currentUserIsTeacherOnly();
     }
 }

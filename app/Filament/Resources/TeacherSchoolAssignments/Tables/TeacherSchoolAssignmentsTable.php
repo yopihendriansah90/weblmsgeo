@@ -19,10 +19,11 @@ class TeacherSchoolAssignmentsTable
                     ->label('No')
                     ->rowIndex(),
                 TextColumn::make('teacher.user.name')->label('Guru')->searchable(),
+                TextColumn::make('teacher.teacher_code')->label('Kode Guru')->toggleable(),
                 TextColumn::make('school.name')->label('Sekolah')->searchable(),
                 TextColumn::make('assigner.name')->label('Diassign Oleh'),
                 TextColumn::make('status')->badge(),
-                TextColumn::make('assigned_at')->dateTime(),
+                TextColumn::make('assigned_at')->label('Tanggal Assign')->dateTime(),
             ])
             ->filters([
                 SelectFilter::make('status')->options(['active' => 'Aktif', 'inactive' => 'Nonaktif']),

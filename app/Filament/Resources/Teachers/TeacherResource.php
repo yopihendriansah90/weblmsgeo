@@ -21,6 +21,14 @@ class TeacherResource extends Resource
 
     protected static ?string $model = Teacher::class;
 
+    protected static string|\UnitEnum|null $navigationGroup = 'Pengaturan Website';
+
+    protected static ?string $navigationLabel = 'Guru';
+
+    protected static ?string $modelLabel = 'guru';
+
+    protected static ?string $pluralModelLabel = 'guru';
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
     public static function form(Schema $schema): Schema

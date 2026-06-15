@@ -22,6 +22,8 @@ class SuperAdminResource extends Resource
 
     protected static ?string $model = User::class;
 
+    protected static string|\UnitEnum|null $navigationGroup = 'Administrasi';
+
     protected static ?string $navigationLabel = 'Akun Super Admin';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedShieldCheck;
