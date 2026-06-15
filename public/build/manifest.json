@@ -1,0 +1,29 @@
+{
+  "resources/css/app.css": {
+    "file": "assets/app-B8-IoTH2.css",
+    "src": "resources/css/app.css",
+    "isEntry": true,
+    "name": "app",
+    "names": [
+      "app.css"
+    ]
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-DsbP9Jus.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true
+  },
+  "resources/js/guru.js": {
+    "file": "assets/guru-kezGpF6H.js",
+    "name": "guru",
+    "src": "resources/js/guru.js",
+    "isEntry": true,
+    "imports": [
+      "resources/js/app.js"
+    ],
+    "css": [
+      "assets/guru-9ytS4ZTo.css"
+    ]
+  }
+}

@@ -6,9 +6,6 @@ use App\Models\Course;
 use App\Models\Module;
 use App\Models\Quiz;
 use App\Models\QuizStep;
-use App\Models\School;
-use App\Models\Student;
-use App\Models\Teacher;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -20,65 +17,14 @@ class DatabaseSeeder extends Seeder
     {
         DB::transaction(function () {
             $superAdminRole = Role::findOrCreate('super_admin');
-            $guruRole = Role::findOrCreate('guru');
-            $siswaRole = Role::findOrCreate('siswa');
+            Role::findOrCreate('guru');
+            Role::findOrCreate('siswa');
 
             $admin = User::updateOrCreate(
                 ['username' => 'admin'],
                 ['name' => 'Super Admin', 'email' => 'admin@gmail.com', 'password' => 'password', 'status' => 'active'],
             );
             $admin->syncRoles([$superAdminRole]);
-
-            $schools = collect([
-                ['name' => 'SMP Negeri 1 Geo', 'code' => 'SMPGEO1', 'level' => 'SMP', 'city' => 'Jakarta', 'province' => 'DKI Jakarta'],
-                ['name' => 'SMP Negeri 2 Geo', 'code' => 'SMPGEO2', 'level' => 'SMP', 'city' => 'Bandung', 'province' => 'Jawa Barat'],
-                ['name' => 'SMA Nusantara SIG', 'code' => 'SMASIG1', 'level' => 'SMA', 'city' => 'Yogyakarta', 'province' => 'DI Yogyakarta'],
-            ])->map(fn (array $school) => School::updateOrCreate(['code' => $school['code']], [...$school, 'status' => 'active']));
-
-            collect([
-                ['name' => 'Pak Ahmad', 'username' => 'pak.ahmad', 'email' => 'ahmad@gmail.com', 'teacher_code' => 'GEO-001', 'school_ids' => [$schools[0]->id, $schools[1]->id]],
-                ['name' => 'Bu Sari', 'username' => 'bu.sari', 'email' => 'sari@gmail.com', 'teacher_code' => 'GEO-002', 'school_ids' => [$schools[2]->id]],
-                ['name' => 'Yopi', 'username' => 'yopi', 'email' => 'yopi@gmail.com', 'teacher_code' => 'GEO-003', 'school_ids' => [$schools[0]->id, $schools[1]->id, $schools[2]->id], 'password' => 'password'],
-            ])->each(function (array $teacherData) use ($guruRole, $admin) {
-                $user = User::updateOrCreate(
-                    ['username' => $teacherData['username']],
-                    ['name' => $teacherData['name'], 'email' => $teacherData['email'], 'password' => $teacherData['password'] ?? 'password', 'status' => 'active'],
-                );
-                $user->syncRoles([$guruRole]);
-                $teacher = Teacher::updateOrCreate(
-                    ['user_id' => $user->id],
-                    ['teacher_code' => $teacherData['teacher_code'], 'status' => 'active'],
-                );
-
-                foreach ($teacherData['school_ids'] as $schoolId) {
-                    $teacher->assignments()->updateOrCreate(
-                        ['school_id' => $schoolId],
-                        ['assigned_by' => $admin->id, 'status' => 'active', 'assigned_at' => now()],
-                    );
-                }
-            });
-
-            collect([
-                ['name' => 'Andini Pratama', 'username' => 'andini', 'school_id' => $schools[0]->id, 'class_name' => 'VIII A', 'nisn' => '100001'],
-                ['name' => 'Rizky Maulana', 'username' => 'rizky', 'school_id' => $schools[0]->id, 'class_name' => 'VIII B', 'nisn' => '100002'],
-                ['name' => 'Geo Xaverius', 'username' => 'geo', 'school_id' => $schools[1]->id, 'class_name' => 'IX A', 'nisn' => '100003'],
-                ['name' => 'Nadia Kartika', 'username' => 'nadia', 'school_id' => $schools[2]->id, 'class_name' => 'X IPS 1', 'nisn' => '100004'],
-            ])->each(function (array $studentData) use ($siswaRole) {
-                $user = User::updateOrCreate(
-                    ['username' => $studentData['username']],
-                    ['name' => $studentData['name'], 'email' => null, 'password' => 'password', 'status' => 'active'],
-                );
-                $user->syncRoles([$siswaRole]);
-                Student::updateOrCreate(
-                    ['user_id' => $user->id],
-                    [
-                        'school_id' => $studentData['school_id'],
-                        'class_name' => $studentData['class_name'],
-                        'nisn' => $studentData['nisn'],
-                        'status' => 'active',
-                    ],
-                );
-            });
 
             $course = Course::updateOrCreate(
                 ['slug' => 'sistem-informasi-geografis'],
@@ -149,6 +95,11 @@ class DatabaseSeeder extends Seeder
                 );
             }
         });
+
+        $this->call([
+            GuruAccountSeeder::class,
+            SiswaAccountSeeder::class,
+        ]);
     }
 
     private function quizSteps(): array
