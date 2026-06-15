@@ -25,33 +25,48 @@
                 </div>
 
                 <div class="mt-5 space-y-3">
-                    @foreach($course->modules as $module)
-                        @php($isQuiz = $module->isQuiz())
-                        <div class="group rounded-[20px] border border-slate-200 bg-slate-50 p-4 transition hover:border-indigo-300 hover:bg-white">
+                    @foreach($courseItems as $item)
+                        @php($module = $item['module'])
+                        @php($isQuiz = $item['is_quiz'])
+                        <div class="group rounded-[20px] border p-4 transition {{ $item['is_locked'] ? 'border-slate-200 bg-slate-100/80' : 'border-slate-200 bg-slate-50 hover:border-indigo-300 hover:bg-white' }}">
                             <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                                 <div class="flex gap-4">
-                                    <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl {{ $isQuiz ? 'bg-cyan-100 text-cyan-700' : 'bg-indigo-100 text-indigo-700' }}">
-                                        <span class="material-symbols-outlined">{{ $isQuiz ? 'quiz' : 'menu_book' }}</span>
+                                    <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl {{ $item['is_locked'] ? 'bg-slate-200 text-slate-500' : ($isQuiz ? 'bg-cyan-100 text-cyan-700' : 'bg-indigo-100 text-indigo-700') }}">
+                                        <span class="material-symbols-outlined">{{ $item['is_locked'] ? 'lock' : ($isQuiz ? 'quiz' : 'menu_book') }}</span>
                                     </div>
                                     <div>
                                         <div class="flex flex-wrap items-center gap-2">
                                             <p class="text-sm font-semibold uppercase tracking-[0.22em] text-slate-500">
-                                                {{ $isQuiz ? 'Quiz Materi' : 'Bab Pembahasan' }}
+                                                {{ $item['label'] }}
                                             </p>
-                                            <span class="rounded-full px-3 py-1 text-xs font-semibold {{ $isQuiz ? 'bg-cyan-100 text-cyan-700' : 'bg-indigo-100 text-indigo-700' }}">
-                                                {{ $isQuiz ? 'Item Quiz' : 'Bab ' . ($loop->iteration) }}
+                                            <span class="rounded-full px-3 py-1 text-xs font-semibold {{ $item['is_locked'] ? 'bg-slate-200 text-slate-600' : ($isQuiz ? 'bg-cyan-100 text-cyan-700' : 'bg-indigo-100 text-indigo-700') }}">
+                                                {{ $item['badge'] }}
                                             </span>
+                                            @if($item['is_locked'])
+                                                <span class="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700">Terkunci</span>
+                                            @elseif($item['is_completed'])
+                                                <span class="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">Selesai</span>
+                                            @endif
                                         </div>
                                         <h3 class="mt-2 text-xl font-semibold text-slate-900">{{ $isQuiz ? ($module->title ?: 'Quiz Akhir Materi') : $module->title }}</h3>
                                         <p class="mt-2 max-w-3xl text-sm leading-6 text-slate-600">
-                                            {{ $isQuiz ? ($module->description ?: 'Item khusus untuk quiz materi.') : (\Illuminate\Support\Str::limit(trim(strip_tags($module->description ?: $module->content)), 140)) }}
+                                            {{ $isQuiz
+                                                ? ($item['is_locked']
+                                                    ? 'Quiz akan terbuka setelah semua bab pembahasan pada learning path ini selesai dipelajari.'
+                                                    : ($module->description ?: 'Item khusus untuk quiz materi.'))
+                                                : (\Illuminate\Support\Str::limit(trim(strip_tags($module->description ?: $module->content)), 140)) }}
                                         </p>
                                     </div>
                                 </div>
 
                                 <div class="flex flex-wrap gap-2">
                                     @if($isQuiz)
-                                        @if($module->publishedQuiz)
+                                        @if($item['is_locked'])
+                                            <span class="inline-flex items-center justify-center gap-2 rounded-full border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-500">
+                                                <span class="material-symbols-outlined text-[18px]">lock</span>
+                                                Quiz Terkunci
+                                            </span>
+                                        @elseif($module->publishedQuiz)
                                             <a class="inline-flex items-center justify-center rounded-full bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white shadow-sm shadow-indigo-600/20 transition hover:bg-indigo-700" href="{{ route('student.quizzes.take', $module->publishedQuiz) }}">
                                                 Buka Quiz
                                             </a>
@@ -61,9 +76,11 @@
                                             </span>
                                         @endif
                                     @else
-                                        <a class="inline-flex items-center justify-center rounded-full border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:border-indigo-300 hover:text-indigo-700" href="{{ route('student.modules.show', $module) }}">
-                                            Buka Materi
-                                        </a>
+                                        @if($item['href'])
+                                            <a class="inline-flex items-center justify-center rounded-full border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:border-indigo-300 hover:text-indigo-700" href="{{ $item['href'] }}">
+                                                Buka Materi
+                                            </a>
+                                        @endif
                                     @endif
                                 </div>
                             </div>
