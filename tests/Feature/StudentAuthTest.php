@@ -33,6 +33,10 @@ class StudentAuthTest extends TestCase
             ->set('username', 'siswa_test')
             ->set('password', 'password')
             ->call('login')
+            ->assertRedirect('/siswa');
+
+        $this->actingAs($user)
+            ->get('/siswa')
             ->assertRedirect(route('student.dashboard'));
     }
 

@@ -50,7 +50,7 @@ class Login extends Component
         }
 
         if ($user->hasRole('guru')) {
-            return redirect()->intended(route('guru.dashboard'));
+            return redirect()->intended('/guru');
         }
 
         if ($user->hasRole('siswa')) {
@@ -59,7 +59,7 @@ class Login extends Component
                 $this->addError('username', 'Akun siswa tidak aktif.');
                 return null;
             }
-            return redirect()->intended(route('student.dashboard'));
+            return redirect()->intended('/siswa');
         }
 
         // Default redirect

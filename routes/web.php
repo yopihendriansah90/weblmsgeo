@@ -19,8 +19,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     if (auth()->check()) {
         if (auth()->user()->hasRole('super_admin')) return redirect('/admin');
-        if (auth()->user()->hasRole('guru')) return redirect()->route('guru.dashboard');
-        if (auth()->user()->hasRole('siswa')) return redirect()->route('student.dashboard');
+        if (auth()->user()->hasRole('guru')) return redirect('/guru');
+        if (auth()->user()->hasRole('siswa')) return redirect('/siswa');
     }
     return redirect()->route('login');
 });
@@ -59,6 +59,9 @@ Route::post('/guru/logout', function (Request $request) {
 })->middleware('auth')->name('guru.logout');
 
 Route::middleware(['auth', 'student'])->prefix('siswa')->name('student.')->group(function () {
+    Route::get('/', function () {
+        return redirect()->route('student.dashboard');
+    })->name('home');
     Route::get('/dashboard', Dashboard::class)->name('dashboard');
     Route::get('/kursus', CourseIndex::class)->name('courses');
     Route::get('/kursus/{course:slug}', CourseShow::class)->name('courses.show');

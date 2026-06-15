@@ -32,6 +32,6 @@ class GuruAuthTest extends TestCase
             ->set('username', 'guru_test')
             ->set('password', 'password')
             ->call('login')
-            ->assertRedirect(route('guru.dashboard'));
+            ->assertRedirect('/guru');
     }
 }
