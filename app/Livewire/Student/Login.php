@@ -69,7 +69,7 @@ class Login extends Component
     public function render()
     {
         return view('livewire.student.login', [
-            'title' => 'Login LMS SIG',
+            'title' => config('app.name'),
             'subtitle' => 'Masuk menggunakan username dan password yang terdaftar.',
         ]);
     }

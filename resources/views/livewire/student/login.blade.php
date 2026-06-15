@@ -1,10 +1,10 @@
 <div class="auth-shell">
     <div class="auth-card">
-        <section class="auth-brand-panel" aria-label="Web LMS SIG">
+        <section class="auth-brand-panel" aria-label="{{ config('app.name') }}">
             <div class="auth-brand-content">
-                <a href="/" class="auth-brand-mark" aria-label="Web LMS SIG">
+                <a href="/" class="auth-brand-mark" aria-label="{{ config('app.name') }}">
                     <span class="material-symbols-outlined auth-brand-icon">school</span>
-                    <span>Web LMS SIG</span>
+                    <span>{{ config('app.name') }}</span>
                 </a>
 
                 <div class="auth-brand-copy">
@@ -31,7 +31,7 @@
         <section class="auth-form-panel">
             <div class="auth-mobile-brand">
                 <span class="material-symbols-outlined auth-brand-icon">school</span>
-                <span>Web LMS SIG</span>
+                <span>{{ config('app.name') }}</span>
             </div>
 
             <div class="auth-heading">
@@ -87,7 +87,7 @@
                 </label>
 
                 <button type="submit" class="auth-submit" wire:loading.attr="disabled" wire:target="login">
-                    <span wire:loading.remove wire:target="login">Masuk ke LMS</span>
+                    <span wire:loading.remove wire:target="login">Masuk ke {{ config('app.name') }}</span>
                     <span wire:loading wire:target="login">Memproses...</span>
                     <span class="material-symbols-outlined">login</span>
                 </button>

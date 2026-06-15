@@ -53,7 +53,7 @@
                     <h3 class="card-title">Selamat Datang</h3>
                 </div>
                 <div class="card-body">
-                    <p>Selamat datang di Panel Guru LMS SIG. Gunakan menu di samping untuk mengelola materi, kuis, dan melihat laporan hasil belajar siswa.</p>
+                    <p>Selamat datang di panel guru {{ config('app.name') }}. Gunakan menu di samping untuk mengelola materi, kuis, dan melihat laporan hasil belajar siswa.</p>
                 </div>
             </div>
         </div>

@@ -1,6 +1,17 @@
 {
+  "_sweetalert2-U0Zsyrl3.css": {
+    "file": "assets/sweetalert2-U0Zsyrl3.css",
+    "src": "_sweetalert2-U0Zsyrl3.css"
+  },
+  "_sweetalert2.min-IAF1_VfD.js": {
+    "file": "assets/sweetalert2.min-IAF1_VfD.js",
+    "name": "sweetalert2.min",
+    "css": [
+      "assets/sweetalert2-U0Zsyrl3.css"
+    ]
+  },
   "resources/css/app.css": {
-    "file": "assets/app-B8-IoTH2.css",
+    "file": "assets/app-EgiZb7T7.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "name": "app",
@@ -9,21 +20,24 @@
     ]
   },
   "resources/js/app.js": {
-    "file": "assets/app-DsbP9Jus.js",
+    "file": "assets/app-wjqsY9a9.js",
     "name": "app",
     "src": "resources/js/app.js",
-    "isEntry": true
+    "isEntry": true,
+    "imports": [
+      "_sweetalert2.min-IAF1_VfD.js"
+    ]
   },
   "resources/js/guru.js": {
-    "file": "assets/guru-kezGpF6H.js",
+    "file": "assets/guru-Vs-qHod8.js",
     "name": "guru",
     "src": "resources/js/guru.js",
     "isEntry": true,
     "imports": [
-      "resources/js/app.js"
+      "_sweetalert2.min-IAF1_VfD.js"
     ],
     "css": [
-      "assets/guru-9ytS4ZTo.css"
+      "assets/guru-Cvx6h_fL.css"
     ]
   }
 }

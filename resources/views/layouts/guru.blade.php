@@ -282,12 +282,12 @@
       <!--begin::Footer-->
       <footer class="app-footer">
         <!--begin::To the end-->
-        <div class="float-end d-none d-sm-inline">LMS SIG</div>
+        <div class="float-end d-none d-sm-inline">{{ config('app.name') }}</div>
         <!--end::To the end-->
         <!--begin::Copyright-->
         <strong>
           Copyright &copy; 2024&nbsp;
-          <a href="#" class="text-decoration-none">Web LMS Geo</a>.
+          <a href="#" class="text-decoration-none">{{ config('app.name') }}</a>.
         </strong>
         All rights reserved.
         <!--end::Copyright-->

@@ -14,6 +14,8 @@ class LessonShow extends Component
     public Module $module;
     public Collection $timelineItems;
     public ?array $nextTimelineItem = null;
+    public bool $hasFinalQuiz = false;
+    public bool $isFinalQuizAvailable = false;
 
     public function mount(Module $module, LessonProgressService $progressService): void
     {
@@ -25,6 +27,7 @@ class LessonShow extends Component
         $this->loadModule($module);
         $progressService->open($student, $module);
         $this->refreshTimeline($student);
+        $this->refreshQuizState();
     }
 
     public function complete(LessonProgressService $progressService): void
@@ -35,6 +38,13 @@ class LessonShow extends Component
         session()->flash('status', 'Materi ditandai selesai.');
         $this->loadModule($this->module->fresh());
         $this->refreshTimeline($student);
+        $this->refreshQuizState();
+
+        if ($this->nextTimelineItem && filled($this->nextTimelineItem['href'] ?? null)) {
+            $this->redirect($this->nextTimelineItem['href'], navigate: false);
+
+            return;
+        }
     }
 
     public function render()
@@ -68,7 +78,7 @@ class LessonShow extends Component
                 'status' => $isCompleted ? 'completed' : ($isCurrent ? 'current' : ($isAvailable ? 'available' : 'locked')),
                 'icon' => $courseModule->isQuiz()
                     ? ($isCompleted ? 'check' : ($isAvailable ? 'quiz' : 'lock'))
-                    : ($isCompleted ? 'check' : ($isCurrent ? 'play_arrow' : ($isAvailable ? 'menu_book' : 'lock'))),
+                    : ($isCompleted ? 'check' : ($isCurrent ? 'auto_stories' : ($isAvailable ? 'auto_stories' : 'lock'))),
                 'href' => $courseModule->isQuiz()
                     ? (($isCompleted || $isAvailable) && $courseModule->publishedQuiz ? route('student.quizzes.take', $courseModule->publishedQuiz) : null)
                     : ($isCompleted || $isCurrent || $isAvailable ? route('student.modules.show', $courseModule) : null),
@@ -101,5 +111,13 @@ class LessonShow extends Component
         $this->timelineItems = $this->buildTimelineItems($student);
         $this->nextTimelineItem = $this->timelineItems
             ->first(fn (array $item) => $item['href'] && ! $item['is_current'] && $item['status'] === 'available');
+    }
+
+    private function refreshQuizState(): void
+    {
+        $quizModule = $this->module->course->modules->first(fn (Module $courseModule) => $courseModule->isQuiz());
+
+        $this->hasFinalQuiz = (bool) $quizModule;
+        $this->isFinalQuizAvailable = (bool) $quizModule?->publishedQuiz;
     }
 }

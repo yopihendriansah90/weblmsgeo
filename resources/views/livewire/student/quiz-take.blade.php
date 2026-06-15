@@ -176,24 +176,96 @@
                                 </div>
                             </div>
                         @else
-                            <div class="space-y-4">
-                                @foreach($this->orderedItems($activeStep, $activeAttempt) as $item)
-                                    <div class="rounded-[20px] border border-slate-200 bg-slate-50 p-4">
-                                        <label class="block text-sm font-semibold text-slate-900">
-                                            @if($activeStep->type === 'image_text_matching' && filled($item['image_url'] ?? null))
-                                                <img src="{{ $item['image_url'] }}" alt="{{ $item['alt'] ?? $item['label'] }}" class="mb-3 h-36 w-full rounded-2xl object-cover">
+                            @if($activeStep->type === 'image_text_matching')
+                                <div class="grid gap-5 md:grid-cols-2">
+                                    @foreach($this->orderedItems($activeStep, $activeAttempt) as $item)
+                                        @php
+                                            $itemResult = collect(data_get($activeAttempt->result_payload ?? [], 'items', []))->firstWhere('item_key', $item['key']);
+                                            $itemIsReviewed = in_array($activeAttempt?->status, ['auto_graded', 'completed'], true);
+                                            $itemStateClass = ! $itemIsReviewed
+                                                ? 'border-slate-200 bg-white'
+                                                : (($itemResult['is_correct'] ?? false)
+                                                    ? 'border-emerald-200 bg-emerald-50/70'
+                                                    : 'border-red-200 bg-red-50/70');
+                                        @endphp
+                                        <article class="overflow-hidden rounded-[22px] border p-4 shadow-sm transition {{ $itemStateClass }}">
+                                            <div class="flex items-center justify-between gap-3">
+                                                <span class="inline-flex items-center rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-700">Soal {{ $loop->iteration }}</span>
+                                                @if(filled($item['image_url'] ?? null))
+                                                    <button
+                                                        type="button"
+                                                        class="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-600 transition hover:border-indigo-300 hover:text-indigo-700"
+                                                        onclick="window.dispatchEvent(new CustomEvent('open-image-preview', { detail: { src: '{{ $item['image_url'] }}', alt: @js($item['alt'] ?? $item['label']) } }))"
+                                                    >
+                                                        <span class="material-symbols-outlined text-[16px]">zoom_in</span>
+                                                        Perbesar
+                                                    </button>
+                                                @endif
+                                            </div>
+
+                                            <div class="mt-4 overflow-hidden rounded-[20px] border border-slate-200 bg-gradient-to-br from-slate-50 to-indigo-50/60">
+                                                <div class="flex aspect-[4/3] items-center justify-center p-4 sm:p-5">
+                                                    @if(filled($item['image_url'] ?? null))
+                                                        <img
+                                                            src="{{ $item['image_url'] }}"
+                                                            alt="{{ $item['alt'] ?? $item['label'] }}"
+                                                            class="max-h-full w-full object-contain"
+                                                        >
+                                                    @else
+                                                        <div class="flex h-full w-full items-center justify-center rounded-[16px] border border-dashed border-slate-300 bg-white text-sm font-medium text-slate-400">
+                                                            Gambar tidak tersedia
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                            </div>
+
+                                            <div class="mt-4">
+                                                <p class="text-sm font-semibold text-slate-900">{{ $item['label'] }}</p>
+                                                <p class="mt-1 text-xs leading-5 text-slate-500">Pilih kategori yang paling sesuai dengan objek pada gambar.</p>
+                                            </div>
+
+                                            <div class="mt-4">
+                                                <label class="mb-2 block text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Jawaban</label>
+                                                <select wire:model="answer.matches.{{ $item['key'] }}" class="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100">
+                                                    <option value="">Pilih jawaban</option>
+                                                    @foreach(($payload['options'] ?? []) as $option)
+                                                        <option value="{{ $option['key'] }}">{{ $option['label'] }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+
+                                            @if($itemIsReviewed && $itemResult)
+                                                <div class="mt-4 rounded-[18px] border border-white/70 bg-white/80 px-4 py-3 text-sm">
+                                                    <div class="flex items-center justify-between gap-3">
+                                                        <span class="font-semibold text-slate-900">Hasil soal</span>
+                                                        <span class="rounded-full px-3 py-1 text-xs font-semibold text-white {{ ($itemResult['is_correct'] ?? false) ? 'bg-emerald-600' : 'bg-red-600' }}">
+                                                            {{ ($itemResult['is_correct'] ?? false) ? 'Tepat' : 'Belum tepat' }}
+                                                        </span>
+                                                    </div>
+                                                    <p class="mt-3 text-slate-700">Jawaban Anda: <strong>{{ $itemResult['selected_option_label'] ?? '-' }}</strong></p>
+                                                    <p class="mt-1 text-slate-700">Kunci jawaban: <strong>{{ $itemResult['correct_option_label'] ?? '-' }}</strong></p>
+                                                </div>
                                             @endif
-                                            {{ $item['label'] }}
-                                        </label>
-                                        <select wire:model="answer.matches.{{ $item['key'] }}" class="mt-3 w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100">
-                                            <option value="">Pilih jawaban</option>
-                                            @foreach(($payload['options'] ?? []) as $option)
-                                                <option value="{{ $option['key'] }}">{{ $option['label'] }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                @endforeach
-                            </div>
+                                        </article>
+                                    @endforeach
+                                </div>
+                            @else
+                                <div class="space-y-4">
+                                    @foreach($this->orderedItems($activeStep, $activeAttempt) as $item)
+                                        <div class="rounded-[20px] border border-slate-200 bg-slate-50 p-4">
+                                            <label class="block text-sm font-semibold text-slate-900">
+                                                {{ $item['label'] }}
+                                            </label>
+                                            <select wire:model="answer.matches.{{ $item['key'] }}" class="mt-3 w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100">
+                                                <option value="">Pilih jawaban</option>
+                                                @foreach(($payload['options'] ?? []) as $option)
+                                                    <option value="{{ $option['key'] }}">{{ $option['label'] }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @endif
                         @endif
                     @endif
                 </div>
@@ -291,6 +363,24 @@
         </section>
 
     </div>
+    <dialog id="quiz-image-preview" class="quiz-image-preview">
+        <div class="flex items-center justify-between gap-4 border-b border-slate-200 px-5 py-4">
+            <div>
+                <p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-indigo-700">Preview Gambar</p>
+                <p id="quiz-image-preview-caption" class="mt-1 text-sm font-medium text-slate-700">Preview gambar soal</p>
+            </div>
+            <form method="dialog">
+                <button type="submit" class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 transition hover:border-indigo-300 hover:text-indigo-700">
+                    <span class="material-symbols-outlined text-[20px]">close</span>
+                </button>
+            </form>
+        </div>
+        <div class="bg-slate-50 p-5">
+            <div class="flex max-h-[72vh] min-h-[320px] items-center justify-center rounded-[20px] border border-slate-200 bg-white p-4">
+                <img id="quiz-image-preview-image" src="" alt="" class="max-h-[64vh] w-full object-contain">
+            </div>
+        </div>
+    </dialog>
 </div>
 
 @push('styles')
@@ -304,6 +394,22 @@
                 opacity: 1;
                 transform: translateY(0);
             }
+        }
+
+        dialog.quiz-image-preview {
+            width: min(92vw, 960px);
+            max-height: 90vh;
+            margin: auto;
+            padding: 0;
+            border: 0;
+            border-radius: 24px;
+            background: #ffffff;
+            box-shadow: 0 24px 80px rgba(15, 23, 42, 0.28);
+        }
+
+        dialog.quiz-image-preview::backdrop {
+            background: rgba(15, 23, 42, 0.58);
+            backdrop-filter: blur(4px);
         }
     </style>
 @endpush
@@ -319,6 +425,21 @@
 
             panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
             panel.focus({ preventScroll: true });
+        });
+
+        window.addEventListener('open-image-preview', (event) => {
+            const dialog = document.getElementById('quiz-image-preview');
+            const image = document.getElementById('quiz-image-preview-image');
+            const caption = document.getElementById('quiz-image-preview-caption');
+
+            if (!dialog || !image || !caption) {
+                return;
+            }
+
+            image.src = event.detail.src;
+            image.alt = event.detail.alt || 'Preview gambar soal';
+            caption.textContent = event.detail.alt || 'Preview gambar soal';
+            dialog.showModal();
         });
     </script>
 @endpush
