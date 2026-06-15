@@ -2,19 +2,15 @@
 
 namespace App\Livewire\Guru;
 
-use App\Models\Course;
-use App\Models\QuizAttempt;
 use App\Models\QuizStepAttempt;
-use App\Models\School;
-use App\Models\Student;
 use App\Services\EssayReviewService;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
-class Dashboard extends Component
+#[Layout('layouts.guru')]
+class EssayReviewIndex extends Component
 {
-    #[Layout('layouts.guru')]
     public ?int $selectedEssayAttemptId = null;
 
     public ?float $reviewScore = null;
@@ -76,21 +72,6 @@ class Dashboard extends Component
 
     public function render()
     {
-        $user = auth()->user();
-        $teacher = $user->teacher;
-        $assignedSchoolIds = $teacher?->activeAssignments()->pluck('school_id') ?? collect();
-
-        $studentCount = $user->hasRole('super_admin') && ! $teacher
-            ? Student::count()
-            : Student::whereIn('school_id', $assignedSchoolIds)->count();
-
-        $schoolCount = $user->hasRole('super_admin') && ! $teacher
-            ? School::count()
-            : $assignedSchoolIds->count();
-
-        $pendingEssays = $this->pendingEssayAttemptsQuery()->count();
-        $courseCount = Course::count();
-
         $pendingEssayAttempts = $this->pendingEssayAttemptsQuery()
             ->with([
                 'quizAttempt.student.user',
@@ -111,14 +92,11 @@ class Dashboard extends Component
         $selectedEssayAttempt = $pendingEssayAttempts->firstWhere('id', $this->selectedEssayAttemptId)
             ?? $pendingEssayAttempts->first();
 
-        return view('livewire.guru.dashboard', [
-            'title' => $user->hasRole('super_admin') && ! $teacher ? 'Dashboard Guru (Admin View)' : 'Dashboard Guru',
-            'studentCount' => $studentCount,
-            'schoolCount' => $schoolCount,
-            'pendingEssays' => $pendingEssays,
-            'courseCount' => $courseCount,
+        return view('livewire.guru.essay-review-index', [
+            'title' => 'Penilaian Essay',
             'pendingEssayAttempts' => $pendingEssayAttempts,
             'selectedEssayAttempt' => $selectedEssayAttempt,
+            'pendingEssayCount' => $pendingEssayAttempts->count(),
         ]);
     }
 

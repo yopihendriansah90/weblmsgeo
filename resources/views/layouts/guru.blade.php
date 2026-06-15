@@ -123,6 +123,11 @@
                 $breadcrumbSectionUrl = route('guru.courses.index');
                 $pageContext = 'Subbab';
                 break;
+            case request()->routeIs('guru.essay-reviews.index'):
+                $pageTitle = 'Penilaian Essay';
+                $pageSubtitle = 'Tinjau jawaban essay siswa dan simpan nilai beserta feedback.';
+                $pageContext = 'Penilaian';
+                break;
             default:
                 $pageTitle = $title ?? 'Dashboard Guru';
                 $pageContext = 'Dashboard';
@@ -209,15 +214,9 @@
                   <p>Materi</p>
                 </a>
               </li>
-              <li class="nav-item">
-                <a href="#" class="nav-link">
-                  <i class="nav-icon bi bi-journal-check"></i>
-                  <p>Kuis</p>
-                </a>
-              </li>
               <li class="nav-header">PENILAIAN</li>
               <li class="nav-item">
-                <a href="#" class="nav-link">
+                <a href="{{ route('guru.essay-reviews.index') }}" class="nav-link {{ request()->routeIs('guru.essay-reviews.*') ? 'active' : '' }}">
                   <i class="nav-icon bi bi-pencil-square"></i>
                   <p>Penilaian Essay</p>
                 </a>
