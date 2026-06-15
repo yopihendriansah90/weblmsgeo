@@ -101,44 +101,7 @@
                 </div>
             </section>
 
-            <section class="rounded-[24px] border border-slate-200/80 bg-white p-5 shadow-sm">
-                <div class="flex items-center justify-between gap-3">
-                    <div>
-                        <p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-indigo-700">Kuis Tersedia</p>
-                        <h2 class="mt-1 text-2xl font-semibold text-slate-900">Siap dikerjakan</h2>
-                    </div>
-                    <a class="text-sm font-medium text-indigo-700 transition hover:text-indigo-800" href="{{ route('student.quiz-history') }}">Riwayat kuis</a>
-                </div>
-
-                <div class="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-                    @forelse($summary['available_quizzes'] as $quiz)
-                        @php($quizState = $summary['quiz_states']->get($quiz->id))
-                        <a href="{{ route('student.quizzes.take', $quiz) }}" class="group rounded-[20px] border border-slate-200 bg-slate-50 p-4 transition hover:-translate-y-0.5 hover:border-indigo-300 hover:bg-white hover:shadow-sm">
-                            <div class="flex items-start justify-between gap-3">
-                                <div>
-                                    <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-500">{{ $quiz->module->course->title }}</p>
-                                    <h3 class="mt-2 text-lg font-semibold text-slate-900 group-hover:text-indigo-700">{{ $quiz->title }}</h3>
-                                </div>
-                                @if($quizState)
-                                    <span class="rounded-full px-3 py-1 text-xs font-semibold {{ $quizState['status'] === 'completed' ? 'bg-emerald-100 text-emerald-700' : ($quizState['status'] === 'pending_review' ? 'bg-amber-100 text-amber-700' : 'bg-indigo-100 text-indigo-700') }}">
-                                        {{ $quizState['status'] === 'completed' ? 'Selesai' : ($quizState['status'] === 'pending_review' ? 'Menunggu' : 'Dikerjakan') }}
-                                    </span>
-                                @else
-                                    <span class="rounded-full bg-cyan-100 px-3 py-1 text-xs font-semibold text-cyan-700">Baru</span>
-                                @endif
-                            </div>
-                            <p class="mt-3 text-sm text-slate-600">{{ $quiz->description }}</p>
-                            @if($quizState)
-                                <p class="mt-3 text-xs text-slate-500">
-                                    Nilai terakhir: {{ $quizState['final_score'] ?? ($quizState['auto_score'] ?? '-') }}
-                                </p>
-                            @endif
-                        </a>
-                    @empty
-                        <p class="text-sm text-slate-600">Tidak ada kuis baru.</p>
-                    @endforelse
-                </div>
-            </section>
+            {{-- Kartu kuis tersedia disembunyikan sementara sesuai arahan produk. --}}
         </div>
 
         <div class="space-y-6 xl:col-span-4">
