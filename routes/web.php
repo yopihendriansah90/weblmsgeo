@@ -13,6 +13,7 @@ use App\Livewire\Guru\CourseForm;
 use App\Livewire\Guru\EssayReviewIndex;
 use App\Livewire\Guru\ModuleForm;
 use App\Livewire\Guru\ModuleIndex;
+use App\Livewire\Guru\QuizReportIndex;
 use App\Livewire\Guru\QuizForm;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -76,6 +77,7 @@ Route::middleware(['auth', 'student'])->prefix('siswa')->name('student.')->group
 Route::middleware(['auth', 'guru'])->prefix('guru')->name('guru.')->group(function () {
     Route::get('/dashboard', \App\Livewire\Guru\Dashboard::class)->name('dashboard');
     Route::get('/penilaian-essay', EssayReviewIndex::class)->name('essay-reviews.index');
+    Route::get('/laporan-quiz', QuizReportIndex::class)->name('reports.index');
     Route::get('/materi', \App\Livewire\Guru\CourseIndex::class)->name('courses.index');
     Route::get('/materi/create', CourseForm::class)->name('courses.create');
     Route::get('/materi/{course}/edit', CourseForm::class)->name('courses.edit');

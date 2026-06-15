@@ -7,7 +7,7 @@
                         <div>
                             <p class="guru-kicker mb-1">Penilaian Essay</p>
                             <h3 class="card-title mb-0">Jawaban siswa yang perlu direview</h3>
-                            <p class="text-muted mb-0 mt-2">Daftar ini otomatis membaca jawaban essay siswa yang statusnya masih menunggu penilaian.</p>
+                            <br><p class="text-muted mb-0 mt-2">Daftar ini otomatis membaca jawaban essay siswa yang statusnya masih menunggu penilaian.</p>
                         </div>
                         <span class="badge rounded-pill text-bg-warning px-3 py-2">{{ $pendingEssayCount }} antrean</span>
                     </div>

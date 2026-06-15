@@ -128,6 +128,11 @@
                 $pageSubtitle = 'Tinjau jawaban essay siswa dan simpan nilai beserta feedback.';
                 $pageContext = 'Penilaian';
                 break;
+            case request()->routeIs('guru.reports.index'):
+                $pageTitle = 'Laporan Hasil Quiz';
+                $pageSubtitle = 'Lihat hasil quiz siswa dari sekolah yang diampu beserta status dan nilainya.';
+                $pageContext = 'Laporan';
+                break;
             default:
                 $pageTitle = $title ?? 'Dashboard Guru';
                 $pageContext = 'Dashboard';
@@ -222,7 +227,7 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a href="#" class="nav-link">
+                <a href="{{ route('guru.reports.index') }}" class="nav-link {{ request()->routeIs('guru.reports.*') ? 'active' : '' }}">
                   <i class="nav-icon bi bi-graph-up"></i>
                   <p>Laporan Siswa</p>
                 </a>
