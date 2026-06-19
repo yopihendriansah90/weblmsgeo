@@ -46,8 +46,88 @@
         margin: 1rem 0;
     }
 
+    .lesson-content ol {
+        list-style: decimal;
+    }
+
+    .lesson-content ul {
+        list-style: disc;
+    }
+
+    .lesson-content ol,
+    .lesson-content ul {
+        margin: 1rem 0 1rem 1.5rem;
+        padding-left: 1.25rem;
+    }
+
+    .lesson-content li {
+        margin: 0.35rem 0;
+        padding-left: 0.25rem;
+        line-height: 1.75;
+    }
+
     .lesson-content table {
         width: 100%;
+        margin: 1rem 0;
+        border-collapse: collapse;
+    }
+
+    .lesson-content th,
+    .lesson-content td {
+        border: 1px solid #dee2e6;
+        padding: 0.75rem;
+        vertical-align: top;
+    }
+
+    .lesson-content th {
+        background: #f8f9fa;
+        font-weight: 700;
+    }
+
+    .lesson-content figure.image {
+        display: table;
+        max-width: 100%;
+        margin: 1rem 0;
+    }
+
+    .lesson-content figure.image img {
+        display: block;
+        margin: 0;
+    }
+
+    .lesson-content figure.image figcaption {
+        caption-side: bottom;
+        color: #6c757d;
+        display: table-caption;
+        font-size: 0.875rem;
+        padding-top: 0.5rem;
+        text-align: center;
+    }
+
+    .lesson-content img.image-style-align-left,
+    .lesson-content figure.image.image-style-align-left {
+        float: left;
+        margin: 0.5rem 1.25rem 1rem 0;
+    }
+
+    .lesson-content img.image-style-align-right,
+    .lesson-content figure.image.image-style-align-right {
+        float: right;
+        margin: 0.5rem 0 1rem 1.25rem;
+    }
+
+    .lesson-content img.image-style-align-center,
+    .lesson-content figure.image.image-style-align-center,
+    .lesson-content figure.image.align-center {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .lesson-content p::after,
+    .lesson-content div::after {
+        clear: both;
+        content: "";
+        display: table;
     }
 </style>
 @endpush

@@ -108,10 +108,10 @@
                     </a>
 
                     <div class="ml-auto flex items-center gap-2 sm:gap-3">
-                        <button class="rounded-full p-2 text-slate-700 transition hover:bg-slate-100" type="button" aria-label="Notifications">
+                        <button class="hidden rounded-full p-2 text-slate-700 transition hover:bg-slate-100" type="button" aria-label="Notifications">
                             <span class="material-symbols-outlined">notifications</span>
                         </button>
-                        <button class="rounded-full p-2 text-slate-700 transition hover:bg-slate-100" type="button" aria-label="Messages">
+                        <button class="hidden rounded-full p-2 text-slate-700 transition hover:bg-slate-100" type="button" aria-label="Messages">
                             <span class="material-symbols-outlined">mail</span>
                         </button>
 

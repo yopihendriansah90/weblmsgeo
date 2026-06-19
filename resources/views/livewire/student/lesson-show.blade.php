@@ -153,8 +153,43 @@
         border-radius: 1rem;
     }
 
+    .lesson-content ol {
+        list-style: decimal;
+    }
+
+    .lesson-content ul {
+        list-style: disc;
+    }
+
+    .lesson-content ol,
+    .lesson-content ul {
+        margin: 1rem 0 1rem 1.5rem;
+        padding-left: 1.25rem;
+    }
+
+    .lesson-content li {
+        margin: 0.35rem 0;
+        padding-left: 0.25rem;
+        line-height: 1.75;
+    }
+
     .lesson-content table {
         width: 100%;
+        margin: 1rem 0;
+        border-collapse: collapse;
+    }
+
+    .lesson-content th,
+    .lesson-content td {
+        border: 1px solid #e2e8f0;
+        padding: 0.75rem;
+        vertical-align: top;
+    }
+
+    .lesson-content th {
+        background: #fff5ef;
+        color: #7a2b1c;
+        font-weight: 700;
     }
 
     .lesson-content h1,
@@ -165,6 +200,51 @@
 
     .lesson-content p {
         line-height: 1.75;
+    }
+
+    .lesson-content figure.image {
+        display: table;
+        max-width: 100%;
+        margin: 1rem 0;
+    }
+
+    .lesson-content figure.image img {
+        display: block;
+    }
+
+    .lesson-content figure.image figcaption {
+        caption-side: bottom;
+        color: #64748b;
+        display: table-caption;
+        font-size: 0.875rem;
+        padding-top: 0.5rem;
+        text-align: center;
+    }
+
+    .lesson-content img.image-style-align-left,
+    .lesson-content figure.image.image-style-align-left {
+        float: left;
+        margin: 0.5rem 1.25rem 1rem 0;
+    }
+
+    .lesson-content img.image-style-align-right,
+    .lesson-content figure.image.image-style-align-right {
+        float: right;
+        margin: 0.5rem 0 1rem 1.25rem;
+    }
+
+    .lesson-content img.image-style-align-center,
+    .lesson-content figure.image.image-style-align-center,
+    .lesson-content figure.image.align-center {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .lesson-content p::after,
+    .lesson-content div::after {
+        clear: both;
+        content: "";
+        display: table;
     }
 
     .timeline-step:not(:last-child)::after {

@@ -34,7 +34,7 @@
 
                     <div class="mb-3">
                         <label class="form-label">Isi Bab</label>
-                        <p class="text-muted small mb-2">Tulis seluruh materi bab di sini. Heading di dalam editor bisa dipakai sebagai penanda bagian materi.</p>
+                        <p class="text-muted small mb-2">Tulis seluruh materi bab di sini. Gunakan heading, underline, list, tabel, gambar, dan pengaturan rata kiri/tengah/kanan/kiri-kanan untuk menyusun materi.</p>
                         <div wire:ignore>
                             <textarea
                                 id="module-content-editor"
