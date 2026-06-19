@@ -93,6 +93,22 @@ const boot = () => {
     document.querySelectorAll('[data-tinymce]').forEach(initEditor);
 };
 
+window.syncTinyMceEditors = () => {
+    const editors = typeof tinymce.get === 'function' ? tinymce.get() : [];
+
+    editors.forEach((editor) => {
+        const target = editor.getElement();
+        const syncInput = target?.dataset?.syncTarget
+            ? document.getElementById(target.dataset.syncTarget)
+            : null;
+
+        if (! syncInput) return;
+
+        syncInput.value = editor.getContent();
+        syncInput.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+};
+
 document.addEventListener('DOMContentLoaded', boot);
 document.addEventListener('livewire:navigated', boot);
 document.addEventListener('livewire:load', boot);

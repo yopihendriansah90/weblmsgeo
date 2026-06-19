@@ -1,140 +1,151 @@
-<div class="module-preview-page">
-    <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3 mb-4">
-        <div>
-            <p class="guru-kicker mb-1">Preview Tampilan Siswa</p>
-            <h3 class="guru-panel-title mb-1">{{ $module->title }}</h3>
-            <p class="text-muted mb-0">Pratinjau ini memakai gaya render materi yang sama dengan halaman pembahasan siswa.</p>
+<article class="space-y-6">
+    <div class="flex flex-wrap items-center justify-between gap-3 rounded-[20px] border border-slate-200/80 bg-white px-4 py-3 shadow-sm">
+        <div class="flex flex-wrap items-center gap-2 text-sm text-slate-600">
+            <a href="{{ $backUrl }}" class="inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-4 py-2 font-medium text-slate-700 transition hover:border-[#db8b73] hover:text-[#b64027]">
+                <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+                Kembali
+            </a>
+            <a href="{{ route('guru.modules.index', $module->course) }}" class="inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-4 py-2 font-medium text-slate-700 transition hover:border-[#db8b73] hover:text-[#b64027]">
+                <span class="material-symbols-outlined text-[18px]">library_books</span>
+                Kembali ke Materi
+            </a>
+            <a href="{{ route('guru.modules.edit', $module) }}" class="inline-flex items-center gap-2 rounded-full border border-[#efc2b2] bg-[#fff5ef] px-4 py-2 font-medium text-[#b64027] transition hover:border-[#db8b73] hover:bg-[#f8ded2]">
+                <span class="material-symbols-outlined text-[18px]">edit</span>
+                Edit Bab
+            </a>
         </div>
-        <div class="d-flex flex-wrap gap-2">
-            <a href="{{ route('guru.modules.edit', $module) }}" class="btn btn-sm btn-outline-primary guru-btn-sm guru-btn-bordered">Edit Bab</a>
-            <a href="{{ route('guru.modules.index', $module->course) }}" class="btn btn-sm btn-outline-secondary guru-btn-sm guru-btn-bordered">Kembali</a>
-        </div>
+        <span class="rounded-full bg-[#f8ded2] px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[#b64027]">Preview Guru</span>
     </div>
 
-    <section class="student-preview-hero">
-        <div class="student-preview-hero-copy">
-            <p class="student-preview-kicker">{{ $module->course->title }}</p>
-            <h1>{{ $module->title }}</h1>
-            @if($module->description)
-                <p>{{ $module->description }}</p>
-            @endif
+    @if($nextTimelineItem)
+        <div class="flex justify-end">
+            <a href="{{ $nextTimelineItem['href'] }}" class="inline-flex items-center gap-2 rounded-full bg-[#c84a2f] px-4 py-2.5 text-sm font-semibold text-white shadow-sm shadow-[#c84a2f]/20 transition hover:bg-[#a93b25]">
+                Lanjut berikutnya
+                <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+            </a>
+        </div>
+    @endif
+
+    <section class="rounded-[24px] border border-slate-200/80 bg-white px-4 py-5 shadow-sm sm:px-6">
+        <div class="flex items-center justify-between gap-3">
+            <div>
+                <p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#b64027]">Timeline Belajar</p>
+                <h2 class="mt-1 text-xl font-semibold text-slate-900 sm:text-2xl">Perjalanan pembelajaran materi</h2>
+            </div>
+            <span class="hidden rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600 sm:inline-flex">
+                {{ $timelineItems->count() }} tahap
+            </span>
         </div>
 
-        <div class="student-preview-badges">
-            @if($module->estimated_duration)
-                <span>{{ $module->estimated_duration }} menit</span>
-            @endif
-            <span>{{ $module->status === 'published' ? 'Dipublikasikan' : ucfirst($module->status) }}</span>
+        <div class="mt-6 overflow-x-auto pb-2">
+            <div class="timeline-track flex min-w-max items-start justify-between gap-3 px-2">
+                @foreach($timelineItems as $item)
+                    @php
+                        $statusClasses = match ($item['status']) {
+                            'completed' => 'border-emerald-200 bg-emerald-200 text-emerald-800',
+                            'current' => 'border-[#b64027] bg-[#c84a2f] text-white shadow-[0_0_0_7px_rgba(195,72,45,0.16)]',
+                            'available' => 'border-[#efc2b2] bg-[#f8ded2] text-[#b64027]',
+                            default => 'border-slate-300 bg-slate-100 text-slate-400',
+                        };
+                    @endphp
+
+                    <div class="timeline-step relative flex min-w-[150px] flex-1 flex-col items-center text-center">
+                        @if($item['href'])
+                            <a href="{{ $item['href'] }}" class="flex flex-col items-center transition hover:scale-[1.02]">
+                                <span class="flex h-14 w-14 items-center justify-center rounded-full border-2 text-lg {{ $statusClasses }}">
+                                    <span class="material-symbols-outlined">{{ $item['icon'] }}</span>
+                                </span>
+                                <span class="mt-3 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">{{ $item['label'] }}</span>
+                                <span class="mt-1 text-sm font-semibold {{ $item['is_current'] ? 'text-[#b64027]' : 'text-slate-700' }}">{{ $item['title'] }}</span>
+                            </a>
+                        @else
+                            <div class="flex flex-col items-center">
+                                <span class="flex h-14 w-14 items-center justify-center rounded-full border-2 text-lg {{ $statusClasses }}">
+                                    <span class="material-symbols-outlined">{{ $item['icon'] }}</span>
+                                </span>
+                                <span class="mt-3 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">{{ $item['label'] }}</span>
+                                <span class="mt-1 text-sm font-semibold {{ $item['is_current'] ? 'text-[#b64027]' : 'text-slate-500' }}">{{ $item['title'] }}</span>
+                            </div>
+                        @endif
+                    </div>
+                @endforeach
+            </div>
         </div>
     </section>
 
-    <section class="student-preview-content">
-        <div class="student-preview-content-heading">
-            <p class="student-preview-kicker">Bab Pembahasan</p>
-            <h2>Isi Materi</h2>
-        </div>
+    <section class="rounded-[24px] border border-slate-200/80 bg-white p-5 shadow-sm sm:p-6">
+        <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+            <div class="max-w-3xl">
+                <p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#b64027]">{{ $module->course->title }}</p>
+                <h1 class="mt-1 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">{{ $module->title }}</h1>
+                <p class="mt-3 text-sm leading-6 text-slate-600 sm:text-base">{{ $module->description }}</p>
+            </div>
 
-        <div class="lesson-content student-preview-lesson-content">
-            @if(filled($module->content))
-                {!! $module->content !!}
-            @else
-                <p class="text-muted mb-0">Belum ada isi bab untuk ditampilkan.</p>
-            @endif
+            <div class="flex flex-wrap gap-2">
+                @if($module->estimated_duration)
+                    <span class="rounded-full bg-[#f8ded2] px-4 py-2 text-sm font-medium text-[#b64027]">
+                        {{ $module->estimated_duration }} menit
+                    </span>
+                @endif
+                <span class="rounded-full bg-slate-100 px-4 py-2 text-sm font-medium text-slate-600">
+                    {{ $hasFinalQuiz ? 'Quiz di akhir materi' : 'Tanpa quiz' }}
+                </span>
+            </div>
         </div>
     </section>
-</div>
+
+    <div class="rounded-[20px] border border-[#efc2b2] bg-[#fff5ef] px-4 py-3 text-sm font-medium text-[#8f321f]">
+        Ini adalah mode preview untuk guru. Tampilan materi, jarak, list, tabel, gambar, dan alignment mengikuti halaman pembahasan siswa.
+    </div>
+
+    <div class="grid gap-6 xl:grid-cols-12">
+        <section class="space-y-6 xl:col-span-8">
+            <div class="rounded-[24px] border border-slate-200/80 bg-white p-5 shadow-sm">
+                <div class="flex items-center justify-between gap-3">
+                    <div>
+                        <p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#b64027]">Bab Pembahasan</p>
+                        <h2 class="mt-1 text-2xl font-semibold text-slate-900">Isi Materi</h2>
+                    </div>
+                </div>
+
+                <div class="lesson-content prose max-w-none pt-4 text-slate-700">
+                    @if(filled($module->content))
+                        {!! $module->content !!}
+                    @else
+                        <p class="text-slate-600">Belum ada isi bab untuk ditampilkan.</p>
+                    @endif
+                </div>
+            </div>
+        </section>
+
+        <aside class="space-y-6 xl:col-span-4">
+            <section class="rounded-[24px] border border-slate-200/80 bg-white p-5 shadow-sm">
+                <p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#b64027]">Ringkasan</p>
+                <h2 class="mt-1 text-2xl font-semibold text-slate-900">Informasi bab</h2>
+
+                <dl class="mt-5 space-y-4">
+                    <div class="rounded-[18px] border border-slate-200 bg-slate-50 p-4">
+                        <dt class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Durasi</dt>
+                        <dd class="mt-2 text-xl font-semibold text-slate-900">{{ $module->estimated_duration ? $module->estimated_duration . ' menit' : '-' }}</dd>
+                    </div>
+                    <div class="rounded-[18px] border border-slate-200 bg-slate-50 p-4">
+                        <dt class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Quiz akhir materi</dt>
+                        <dd class="mt-2 text-xl font-semibold text-slate-900">
+                            {{ $isFinalQuizAvailable ? 'Tersedia' : ($hasFinalQuiz ? 'Belum tersedia' : 'Belum ada') }}
+                        </dd>
+                    </div>
+                    <div class="rounded-[18px] border border-slate-200 bg-slate-50 p-4">
+                        <dt class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Status bab</dt>
+                        <dd class="mt-2 text-xl font-semibold text-slate-900">{{ ucfirst($module->status) }}</dd>
+                    </div>
+                </dl>
+            </section>
+        </aside>
+    </div>
+</article>
 
 @push('styles')
 <style>
-    .module-preview-page {
-        max-width: 1180px;
-        margin-inline: auto;
-    }
-
-    .student-preview-hero,
-    .student-preview-content {
-        border: 1px solid rgba(226, 232, 240, 0.8);
-        border-radius: 24px;
-        background: #ffffff;
-        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
-    }
-
-    .student-preview-hero {
-        display: flex;
-        align-items: flex-end;
-        justify-content: space-between;
-        gap: 1rem;
-        margin-bottom: 1.5rem;
-        padding: 1.5rem;
-    }
-
-    .student-preview-hero-copy {
-        max-width: 48rem;
-    }
-
-    .student-preview-kicker {
-        margin: 0;
-        color: #b64027;
-        font-size: 11px;
-        font-weight: 700;
-        letter-spacing: 0.24em;
-        text-transform: uppercase;
-    }
-
-    .student-preview-hero h1 {
-        margin: 0.25rem 0 0;
-        color: #0f172a;
-        font-size: clamp(2rem, 4vw, 3rem);
-        font-weight: 700;
-        letter-spacing: -0.025em;
-    }
-
-    .student-preview-hero-copy > p:not(.student-preview-kicker) {
-        margin: 0.75rem 0 0;
-        color: #475569;
-        font-size: 1rem;
-        line-height: 1.6;
-    }
-
-    .student-preview-badges {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-    }
-
-    .student-preview-badges span {
-        border-radius: 999px;
-        background: #f8ded2;
-        color: #b64027;
-        padding: 0.5rem 1rem;
-        font-size: 0.875rem;
-        font-weight: 600;
-        white-space: nowrap;
-    }
-
-    .student-preview-content {
-        padding: 1.25rem;
-    }
-
-    .student-preview-content-heading h2 {
-        margin: 0.25rem 0 0;
-        color: #0f172a;
-        font-size: 1.5rem;
-        font-weight: 700;
-    }
-
-    .student-preview-lesson-content {
-        padding-top: 1rem;
-        color: #334155;
-    }
-
-    @media (max-width: 768px) {
-        .student-preview-hero {
-            align-items: flex-start;
-            flex-direction: column;
-        }
-    }
-
     .lesson-content img {
         max-width: 100%;
         height: auto;
@@ -297,6 +308,32 @@
         clear: both;
         content: "";
         display: table;
+    }
+
+    .timeline-step:not(:last-child)::after {
+        content: "";
+        position: absolute;
+        top: 1.7rem;
+        left: calc(50% + 2rem);
+        width: calc(100% - 1rem);
+        height: 2px;
+        background: linear-gradient(90deg, #cbd5e1 0%, #e2e8f0 100%);
+        z-index: 0;
+    }
+
+    .timeline-step > * {
+        position: relative;
+        z-index: 1;
+    }
+
+    @media (max-width: 640px) {
+        .timeline-step {
+            min-width: 132px;
+        }
+
+        .timeline-step:not(:last-child)::after {
+            width: calc(100% - 0.5rem);
+        }
     }
 </style>
 @endpush

@@ -80,7 +80,14 @@
                                 </a>
                             @endif
                         @else
-                            <a href="{{ route('guru.modules.preview', $module) }}" class="btn btn-sm btn-outline-secondary guru-btn-soft-secondary">Preview</a>
+                            <a
+                                href="{{ route('guru.modules.preview', ['module' => $module, 'back' => request()->fullUrl()]) }}"
+                                target="_blank"
+                                rel="noopener"
+                                class="btn btn-sm btn-outline-secondary guru-btn-soft-secondary"
+                            >
+                                Preview
+                            </a>
                             <a href="{{ route('guru.modules.edit', $module) }}" class="btn btn-sm btn-outline-primary guru-btn-soft-primary">Edit</a>
                             <button type="button" class="btn btn-sm btn-outline-danger guru-btn-soft-danger" wire:click="requestDeleteModule({{ $module->id }})">Hapus</button>
                         @endif

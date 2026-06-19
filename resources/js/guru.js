@@ -67,5 +67,69 @@ const confirmDelete = async (detail = {}) => {
     await component.call(action, id);
 };
 
+const openPreviewPlaceholder = () => {
+    const previewTab = window.open('about:blank', '_blank');
+
+    if (! previewTab) {
+        return null;
+    }
+
+    previewTab.document.write(`
+        <!doctype html>
+        <title>Menyiapkan preview...</title>
+        <body style="font-family: system-ui, sans-serif; padding: 24px; color: #334155;">
+            Menyiapkan preview materi...
+        </body>
+    `);
+
+    return previewTab;
+};
+
+const saveAndPreview = async (button) => {
+    const componentId = button.dataset.componentId;
+    const component = componentId && window.Livewire?.find
+        ? window.Livewire.find(componentId)
+        : null;
+
+    if (! component) {
+        notify({ type: 'error', message: 'Komponen form belum siap. Muat ulang halaman lalu coba lagi.' });
+        return;
+    }
+
+    window.syncTinyMceEditors?.();
+
+    const previewTab = openPreviewPlaceholder();
+    const originalLabel = button.textContent;
+
+    button.disabled = true;
+    button.textContent = 'Menyiapkan...';
+
+    try {
+        const previewUrl = await component.call('saveAndPreview');
+
+        if (previewTab) {
+            previewTab.location.href = previewUrl;
+        } else {
+            window.open(previewUrl, '_blank');
+        }
+    } catch (error) {
+        previewTab?.close();
+        notify({ type: 'error', message: 'Preview belum bisa dibuka. Periksa kembali isian bab.' });
+    } finally {
+        button.disabled = false;
+        button.textContent = originalLabel;
+    }
+};
+
 document.addEventListener('guru-notify', (event) => notify(event.detail));
 document.addEventListener('guru-confirm-delete', (event) => confirmDelete(event.detail));
+document.addEventListener('click', (event) => {
+    const button = event.target.closest('[data-save-preview-button]');
+
+    if (! button) {
+        return;
+    }
+
+    event.preventDefault();
+    saveAndPreview(button);
+});

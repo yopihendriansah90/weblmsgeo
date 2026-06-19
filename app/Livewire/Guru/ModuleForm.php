@@ -52,6 +52,27 @@ class ModuleForm extends Component
 
     public function save()
     {
+        $module = $this->persist();
+
+        session()->flash('success', 'Bab berhasil disimpan.');
+
+        return redirect()->route('guru.modules.index', $module->course);
+    }
+
+    public function saveAndPreview(): string
+    {
+        $module = $this->persist();
+
+        session()->flash('success', 'Bab berhasil disimpan. Preview sudah dibuka di tab baru.');
+
+        return route('guru.modules.preview', [
+            'module' => $module,
+            'back' => route('guru.modules.edit', $module),
+        ]);
+    }
+
+    private function persist(): Module
+    {
         abort_unless($this->course, 404);
 
         $this->title = trim($this->title);
@@ -89,9 +110,7 @@ class ModuleForm extends Component
             $this->module = Module::create($payload);
         }
 
-        session()->flash('success', 'Bab berhasil disimpan.');
-
-        return redirect()->route('guru.modules.index', $this->course);
+        return $this->module->refresh();
     }
 
     public function render()
