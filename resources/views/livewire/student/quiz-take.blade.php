@@ -1,22 +1,22 @@
 <div class="space-y-6">
     <div class="flex flex-wrap items-center justify-between gap-3 rounded-[20px] border border-slate-200/80 bg-white px-4 py-3 shadow-sm">
         <div class="flex flex-wrap items-center gap-2 text-sm text-slate-600">
-            <a href="{{ route('student.courses.show', $quiz->module->course) }}" class="inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-4 py-2 font-medium text-slate-700 transition hover:border-indigo-300 hover:text-indigo-700">
+            <a href="{{ route('student.courses.show', $quiz->module->course) }}" class="inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-4 py-2 font-medium text-slate-700 transition hover:border-[#db8b73] hover:text-[#b64027]">
                 <span class="material-symbols-outlined text-[18px]">arrow_back</span>
                 Kembali ke Materi
             </a>
-            <a href="{{ route('student.quiz-history') }}" class="inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-4 py-2 font-medium text-slate-700 transition hover:border-indigo-300 hover:text-indigo-700">
+            <a href="{{ route('student.quiz-history') }}" class="inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-4 py-2 font-medium text-slate-700 transition hover:border-[#db8b73] hover:text-[#b64027]">
                 <span class="material-symbols-outlined text-[18px]">history</span>
                 Riwayat Kuis
             </a>
         </div>
-        <span class="rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-700">Mode fokus</span>
+        <span class="rounded-full bg-[#f8ded2] px-3 py-1 text-xs font-semibold text-[#b64027]">Mode fokus</span>
     </div>
 
     <section class="rounded-[24px] border border-slate-200/80 bg-white p-5 shadow-sm sm:p-6">
         <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div class="max-w-3xl">
-                <p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-indigo-700">{{ $quiz->module->title }}</p>
+                <p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#b64027]">{{ $quiz->module->title }}</p>
                 <h1 class="mt-1 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">{{ $quiz->title }}</h1>
                 <p class="mt-3 text-sm leading-6 text-slate-600 sm:text-base">{{ $quiz->description }}</p>
             </div>
@@ -29,7 +29,7 @@
                         default => 'Dalam proses',
                     };
                 @endphp
-                <span class="rounded-full bg-indigo-100 px-4 py-2 text-sm font-medium text-indigo-700">{{ $attemptStatusLabel }}</span>
+                <span class="rounded-full bg-[#f8ded2] px-4 py-2 text-sm font-medium text-[#b64027]">{{ $attemptStatusLabel }}</span>
                 <span class="rounded-full bg-slate-100 px-4 py-2 text-sm font-medium text-slate-600">{{ $steps->count() }} langkah</span>
             </div>
         </div>
@@ -37,7 +37,7 @@
 
     <div class="grid gap-6 xl:grid-cols-12">
         <aside class="rounded-[24px] border border-slate-200/80 bg-white p-4 shadow-sm xl:col-span-3">
-            <p class="px-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-indigo-700">Langkah Quiz</p>
+            <p class="px-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-[#b64027]">Langkah Quiz</p>
             <div class="mt-4 space-y-2">
                 @foreach($steps as $step)
                     @php
@@ -53,10 +53,10 @@
                     @endphp
                     <button
                         wire:click="setActiveStep({{ $step->id }})"
-                        class="flex w-full items-start gap-3 rounded-[18px] border px-3 py-3 text-left transition {{ $isActive ? 'border-indigo-300 bg-indigo-50 shadow-sm' : 'border-slate-200 bg-slate-50 hover:border-indigo-300 hover:bg-white' }}"
+                        class="flex w-full items-start gap-3 rounded-[18px] border px-3 py-3 text-left transition {{ $isActive ? 'border-[#db8b73] bg-[#fff5ef] shadow-sm' : 'border-slate-200 bg-slate-50 hover:border-[#db8b73] hover:bg-white' }}"
                         @disabled($stepAttempt?->status === 'locked')
                     >
-                        <span class="mt-0.5 inline-flex h-8 w-8 items-center justify-center rounded-full {{ $isActive ? 'bg-indigo-600 text-white' : 'bg-white text-slate-500' }}">
+                        <span class="mt-0.5 inline-flex h-8 w-8 items-center justify-center rounded-full {{ $isActive ? 'bg-[#c84a2f] text-white' : 'bg-white text-slate-500' }}">
                             {{ $loop->iteration }}
                         </span>
                         <span class="min-w-0">
@@ -78,7 +78,7 @@
                 <div class="rounded-[24px] border border-slate-200/80 bg-white p-5 shadow-sm">
                     <div class="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
                         <div>
-                            <p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-indigo-700">Step Aktif</p>
+                            <p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#b64027]">Step Aktif</p>
                             <h2 class="mt-1 text-2xl font-semibold text-slate-900">{{ $activeStep->title }}</h2>
                             <p class="mt-2 text-sm leading-6 text-slate-600">{{ $activeStep->instruction }}</p>
                         </div>
@@ -102,7 +102,7 @@
                 <div class="rounded-[24px] border border-slate-200/80 bg-white p-5 shadow-sm">
                     @if($activeStep->type === 'essay')
                         <p class="text-lg font-semibold text-slate-900">{{ $payload['question'] ?? 'Tuliskan jawaban kamu.' }}</p>
-                        <textarea wire:model="answer.essay" class="mt-4 min-h-48 w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100"></textarea>
+                        <textarea wire:model="answer.essay" class="mt-4 min-h-48 w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-[#db8b73] focus:ring-2 focus:ring-[#f7ded4]"></textarea>
                         @error('answer.essay') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
                     @elseif($activeStep->type === 'table_checklist')
                         <div class="overflow-x-auto">
@@ -127,7 +127,7 @@
                                                         type="radio"
                                                         wire:model="answer.rows.{{ $row['id'] }}"
                                                         value="{{ $column['id'] }}"
-                                                        class="h-5 w-5 appearance-none rounded-md border-2 border-slate-300 bg-white text-indigo-600 transition checked:border-indigo-600 checked:bg-indigo-600 focus:ring-2 focus:ring-indigo-200"
+                                                        class="h-5 w-5 appearance-none rounded-md border-2 border-slate-300 bg-white text-[#c84a2f] transition checked:border-[#c84a2f] checked:bg-[#c84a2f] focus:ring-2 focus:ring-[#f2cfc1]"
                                                     >
                                                 </td>
                                             @endforeach
@@ -147,7 +147,7 @@
                                                     <p class="text-sm font-semibold text-slate-900">{{ $item['label'] }}</p>
                                                 </div>
 
-                                                <select wire:model="answer.matches.{{ $item['key'] }}" class="w-full max-w-[120px] rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100">
+                                                <select wire:model="answer.matches.{{ $item['key'] }}" class="w-full max-w-[120px] rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-[#db8b73] focus:ring-2 focus:ring-[#f7ded4]">
                                                     <option value="">Pilih huruf</option>
                                                     @foreach(($payload['options'] ?? []) as $option)
                                                         <option value="{{ $option['key'] }}">{{ $option['key'] }}</option>
@@ -159,15 +159,15 @@
                                 </div>
 
                                 <div class="rounded-[22px] border border-slate-200 bg-white p-4 shadow-sm xl:col-span-5">
-                                    <p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-indigo-700">Daftar Jawaban</p>
+                                    <p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#b64027]">Daftar Jawaban</p>
                                     <div class="mt-4 space-y-3">
                                         @foreach(($payload['options'] ?? []) as $option)
                                             <div class="flex items-start gap-3 rounded-[18px] border border-slate-200 bg-slate-50 p-4">
-                                                <span class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-sm font-semibold text-white">
+                                                <span class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#c84a2f] text-sm font-semibold text-white">
                                                     {{ $option['key'] }}
                                                 </span>
                                                 <div class="min-w-0">
-                                                    <p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-indigo-700">Jawaban {{ $option['key'] }}</p>
+                                                    <p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#b64027]">Jawaban {{ $option['key'] }}</p>
                                                     <p class="text-sm leading-6 text-slate-700">{{ $option['label'] }}</p>
                                                 </div>
                                             </div>
@@ -190,11 +190,11 @@
                                         @endphp
                                         <article class="overflow-hidden rounded-[22px] border p-4 shadow-sm transition {{ $itemStateClass }}">
                                             <div class="flex items-center justify-between gap-3">
-                                                <span class="inline-flex items-center rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-700">Soal {{ $loop->iteration }}</span>
+                                                <span class="inline-flex items-center rounded-full bg-[#f8ded2] px-3 py-1 text-xs font-semibold text-[#b64027]">Soal {{ $loop->iteration }}</span>
                                                 @if(filled($item['image_url'] ?? null))
                                                     <button
                                                         type="button"
-                                                        class="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-600 transition hover:border-indigo-300 hover:text-indigo-700"
+                                                        class="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-600 transition hover:border-[#db8b73] hover:text-[#b64027]"
                                                         onclick="window.dispatchEvent(new CustomEvent('open-image-preview', { detail: { src: '{{ $item['image_url'] }}', alt: @js($item['alt'] ?? $item['label']) } }))"
                                                     >
                                                         <span class="material-symbols-outlined text-[16px]">zoom_in</span>
@@ -203,7 +203,7 @@
                                                 @endif
                                             </div>
 
-                                            <div class="mt-4 overflow-hidden rounded-[20px] border border-slate-200 bg-gradient-to-br from-slate-50 to-indigo-50/60">
+                                            <div class="mt-4 overflow-hidden rounded-[20px] border border-slate-200 bg-gradient-to-br from-[#fffaf6] to-[#fff1e7]/60">
                                                 <div class="flex aspect-[4/3] items-center justify-center p-4 sm:p-5">
                                                     @if(filled($item['image_url'] ?? null))
                                                         <img
@@ -226,7 +226,7 @@
 
                                             <div class="mt-4">
                                                 <label class="mb-2 block text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Jawaban</label>
-                                                <select wire:model="answer.matches.{{ $item['key'] }}" class="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100">
+                                                <select wire:model="answer.matches.{{ $item['key'] }}" class="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-[#db8b73] focus:ring-2 focus:ring-[#f7ded4]">
                                                     <option value="">Pilih jawaban</option>
                                                     @foreach(($payload['options'] ?? []) as $option)
                                                         <option value="{{ $option['key'] }}">{{ $option['label'] }}</option>
@@ -256,7 +256,7 @@
                                             <label class="block text-sm font-semibold text-slate-900">
                                                 {{ $item['label'] }}
                                             </label>
-                                            <select wire:model="answer.matches.{{ $item['key'] }}" class="mt-3 w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100">
+                                            <select wire:model="answer.matches.{{ $item['key'] }}" class="mt-3 w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-[#db8b73] focus:ring-2 focus:ring-[#f7ded4]">
                                                 <option value="">Pilih jawaban</option>
                                                 @foreach(($payload['options'] ?? []) as $option)
                                                     <option value="{{ $option['key'] }}">{{ $option['label'] }}</option>
@@ -286,11 +286,11 @@
                     <div id="quiz-feedback-panel" tabindex="-1" class="rounded-[24px] border border-slate-200/80 bg-white p-5 shadow-sm scroll-mt-24 motion-safe:animate-[quizFeedbackIn_380ms_ease-out]">
                         <div class="flex items-center justify-between gap-3">
                             <div>
-                                <p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-indigo-700">Hasil</p>
+                                <p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#b64027]">Hasil</p>
                                 <h3 class="mt-1 text-2xl font-semibold text-slate-900">Ringkasan Penilaian</h3>
                             </div>
                             @if($resultStatusLabel)
-                                <span class="rounded-full bg-indigo-100 px-3 py-1 text-sm font-semibold text-indigo-700">
+                                <span class="rounded-full bg-[#f8ded2] px-3 py-1 text-sm font-semibold text-[#b64027]">
                                     {{ $resultStatusLabel }}
                                 </span>
                             @endif
@@ -330,7 +330,7 @@
 
                 <div class="flex items-center justify-end gap-3">
                     @if(! in_array($activeAttempt?->status, ['auto_graded', 'pending_review', 'completed'], true))
-                        <button wire:click="submit" wire:loading.attr="disabled" wire:target="submit" class="inline-flex items-center justify-center rounded-full bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm shadow-indigo-600/20 transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-70">
+                        <button wire:click="submit" wire:loading.attr="disabled" wire:target="submit" class="inline-flex items-center justify-center rounded-full bg-[#c84a2f] px-4 py-2.5 text-sm font-semibold text-white shadow-sm shadow-[#c84a2f]/20 transition hover:bg-[#a93b25] disabled:cursor-not-allowed disabled:opacity-70">
                             <span wire:loading.remove wire:target="submit">Kirim Jawaban</span>
                             <span wire:loading wire:target="submit" class="inline-flex items-center gap-2">
                                 <span class="inline-flex h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white"></span>
@@ -342,17 +342,17 @@
                     @if(in_array($activeAttempt?->status, ['auto_graded', 'pending_review', 'completed'], true))
                         @if($this->isLastStep())
                             <div class="flex flex-wrap items-center justify-end gap-3">
-                                <a href="{{ route('student.courses.show', $quiz->module->course) }}" class="inline-flex items-center justify-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-5 py-2.5 text-sm font-semibold text-indigo-700 transition hover:border-indigo-300 hover:bg-indigo-100">
+                                <a href="{{ route('student.courses.show', $quiz->module->course) }}" class="inline-flex items-center justify-center gap-2 rounded-full border border-[#efc2b2] bg-[#fff5ef] px-5 py-2.5 text-sm font-semibold text-[#b64027] transition hover:border-[#db8b73] hover:bg-[#f2cfc1]">
                                     Kembali ke Materi
                                     <span class="material-symbols-outlined text-[18px]">menu_book</span>
                                 </a>
-                                <a href="{{ route('student.dashboard') }}" class="inline-flex items-center justify-center gap-2 rounded-full bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-indigo-600/20 transition hover:bg-indigo-700 hover:shadow-xl hover:shadow-indigo-600/30">
+                                <a href="{{ route('student.dashboard') }}" class="inline-flex items-center justify-center gap-2 rounded-full bg-[#c84a2f] px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#c84a2f]/20 transition hover:bg-[#a93b25] hover:shadow-xl hover:shadow-[#c84a2f]/30">
                                     Kembali ke Beranda
                                     <span class="material-symbols-outlined text-[18px]">home</span>
                                 </a>
                             </div>
                         @else
-                            <button wire:click="next" class="inline-flex items-center justify-center gap-2 rounded-full bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm shadow-indigo-600/20 transition hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-600/30">
+                            <button wire:click="next" class="inline-flex items-center justify-center gap-2 rounded-full bg-[#c84a2f] px-5 py-2.5 text-sm font-semibold text-white shadow-sm shadow-[#c84a2f]/20 transition hover:bg-[#a93b25] hover:shadow-lg hover:shadow-[#c84a2f]/30">
                                 Soal Selanjutnya
                                 <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
                             </button>
@@ -366,11 +366,11 @@
     <dialog id="quiz-image-preview" class="quiz-image-preview">
         <div class="flex items-center justify-between gap-4 border-b border-slate-200 px-5 py-4">
             <div>
-                <p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-indigo-700">Preview Gambar</p>
+                <p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-[#b64027]">Preview Gambar</p>
                 <p id="quiz-image-preview-caption" class="mt-1 text-sm font-medium text-slate-700">Preview gambar soal</p>
             </div>
             <form method="dialog">
-                <button type="submit" class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 transition hover:border-indigo-300 hover:text-indigo-700">
+                <button type="submit" class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 transition hover:border-[#db8b73] hover:text-[#b64027]">
                     <span class="material-symbols-outlined text-[20px]">close</span>
                 </button>
             </form>
