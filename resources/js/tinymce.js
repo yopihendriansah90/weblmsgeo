@@ -28,6 +28,8 @@ const initEditor = (textarea) => {
         menubar: false,
         skin_url: '/tinymce/skins/ui/oxide',
         content_css: '/tinymce/skins/ui/oxide/content.min.css',
+        height: 640,
+        min_height: 520,
         plugins: 'advlist autolink code image link lists table wordcount',
         toolbar: [
             'undo redo | blocks | bold italic underline | alignleft aligncenter alignright alignjustify',

@@ -13,6 +13,7 @@ use App\Livewire\Guru\CourseForm;
 use App\Livewire\Guru\EssayReviewIndex;
 use App\Livewire\Guru\ModuleForm;
 use App\Livewire\Guru\ModuleIndex;
+use App\Livewire\Guru\ModulePreview;
 use App\Livewire\Guru\QuizReportIndex;
 use App\Livewire\Guru\QuizForm;
 use Illuminate\Http\Request;
@@ -83,6 +84,7 @@ Route::middleware(['auth', 'guru'])->prefix('guru')->name('guru.')->group(functi
     Route::get('/materi/{course}/edit', CourseForm::class)->name('courses.edit');
     Route::get('/materi/{course}/bab', ModuleIndex::class)->name('modules.index');
     Route::get('/materi/{course}/bab/create', ModuleForm::class)->name('modules.create');
+    Route::get('/bab/{module}/preview', ModulePreview::class)->name('modules.preview');
     Route::get('/bab/{module}/edit', ModuleForm::class)->name('modules.edit');
     Route::get('/bab/{module}/quiz', QuizForm::class)->name('quizzes.create');
     Route::get('/bab/{module}/quiz/{quiz}', QuizForm::class)->name('quizzes.edit');

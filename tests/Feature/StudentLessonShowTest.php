@@ -69,6 +69,48 @@ class StudentLessonShowTest extends TestCase
             ->assertDontSee('Belum ada');
     }
 
+    public function test_lesson_page_renders_rich_editor_content(): void
+    {
+        $student = $this->student();
+        $course = Course::create([
+            'title' => 'Course Rich Content',
+            'slug' => 'course-rich-content',
+            'status' => 'published',
+        ]);
+
+        $lesson = Module::create([
+            'course_id' => $course->id,
+            'type' => 'lesson',
+            'title' => 'Bab Rich Content',
+            'slug' => 'bab-rich-content',
+            'content' => implode('', [
+                '<h1 style="text-align: center;">Judul Materi</h1>',
+                '<p><strong>Tebal</strong> <em>miring</em> <u>garis bawah</u> <a href="https://example.test">tautan</a></p>',
+                '<blockquote>Kutipan penting</blockquote>',
+                '<ol><li>Langkah satu</li><li>Langkah dua</li></ol>',
+                '<ul><li>Poin satu</li><li>Poin dua</li></ul>',
+                '<table><tbody><tr><th>Kolom</th><td>Isi tabel</td></tr></tbody></table>',
+                '<figure class="image image-style-align-center"><img src="/example.png" alt="Contoh"><figcaption>Caption gambar</figcaption></figure>',
+                '<pre><code>kode contoh</code></pre>',
+            ]),
+            'sort_order' => 1,
+            'status' => 'published',
+        ]);
+
+        $this->actingAs($student->user)
+            ->get(route('student.modules.show', $lesson))
+            ->assertOk()
+            ->assertSee('style="text-align: center;"', false)
+            ->assertSee('<u>garis bawah</u>', false)
+            ->assertSee('<blockquote>Kutipan penting</blockquote>', false)
+            ->assertSee('<ol><li>Langkah satu</li><li>Langkah dua</li></ol>', false)
+            ->assertSee('<ul><li>Poin satu</li><li>Poin dua</li></ul>', false)
+            ->assertSee('<table><tbody><tr><th>Kolom</th><td>Isi tabel</td></tr></tbody></table>', false)
+            ->assertSee('image-style-align-center', false)
+            ->assertSee('<figcaption>Caption gambar</figcaption>', false)
+            ->assertSee('<pre><code>kode contoh</code></pre>', false);
+    }
+
     private function student(): Student
     {
         Role::findOrCreate('siswa');

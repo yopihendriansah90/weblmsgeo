@@ -102,6 +102,13 @@
                 $breadcrumbSectionUrl = route('guru.courses.index');
                 $pageContext = 'Bab';
                 break;
+            case request()->routeIs('guru.modules.preview'):
+                $pageTitle = 'Preview Bab';
+                $pageSubtitle = 'Pratinjau tampilan bab pembahasan sebelum dipublikasikan ke siswa.';
+                $breadcrumbSection = 'Materi';
+                $breadcrumbSectionUrl = route('guru.courses.index');
+                $pageContext = 'Bab';
+                break;
             case request()->routeIs('guru.lessons.create'):
                 $pageTitle = 'Tambah Subbab';
                 $pageSubtitle = 'Tambahkan subbab baru ke dalam bab.';

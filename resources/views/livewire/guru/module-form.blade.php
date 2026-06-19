@@ -70,9 +70,14 @@
                         </div>
                     </div>
                 </div>
-                <div class="card-footer bg-white d-flex justify-content-between">
+                <div class="card-footer bg-white d-flex justify-content-between gap-2">
                     <a href="{{ $course ? route('guru.modules.index', $course) : route('guru.courses.index') }}" class="btn btn-sm btn-outline-secondary guru-btn-sm guru-btn-bordered">Kembali</a>
-                    <button type="submit" class="btn btn-sm btn-primary guru-btn-sm ms-auto">Simpan</button>
+                    <div class="d-flex flex-wrap gap-2 ms-auto">
+                        @if($module)
+                            <a href="{{ route('guru.modules.preview', $module) }}" class="btn btn-sm btn-outline-secondary guru-btn-sm guru-btn-bordered">Preview</a>
+                        @endif
+                        <button type="submit" class="btn btn-sm btn-primary guru-btn-sm">Simpan</button>
+                    </div>
                 </div>
             </form>
         </div>

@@ -153,6 +153,79 @@
         border-radius: 1rem;
     }
 
+    .lesson-content > * + * {
+        margin-top: 1rem;
+    }
+
+    .lesson-content p {
+        line-height: 1.75;
+        margin: 0.85rem 0;
+    }
+
+    .lesson-content h1,
+    .lesson-content h2,
+    .lesson-content h3 {
+        color: #7a2b1c;
+        font-weight: 700;
+        line-height: 1.25;
+        margin: 1.5rem 0 0.75rem;
+    }
+
+    .lesson-content h1 {
+        font-size: clamp(2rem, 4vw, 2.75rem);
+    }
+
+    .lesson-content h2 {
+        font-size: clamp(1.5rem, 3vw, 2rem);
+    }
+
+    .lesson-content h3 {
+        font-size: clamp(1.25rem, 2vw, 1.5rem);
+    }
+
+    .lesson-content a {
+        color: #b64027;
+        font-weight: 600;
+        text-decoration: underline;
+        text-underline-offset: 0.18em;
+    }
+
+    .lesson-content blockquote {
+        border-left: 4px solid #db8b73;
+        color: #475569;
+        font-style: italic;
+        margin: 1.25rem 0;
+        padding: 0.75rem 1rem;
+        background: #fff7f1;
+        border-radius: 0 0.75rem 0.75rem 0;
+    }
+
+    .lesson-content code {
+        background: #fff5ef;
+        border: 1px solid #f3d8cb;
+        border-radius: 0.4rem;
+        color: #7a2b1c;
+        font-size: 0.9em;
+        padding: 0.1rem 0.35rem;
+    }
+
+    .lesson-content pre {
+        background: #1f2937;
+        border-radius: 1rem;
+        color: #f8fafc;
+        line-height: 1.7;
+        margin: 1.25rem 0;
+        overflow-x: auto;
+        padding: 1rem;
+    }
+
+    .lesson-content pre code {
+        background: transparent;
+        border: 0;
+        color: inherit;
+        padding: 0;
+    }
+
     .lesson-content ol {
         list-style: decimal;
     }
@@ -192,16 +265,6 @@
         font-weight: 700;
     }
 
-    .lesson-content h1,
-    .lesson-content h2,
-    .lesson-content h3 {
-        color: #7a2b1c;
-    }
-
-    .lesson-content p {
-        line-height: 1.75;
-    }
-
     .lesson-content figure.image {
         display: table;
         max-width: 100%;
@@ -236,6 +299,7 @@
     .lesson-content img.image-style-align-center,
     .lesson-content figure.image.image-style-align-center,
     .lesson-content figure.image.align-center {
+        display: block;
         margin-left: auto;
         margin-right: auto;
     }
