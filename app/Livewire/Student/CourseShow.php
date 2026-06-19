@@ -48,7 +48,7 @@ class CourseShow extends Component
 
         $allowNextAvailable = true;
 
-        return $this->course->modules->values()->map(function (Module $module, int $index) use (&$allowNextAvailable, $lessonProgressByModule, $quizAttemptsByModule) {
+        return $this->course->modules->values()->map(function (Module $module, int $index) use (&$allowNextAvailable, $lessonProgressByModule, $quizAttemptsByModule, $student) {
             $progress = $lessonProgressByModule->get($module->id);
             $attempts = $quizAttemptsByModule->get($module->id, collect());
             $isQuiz = $module->isQuiz();
@@ -56,14 +56,16 @@ class CourseShow extends Component
             $isCompleted = $isQuiz
                 ? $attempts->contains(fn ($attempt) => $attempt->status === 'completed')
                 : $progress?->status === 'completed';
+            $publishedQuiz = $isQuiz ? $module->publishedQuiz : null;
+            $canOpenQuiz = $publishedQuiz?->canStudentStartAttempt($student->id) ?? false;
 
             $isAvailable = $allowNextAvailable && ! $isCompleted;
 
             $href = null;
 
             if ($isQuiz) {
-                if (($isCompleted || $isAvailable) && $module->publishedQuiz) {
-                    $href = route('student.quizzes.take', $module->publishedQuiz);
+                if (($isCompleted || $isAvailable) && $canOpenQuiz) {
+                    $href = route('student.quizzes.take', $publishedQuiz);
                 }
             } elseif ($isCompleted || $isAvailable) {
                 $href = route('student.modules.show', $module);
@@ -81,6 +83,7 @@ class CourseShow extends Component
                 'is_completed' => $isCompleted,
                 'is_available' => $isAvailable,
                 'is_locked' => ! $isCompleted && ! $isAvailable,
+                'can_open_quiz' => $canOpenQuiz,
                 'href' => $href,
             ];
         });

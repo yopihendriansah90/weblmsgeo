@@ -29,4 +29,28 @@ class Quiz extends Model
     {
         return $this->hasMany(QuizAttempt::class);
     }
+
+    public function canStudentStartAttempt(int $studentId): bool
+    {
+        if ($this->attempts()
+            ->where('student_id', $studentId)
+            ->whereIn('status', ['in_progress', 'pending_review'])
+            ->exists()) {
+            return true;
+        }
+
+        $attemptCount = $this->attempts()
+            ->where('student_id', $studentId)
+            ->count();
+
+        if ($attemptCount === 0) {
+            return true;
+        }
+
+        if (! $this->allow_retake) {
+            return false;
+        }
+
+        return $this->max_attempts === null || $attemptCount < $this->max_attempts;
+    }
 }

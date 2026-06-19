@@ -63,7 +63,7 @@ class LessonShow extends Component
 
         $allowNextAvailable = true;
 
-        return $this->module->course->modules->values()->map(function (Module $courseModule, int $index) use (&$allowNextAvailable, $lessonProgressByModule, $quizAttemptsByModule) {
+        return $this->module->course->modules->values()->map(function (Module $courseModule, int $index) use (&$allowNextAvailable, $lessonProgressByModule, $quizAttemptsByModule, $student) {
             $isCurrent = $courseModule->is($this->module);
             $progress = $lessonProgressByModule->get($courseModule->id);
             $attempts = $quizAttemptsByModule->get($courseModule->id, collect());
@@ -71,6 +71,8 @@ class LessonShow extends Component
                 ? $attempts->contains(fn ($attempt) => $attempt->status === 'completed')
                 : $progress?->status === 'completed';
             $isAvailable = $allowNextAvailable && ! $isCompleted;
+            $publishedQuiz = $courseModule->isQuiz() ? $courseModule->publishedQuiz : null;
+            $canOpenQuiz = $publishedQuiz?->canStudentStartAttempt($student->id) ?? false;
 
             $item = [
                 'label' => $courseModule->isQuiz() ? 'Quiz' : 'Bab '.($index + 1),
@@ -80,7 +82,7 @@ class LessonShow extends Component
                     ? ($isCompleted ? 'check' : ($isAvailable ? 'quiz' : 'lock'))
                     : ($isCompleted ? 'check' : ($isCurrent ? 'auto_stories' : ($isAvailable ? 'auto_stories' : 'lock'))),
                 'href' => $courseModule->isQuiz()
-                    ? (($isCompleted || $isAvailable) && $courseModule->publishedQuiz ? route('student.quizzes.take', $courseModule->publishedQuiz) : null)
+                    ? (($isCompleted || $isAvailable) && $canOpenQuiz ? route('student.quizzes.take', $publishedQuiz) : null)
                     : ($isCompleted || $isCurrent || $isAvailable ? route('student.modules.show', $courseModule) : null),
                 'is_current' => $isCurrent,
                 'is_completed' => $isCompleted,

@@ -28,7 +28,17 @@ class QuizTake extends Component
     {
         abort_unless($quiz->status === 'published', 404);
         $this->quiz = $quiz->load('module.course', 'steps');
-        $this->attempt = $flowService->startOrContinue($quiz, auth()->user()->student);
+
+        $student = auth()->user()->student;
+
+        if (! $this->quiz->canStudentStartAttempt($student->id)) {
+            session()->flash('status', 'Quiz sudah selesai dan tidak dapat diulang.');
+            $this->redirect(route('student.courses.show', $this->quiz->module->course), navigate: false);
+
+            return;
+        }
+
+        $this->attempt = $flowService->startOrContinue($quiz, $student);
         $this->activeStepId = $this->attempt->current_step_id ?? $this->quiz->steps->first()?->id;
     }
 

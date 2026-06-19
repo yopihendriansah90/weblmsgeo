@@ -6,6 +6,7 @@ use App\Models\Course;
 use App\Models\LessonProgress;
 use App\Models\Module;
 use App\Models\Quiz;
+use App\Models\QuizAttempt;
 use App\Models\QuizStep;
 use App\Models\School;
 use App\Models\Student;
@@ -58,6 +59,82 @@ class StudentCourseShowTest extends TestCase
             ->assertDontSee('Quiz Terkunci');
     }
 
+    public function test_completed_quiz_without_retake_does_not_show_open_button(): void
+    {
+        $student = $this->student();
+        [$course, $firstLesson, $secondLesson, $quizModule, $quiz] = $this->courseWithTwoLessonsAndQuiz([
+            'allow_retake' => false,
+            'max_attempts' => 1,
+        ]);
+
+        LessonProgress::create([
+            'student_id' => $student->id,
+            'module_id' => $firstLesson->id,
+            'status' => 'completed',
+            'completed_at' => now(),
+        ]);
+
+        LessonProgress::create([
+            'student_id' => $student->id,
+            'module_id' => $secondLesson->id,
+            'status' => 'completed',
+            'completed_at' => now(),
+        ]);
+
+        QuizAttempt::create([
+            'quiz_id' => $quiz->id,
+            'student_id' => $student->id,
+            'status' => 'completed',
+            'started_at' => now()->subMinutes(5),
+            'completed_at' => now(),
+            'final_score' => 80,
+        ]);
+
+        $this->actingAs($student->user)
+            ->get(route('student.courses.show', $course))
+            ->assertOk()
+            ->assertSee('Quiz Selesai')
+            ->assertDontSee('Buka Quiz');
+    }
+
+    public function test_completed_quiz_without_retake_redirects_when_opened_directly(): void
+    {
+        $student = $this->student();
+        [$course, $firstLesson, $secondLesson, $quizModule, $quiz] = $this->courseWithTwoLessonsAndQuiz([
+            'allow_retake' => false,
+            'max_attempts' => 1,
+        ]);
+
+        LessonProgress::create([
+            'student_id' => $student->id,
+            'module_id' => $firstLesson->id,
+            'status' => 'completed',
+            'completed_at' => now(),
+        ]);
+
+        LessonProgress::create([
+            'student_id' => $student->id,
+            'module_id' => $secondLesson->id,
+            'status' => 'completed',
+            'completed_at' => now(),
+        ]);
+
+        QuizAttempt::create([
+            'quiz_id' => $quiz->id,
+            'student_id' => $student->id,
+            'status' => 'completed',
+            'started_at' => now()->subMinutes(5),
+            'completed_at' => now(),
+            'final_score' => 80,
+        ]);
+
+        $this->actingAs($student->user)
+            ->get(route('student.quizzes.take', $quiz))
+            ->assertRedirect(route('student.courses.show', $course));
+
+        $this->assertSame(1, $quiz->attempts()->where('student_id', $student->id)->count());
+    }
+
     private function student(): Student
     {
         Role::findOrCreate('siswa');
@@ -83,7 +160,7 @@ class StudentCourseShowTest extends TestCase
         ]);
     }
 
-    private function courseWithTwoLessonsAndQuiz(): array
+    private function courseWithTwoLessonsAndQuiz(array $quizAttributes = []): array
     {
         $suffix = Str::lower(Str::random(6));
 
@@ -126,6 +203,7 @@ class StudentCourseShowTest extends TestCase
             'module_id' => $quizModule->id,
             'title' => 'Quiz Akhir Materi',
             'status' => 'published',
+            ...$quizAttributes,
         ]);
 
         QuizStep::create([

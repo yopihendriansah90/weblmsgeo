@@ -13,6 +13,7 @@ use App\Services\EssayReviewService;
 use App\Services\QuizFlowService;
 use App\Services\QuizScoringService;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Str;
 use InvalidArgumentException;
 use Spatie\Permission\Models\Role;
 use Tests\TestCase;
@@ -74,10 +75,66 @@ class QuizFlowTest extends TestCase
         ]);
     }
 
+    public function test_completed_quiz_cannot_be_restarted_when_retake_is_disabled(): void
+    {
+        Role::findOrCreate('siswa');
+        $student = $this->student();
+        $quiz = $this->autoQuiz(['allow_retake' => false, 'max_attempts' => 1]);
+        $flow = app(QuizFlowService::class);
+
+        $firstAttempt = $flow->startOrContinue($quiz, $student);
+        $flow->submitStep($firstAttempt, $quiz->steps->first(), [
+            'answers' => [
+                ['item_key' => 'a', 'selected_option_key' => 'one'],
+            ],
+        ]);
+        $this->assertSame('completed', $firstAttempt->fresh()->status);
+
+        $secondAttempt = $flow->startOrContinue($quiz->fresh('steps'), $student);
+
+        $this->assertSame($firstAttempt->id, $secondAttempt->id);
+        $this->assertSame('completed', $secondAttempt->status);
+        $this->assertSame(1, $quiz->attempts()->where('student_id', $student->id)->count());
+    }
+
+    public function test_retake_respects_max_attempts(): void
+    {
+        Role::findOrCreate('siswa');
+        $student = $this->student();
+        $quiz = $this->autoQuiz(['allow_retake' => true, 'max_attempts' => 2]);
+        $flow = app(QuizFlowService::class);
+
+        $firstAttempt = $flow->startOrContinue($quiz, $student);
+        $flow->submitStep($firstAttempt, $quiz->steps->first(), [
+            'answers' => [
+                ['item_key' => 'a', 'selected_option_key' => 'one'],
+            ],
+        ]);
+        $this->assertSame('completed', $firstAttempt->fresh()->status);
+
+        $secondAttempt = $flow->startOrContinue($quiz->fresh('steps'), $student);
+        $flow->submitStep($secondAttempt, $quiz->fresh('steps')->steps->first(), [
+            'answers' => [
+                ['item_key' => 'a', 'selected_option_key' => 'one'],
+            ],
+        ]);
+        $this->assertSame('completed', $secondAttempt->fresh()->status);
+
+        $this->assertSame(2, $quiz->fresh()->max_attempts);
+        $this->assertSame(2, $quiz->attempts()->where('student_id', $student->id)->count());
+
+        $thirdAttempt = $flow->startOrContinue($quiz->fresh('steps'), $student);
+
+        $this->assertNotSame($firstAttempt->id, $secondAttempt->id);
+        $this->assertSame($secondAttempt->id, $thirdAttempt->id);
+        $this->assertSame(2, $quiz->attempts()->where('student_id', $student->id)->count());
+    }
+
     private function student(): Student
     {
-        $school = School::create(['name' => 'Quiz School', 'level' => 'SMP', 'status' => 'active']);
-        $user = User::create(['name' => 'Quiz Student', 'username' => 'quiz_student', 'password' => 'password', 'status' => 'active']);
+        $suffix = Str::random(8);
+        $school = School::create(['name' => 'Quiz School '.$suffix, 'level' => 'SMP', 'status' => 'active']);
+        $user = User::create(['name' => 'Quiz Student', 'username' => 'quiz_student_'.$suffix, 'password' => 'password', 'status' => 'active']);
         $user->assignRole('siswa');
 
         return Student::create(['user_id' => $user->id, 'school_id' => $school->id, 'status' => 'active']);
@@ -113,6 +170,46 @@ class QuizFlowTest extends TestCase
                 'pairs' => [
                     ['item_key' => 'a', 'correct_option_key' => 'one'],
                     ['item_key' => 'b', 'correct_option_key' => 'two'],
+                ],
+            ],
+        ]);
+
+        return $quiz->fresh('steps');
+    }
+
+    private function autoQuiz(array $attributes = []): Quiz
+    {
+        $suffix = Str::random(8);
+        $course = Course::create(['title' => 'Auto Quiz Course', 'slug' => 'auto-quiz-course-'.$suffix, 'status' => 'published']);
+        $module = Module::create([
+            'course_id' => $course->id,
+            'type' => 'quiz',
+            'title' => 'Auto Quiz Module',
+            'slug' => 'auto-quiz-module-'.$suffix,
+            'status' => 'published',
+        ]);
+        $quiz = Quiz::create([
+            'module_id' => $module->id,
+            'title' => 'Auto Quiz',
+            'status' => 'published',
+            ...$attributes,
+        ]);
+
+        QuizStep::create([
+            'quiz_id' => $quiz->id,
+            'title' => 'Matching',
+            'type' => 'text_matching',
+            'sort_order' => 1,
+            'status' => 'published',
+            'content_payload' => [
+                'items' => [
+                    ['key' => 'a', 'label' => 'Data spasial'],
+                ],
+                'options' => [
+                    ['key' => 'one', 'label' => 'Data lokasi'],
+                ],
+                'pairs' => [
+                    ['item_key' => 'a', 'correct_option_key' => 'one'],
                 ],
             ],
         ]);

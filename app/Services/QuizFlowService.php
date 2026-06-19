@@ -20,35 +20,33 @@ class QuizFlowService
     public function startOrContinue(Quiz $quiz, Student $student): QuizAttempt
     {
         return DB::transaction(function () use ($quiz, $student) {
-            $attempt = QuizAttempt::firstOrCreate(
-                ['quiz_id' => $quiz->id, 'student_id' => $student->id, 'status' => 'in_progress'],
-                ['started_at' => now()],
-            );
+            $activeAttempt = $quiz->attempts()
+                ->where('student_id', $student->id)
+                ->whereIn('status', ['in_progress', 'pending_review'])
+                ->latest('id')
+                ->first();
 
-            $steps = $quiz->steps()->get();
-            foreach ($steps as $index => $step) {
-                $stepAttempt = QuizStepAttempt::firstOrCreate(
-                    ['quiz_attempt_id' => $attempt->id, 'quiz_step_id' => $step->id],
-                    ['status' => $index === 0 ? 'active' : 'locked', 'started_at' => $index === 0 ? now() : null],
-                );
-
-                $presentation = $this->buildPresentationPayload($step);
-                if ($presentation) {
-                    $existingPayload = $stepAttempt->result_payload ?? [];
-
-                    if (! isset($existingPayload['presentation'])) {
-                        $stepAttempt->update([
-                            'result_payload' => array_merge($existingPayload, [
-                                'presentation' => $presentation,
-                            ]),
-                        ]);
-                    }
-                }
+            if ($activeAttempt) {
+                return $this->ensureAttemptSteps($activeAttempt, $quiz);
             }
 
-            if (! $attempt->current_step_id && $steps->isNotEmpty()) {
-                $attempt->update(['current_step_id' => $steps->first()->id]);
+            $completedAttempt = $quiz->attempts()
+                ->where('student_id', $student->id)
+                ->where('status', 'completed')
+                ->latest('id')
+                ->first();
+
+            if ($completedAttempt && ! $this->canStartRetake($quiz, $student)) {
+                return $this->ensureAttemptSteps($completedAttempt, $quiz);
             }
+
+            $attempt = $quiz->attempts()->create([
+                'student_id' => $student->id,
+                'started_at' => now(),
+                'status' => 'in_progress',
+            ]);
+
+            $this->ensureAttemptSteps($attempt, $quiz);
 
             StudentLearningActivity::create([
                 'student_id' => $student->id,
@@ -66,6 +64,10 @@ class QuizFlowService
     public function submitStep(QuizAttempt $attempt, QuizStep $step, array $answer): QuizStepAttempt
     {
         return DB::transaction(function () use ($attempt, $step, $answer) {
+            if ($attempt->status !== 'in_progress') {
+                throw new InvalidArgumentException('Quiz ini sudah selesai atau sedang menunggu penilaian.');
+            }
+
             $stepAttempt = $attempt->stepAttempts()->where('quiz_step_id', $step->id)->firstOrFail();
 
             if ($stepAttempt->status === 'locked') {
@@ -147,6 +149,7 @@ class QuizFlowService
 
     public function refreshAttemptScore(QuizAttempt $attempt): void
     {
+        $attempt->refresh();
         $attempt->load('stepAttempts.quizStep');
         $autoSteps = $attempt->stepAttempts->whereIn('quizStep.type', ['text_matching', 'table_checklist', 'image_text_matching']);
         $essaySteps = $attempt->stepAttempts->where('quizStep.type', 'essay');
@@ -190,5 +193,41 @@ class QuizFlowService
         return [
             'item_order' => $itemKeys,
         ];
+    }
+
+    private function canStartRetake(Quiz $quiz, Student $student): bool
+    {
+        return $quiz->canStudentStartAttempt($student->id);
+    }
+
+    private function ensureAttemptSteps(QuizAttempt $attempt, Quiz $quiz): QuizAttempt
+    {
+        $steps = $quiz->steps()->get();
+
+        foreach ($steps as $index => $step) {
+            $stepAttempt = QuizStepAttempt::firstOrCreate(
+                ['quiz_attempt_id' => $attempt->id, 'quiz_step_id' => $step->id],
+                ['status' => $index === 0 ? 'active' : 'locked', 'started_at' => $index === 0 ? now() : null],
+            );
+
+            $presentation = $this->buildPresentationPayload($step);
+            if ($presentation) {
+                $existingPayload = $stepAttempt->result_payload ?? [];
+
+                if (! isset($existingPayload['presentation'])) {
+                    $stepAttempt->update([
+                        'result_payload' => array_merge($existingPayload, [
+                            'presentation' => $presentation,
+                        ]),
+                    ]);
+                }
+            }
+        }
+
+        if (! $attempt->current_step_id && $steps->isNotEmpty()) {
+            $attempt->update(['current_step_id' => $steps->first()->id]);
+        }
+
+        return $attempt->fresh(['quiz.steps', 'stepAttempts.quizStep', 'stepAttempts.answers']);
     }
 }
