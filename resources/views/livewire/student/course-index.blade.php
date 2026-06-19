@@ -18,42 +18,39 @@
     <section class="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
         @forelse($courses as $course)
             <a href="{{ route('student.courses.show', $course) }}" class="group overflow-hidden rounded-[24px] border border-slate-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:border-[#db8b73] hover:shadow-[0_10px_30px_rgba(195,72,45,0.10)]">
-                <div class="relative h-52 overflow-hidden bg-gradient-to-br from-[#c84a2f] via-[#d96043] to-[#7a2b1c] text-white">
+                <div class="relative h-48 overflow-hidden bg-gradient-to-br from-[#c84a2f] via-[#d96043] to-[#7a2b1c] text-white sm:h-52">
                     @if($course->coverUrl())
                         <img
                             src="{{ $course->coverUrl() }}"
                             alt="{{ $course->title }}"
                             class="absolute inset-0 h-full w-full object-cover"
                         >
-                        <div class="absolute inset-0 bg-gradient-to-t from-[#3d150d]/85 via-[#7a2b1c]/35 to-transparent"></div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-[#3d150d]/35 via-transparent to-transparent"></div>
                     @else
                         <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.16),transparent_30%),linear-gradient(135deg,#c84a2f_0%,#7a2b1c_100%)]"></div>
                     @endif
-                    <div class="relative flex h-full flex-col p-5">
-                        <div class="flex items-start justify-between gap-3">
-                            <span class="rounded-full bg-white/20 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-white/90">Materi</span>
-                            <span class="rounded-full bg-[#ffd0bd] px-3 py-1 text-xs font-semibold text-slate-900">{{ $course->lessons_count }} bab</span>
-                        </div>
-                        <div class="mt-auto max-w-[80%]">
-                            <p class="text-sm text-[#fff1e7]/90">{{ $course->title }}</p>
-                            <h2 class="mt-2 text-2xl font-semibold tracking-tight">
-                                {{ \Illuminate\Support\Str::limit($course->description ?: $course->title, 42) }}
-                            </h2>
-                        </div>
+                    <div class="absolute left-4 top-4">
+                        <span class="rounded-full bg-white/90 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-[#b64027] shadow-sm">Materi</span>
                     </div>
                 </div>
 
                 <div class="space-y-4 p-5">
+                    <div>
+                        <h2 class="line-clamp-2 text-xl font-semibold leading-tight text-slate-900 group-hover:text-[#b64027] sm:text-2xl">
+                            {{ $course->title }}
+                        </h2>
+                    </div>
+
                     <p class="text-sm leading-6 text-slate-600">
                         {{ \Illuminate\Support\Str::limit($course->description ?: 'Belum ada deskripsi materi.', 110) }}
                     </p>
-                    <div class="flex items-center justify-between text-sm text-slate-600">
-                        <span>{{ $course->lessons_count }} bab pembahasan</span>
-                        <span class="font-medium text-[#b64027]">1 kuis akhir</span>
+                    <div class="flex flex-wrap gap-2 text-sm">
+                        <span class="rounded-full bg-[#f8ded2] px-3 py-1 font-medium text-[#b64027]">{{ $course->lessons_count }} bab</span>
+                        <span class="rounded-full bg-slate-100 px-3 py-1 font-medium text-slate-600">1 kuis akhir</span>
                     </div>
-                    <div class="flex items-center justify-between">
-                        <span class="text-sm font-medium text-slate-500">Buka materi</span>
-                        <span class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#fff5ef] text-[#b64027] transition group-hover:bg-[#c84a2f] group-hover:text-white">
+                    <div class="flex items-center justify-between rounded-full border border-slate-200 bg-slate-50 px-4 py-2.5 transition group-hover:border-[#db8b73] group-hover:bg-[#fff5ef]">
+                        <span class="text-sm font-semibold text-slate-700 group-hover:text-[#b64027]">Buka materi</span>
+                        <span class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#fff5ef] text-[#b64027] transition group-hover:bg-[#c84a2f] group-hover:text-white">
                             <span class="material-symbols-outlined">arrow_forward</span>
                         </span>
                     </div>

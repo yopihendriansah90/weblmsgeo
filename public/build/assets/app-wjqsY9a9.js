@@ -1,1 +1,0 @@
-import{S as o}from"./sweetalert2.min-IAF1_VfD.js";window.Swal=o;const e=o.mixin({toast:!0,position:"top-end",showConfirmButton:!1,timer:2800,timerProgressBar:!0}),i=({type:t="success",message:n=""}={})=>{n&&e.fire({icon:t,title:n})};window.studentNotify=i;document.addEventListener("student-notify",t=>i(t.detail));

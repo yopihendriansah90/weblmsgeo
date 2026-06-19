@@ -16,6 +16,17 @@ class StudentDashboardService
         $attempts = $student->quizAttempts()->with(['quiz.module.course', 'stepAttempts.quizStep'])->latest()->get();
         $latestAttemptsByQuizId = $attempts->groupBy('quiz_id')->map(fn ($group) => $group->first());
         $latestCompletedAttempt = $attempts->first(fn (QuizAttempt $attempt): bool => $attempt->final_score !== null);
+        $lastModule = LessonProgress::query()
+            ->where('student_id', $student->id)
+            ->whereHas('module', fn ($query) => $query->where('type', 'lesson'))
+            ->with([
+                'module.course.modules' => fn ($query) => $query
+                    ->where('type', 'quiz')
+                    ->where('status', 'published')
+                    ->with('publishedQuiz'),
+            ])
+            ->latest('last_opened_at')
+            ->first()?->module;
         $recentMaterials = LessonProgress::query()
             ->where('student_id', $student->id)
             ->whereHas('module', fn ($query) => $query->where('type', 'lesson'))
@@ -28,12 +39,8 @@ class StudentDashboardService
 
         return [
             'progress_percentage' => $this->progressService->percentage($student),
-            'last_module' => LessonProgress::query()
-                ->where('student_id', $student->id)
-                ->whereHas('module', fn ($query) => $query->where('type', 'lesson'))
-                ->with('module.course')
-                ->latest('last_opened_at')
-                ->first()?->module,
+            'last_module' => $lastModule,
+            'last_module_quiz' => $this->availableCourseQuiz($lastModule, $student),
             'recent_materials' => $recentMaterials,
             'available_quizzes' => Quiz::query()
                 ->where('status', 'published')
@@ -43,7 +50,9 @@ class StudentDashboardService
                         ->whereHas('course', fn ($courseQuery) => $courseQuery->where('status', 'published'));
                 })
                 ->with('module.course')
-                ->get(),
+                ->get()
+                ->filter(fn (Quiz $quiz): bool => $quiz->canStudentStartAttempt($student->id))
+                ->values(),
             'quiz_states' => $latestAttemptsByQuizId->map(fn ($attempt): array => [
                 'status' => $attempt->status,
                 'final_score' => $attempt->final_score,
@@ -55,6 +64,19 @@ class StudentDashboardService
             'latest_score' => $latestCompletedAttempt?->final_score,
             'wrong_answers' => $this->extractWrongAnswers($attempts),
         ];
+    }
+
+    private function availableCourseQuiz($module, Student $student): ?Quiz
+    {
+        $quiz = $module?->course?->modules
+            ->first(fn ($courseModule) => $courseModule->isQuiz())
+            ?->publishedQuiz;
+
+        if (! $quiz || ! $quiz->canStudentStartAttempt($student->id)) {
+            return null;
+        }
+
+        return $quiz;
     }
 
     private function extractWrongAnswers($attempts)

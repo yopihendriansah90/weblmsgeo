@@ -147,7 +147,7 @@
                                                     <p class="text-sm font-semibold text-slate-900">{{ $item['label'] }}</p>
                                                 </div>
 
-                                                <select wire:model="answer.matches.{{ $item['key'] }}" class="w-full max-w-[120px] rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-[#db8b73] focus:ring-2 focus:ring-[#f7ded4]">
+                                                <select wire:model="answer.matches.{{ $item['key'] }}" class="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-[#db8b73] focus:ring-2 focus:ring-[#f7ded4] sm:max-w-[120px]">
                                                     <option value="">Pilih huruf</option>
                                                     @foreach(($payload['options'] ?? []) as $option)
                                                         <option value="{{ $option['key'] }}">{{ $option['key'] }}</option>

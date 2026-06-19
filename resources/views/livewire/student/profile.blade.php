@@ -9,33 +9,33 @@
 
     <div class="grid gap-6 xl:grid-cols-12">
         <section class="rounded-[24px] border border-slate-200/80 bg-white p-5 shadow-sm xl:col-span-4">
-            <div class="flex items-center gap-5">
-                <div class="flex h-24 w-24 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#c84a2f] to-[#7a2b1c] text-3xl font-semibold text-white shadow-lg shadow-[#c84a2f]/20 ring-4 ring-[#f8ded2] sm:h-28 sm:w-28">
+            <div class="flex flex-col items-center gap-4 text-center sm:flex-row sm:items-center sm:text-left">
+                <div class="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#c84a2f] to-[#7a2b1c] text-3xl font-semibold text-white shadow-lg shadow-[#c84a2f]/20 ring-4 ring-[#f8ded2] sm:h-28 sm:w-28">
                     {{ strtoupper(mb_substr($student->user->name ?? 'S', 0, 1)) }}
                 </div>
-                <div>
+                <div class="min-w-0">
                     <p class="text-[11px] font-semibold uppercase tracking-[0.24em] text-slate-500">Nama siswa</p>
-                    <h2 class="mt-1 text-2xl font-semibold tracking-tight text-slate-900">{{ $student->user->name }}</h2>
-                    <p class="mt-2 text-sm text-slate-600">Student ID: {{ $student->nisn ?? $student->id }}</p>
+                    <h2 class="mt-1 break-words text-2xl font-semibold tracking-tight text-slate-900">{{ $student->user->name }}</h2>
+                    <p class="mt-2 text-sm text-slate-600">ID Siswa: {{ $student->nisn ?? $student->id }}</p>
                 </div>
             </div>
 
-            <div class="mt-6 grid gap-4">
-                <div class="rounded-[18px] border border-slate-200 bg-slate-50 p-4">
+            <div class="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-1">
+                <div class="rounded-[18px] border border-slate-200 bg-slate-50 p-3 sm:p-4">
                     <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Sekolah</p>
-                    <p class="mt-2 text-lg font-semibold text-slate-900">{{ $student->school->name }}</p>
+                    <p class="mt-2 break-words text-base font-semibold text-slate-900 sm:text-lg">{{ $student->school->name }}</p>
                 </div>
-                <div class="rounded-[18px] border border-slate-200 bg-slate-50 p-4">
+                <div class="rounded-[18px] border border-slate-200 bg-slate-50 p-3 sm:p-4">
                     <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Kelas</p>
-                    <p class="mt-2 text-lg font-semibold text-slate-900">{{ $student->class_name ?: '-' }}</p>
+                    <p class="mt-2 text-base font-semibold text-slate-900 sm:text-lg">{{ $student->class_name ?: '-' }}</p>
                 </div>
-                <div class="rounded-[18px] border border-slate-200 bg-slate-50 p-4">
+                <div class="rounded-[18px] border border-slate-200 bg-slate-50 p-3 sm:p-4">
                     <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Status</p>
-                    <p class="mt-2 text-lg font-semibold text-slate-900">{{ ucfirst($student->status) }}</p>
+                    <p class="mt-2 text-base font-semibold text-slate-900 sm:text-lg">{{ $student->status === 'active' ? 'Aktif' : 'Tidak aktif' }}</p>
                 </div>
-                <div class="rounded-[18px] border border-slate-200 bg-slate-50 p-4">
+                <div class="rounded-[18px] border border-slate-200 bg-slate-50 p-3 sm:p-4">
                     <p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Role</p>
-                    <p class="mt-2 text-lg font-semibold text-slate-900">{{ $student->user->getRoleNames()->first() ?? 'siswa' }}</p>
+                    <p class="mt-2 text-base font-semibold text-slate-900 sm:text-lg">{{ $student->user->hasRole('siswa') ? 'Siswa' : ucfirst($student->user->getRoleNames()->first() ?? 'siswa') }}</p>
                 </div>
             </div>
         </section>
@@ -108,19 +108,29 @@
                     <div class="mt-4 grid gap-5 md:grid-cols-2">
                         <div>
                             <label for="password" class="mb-2 block text-sm font-semibold text-slate-700">Password baru</label>
-                            <input id="password" type="password" wire:model.defer="password" class="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-[#db8b73] focus:ring-2 focus:ring-[#f7ded4]">
+                            <div class="flex items-center rounded-2xl border border-slate-300 bg-white pr-2 transition focus-within:border-[#db8b73] focus-within:ring-2 focus-within:ring-[#f7ded4]">
+                                <input id="password" type="password" wire:model.defer="password" placeholder="Masukkan password baru" class="min-w-0 flex-1 rounded-2xl border-0 bg-transparent px-4 py-3 text-sm text-slate-700 outline-none focus:ring-0">
+                                <button type="button" class="inline-flex h-10 w-10 items-center justify-center rounded-full text-slate-500 transition hover:bg-slate-100 hover:text-[#b64027]" aria-label="Tampilkan password baru" data-password-toggle="password">
+                                    <span class="material-symbols-outlined text-[20px]">visibility</span>
+                                </button>
+                            </div>
                             @error('password') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
                         </div>
 
                         <div>
                             <label for="password_confirmation" class="mb-2 block text-sm font-semibold text-slate-700">Konfirmasi password baru</label>
-                            <input id="password_confirmation" type="password" wire:model.defer="password_confirmation" class="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-[#db8b73] focus:ring-2 focus:ring-[#f7ded4]">
+                            <div class="flex items-center rounded-2xl border border-slate-300 bg-white pr-2 transition focus-within:border-[#db8b73] focus-within:ring-2 focus-within:ring-[#f7ded4]">
+                                <input id="password_confirmation" type="password" wire:model.defer="password_confirmation" placeholder="Ulangi password baru" class="min-w-0 flex-1 rounded-2xl border-0 bg-transparent px-4 py-3 text-sm text-slate-700 outline-none focus:ring-0">
+                                <button type="button" class="inline-flex h-10 w-10 items-center justify-center rounded-full text-slate-500 transition hover:bg-slate-100 hover:text-[#b64027]" aria-label="Tampilkan konfirmasi password" data-password-toggle="password_confirmation">
+                                    <span class="material-symbols-outlined text-[20px]">visibility</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="flex flex-wrap items-center justify-end gap-3">
-                    <button type="submit" class="inline-flex items-center justify-center rounded-full bg-[#c84a2f] px-5 py-3 text-sm font-semibold text-white shadow-sm shadow-[#c84a2f]/20 transition hover:bg-[#a93b25]">
+                    <button type="submit" class="inline-flex w-full items-center justify-center rounded-full bg-[#c84a2f] px-5 py-3 text-sm font-semibold text-white shadow-sm shadow-[#c84a2f]/20 transition hover:bg-[#a93b25] sm:w-auto">
                         Simpan perubahan
                     </button>
                 </div>
