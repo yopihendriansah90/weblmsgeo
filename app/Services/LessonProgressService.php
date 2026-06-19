@@ -52,7 +52,9 @@ class LessonProgressService
 
     public function percentage(Student $student): int
     {
-        $total = Module::where('status', 'published')->count();
+        $total = Module::where('status', 'published')
+            ->where('type', 'lesson')
+            ->count();
 
         if ($total === 0) {
             return 0;
@@ -60,6 +62,9 @@ class LessonProgressService
 
         $completed = LessonProgress::where('student_id', $student->id)
             ->where('status', 'completed')
+            ->whereHas('module', fn ($query) => $query
+                ->where('status', 'published')
+                ->where('type', 'lesson'))
             ->count();
 
         return (int) round(($completed / $total) * 100);

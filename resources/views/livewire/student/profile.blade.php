@@ -10,7 +10,7 @@
     <div class="grid gap-6 xl:grid-cols-12">
         <section class="rounded-[24px] border border-slate-200/80 bg-white p-5 shadow-sm xl:col-span-4">
             <div class="flex items-center gap-5">
-                <div class="flex h-28 w-28 items-center justify-center rounded-[28px] bg-gradient-to-br from-[#c84a2f] to-[#7a2b1c] text-3xl font-semibold text-white shadow-lg shadow-[#c84a2f]/20">
+                <div class="flex h-24 w-24 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#c84a2f] to-[#7a2b1c] text-3xl font-semibold text-white shadow-lg shadow-[#c84a2f]/20 ring-4 ring-[#f8ded2] sm:h-28 sm:w-28">
                     {{ strtoupper(mb_substr($student->user->name ?? 'S', 0, 1)) }}
                 </div>
                 <div>

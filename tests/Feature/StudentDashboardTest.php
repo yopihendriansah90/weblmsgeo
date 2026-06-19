@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Course;
+use App\Models\LessonProgress;
 use App\Models\Module;
 use App\Models\Quiz;
 use App\Models\QuizAttempt;
@@ -11,6 +12,7 @@ use App\Models\Student;
 use App\Models\User;
 use App\Services\StudentDashboardService;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class StudentDashboardTest extends TestCase
@@ -50,10 +52,67 @@ class StudentDashboardTest extends TestCase
         $this->assertFalse($quizTitles->contains('Quiz Tidak Terbit'));
     }
 
+    public function test_learning_progress_only_counts_published_lesson_modules(): void
+    {
+        $student = $this->student();
+        $lessonTotalBefore = Module::where('status', 'published')
+            ->where('type', 'lesson')
+            ->count();
+
+        $course = Course::create([
+            'title' => 'Course Progress',
+            'slug' => 'course-progress',
+            'status' => 'published',
+        ]);
+
+        $completedLesson = Module::create([
+            'course_id' => $course->id,
+            'type' => 'lesson',
+            'title' => 'Bab Selesai',
+            'slug' => 'bab-selesai',
+            'status' => 'published',
+        ]);
+
+        Module::create([
+            'course_id' => $course->id,
+            'type' => 'lesson',
+            'title' => 'Bab Belum Selesai',
+            'slug' => 'bab-belum-selesai',
+            'status' => 'published',
+        ]);
+
+        Module::create([
+            'course_id' => $course->id,
+            'type' => 'quiz',
+            'title' => 'Quiz Materi',
+            'slug' => 'quiz-materi-progress',
+            'status' => 'published',
+        ]);
+
+        LessonProgress::create([
+            'student_id' => $student->id,
+            'module_id' => $completedLesson->id,
+            'status' => 'completed',
+            'completed_at' => now(),
+        ]);
+
+        $summary = app(StudentDashboardService::class)->summary($student);
+        $expectedProgress = (int) round((1 / ($lessonTotalBefore + 2)) * 100);
+        $progressIfQuizWasCounted = (int) round((1 / ($lessonTotalBefore + 3)) * 100);
+
+        $this->assertSame($expectedProgress, $summary['progress_percentage']);
+        $this->assertNotSame($progressIfQuizWasCounted, $summary['progress_percentage']);
+    }
+
     private function student(): Student
     {
         $school = School::create(['name' => 'Student School', 'level' => 'SMP', 'status' => 'active']);
-        $user = User::create(['name' => 'Student One', 'username' => 'student_one', 'password' => 'password', 'status' => 'active']);
+        $user = User::create([
+            'name' => 'Student One',
+            'username' => 'student_one_'.Str::lower(Str::random(6)),
+            'password' => 'password',
+            'status' => 'active',
+        ]);
 
         return Student::create(['user_id' => $user->id, 'school_id' => $school->id, 'status' => 'active']);
     }
