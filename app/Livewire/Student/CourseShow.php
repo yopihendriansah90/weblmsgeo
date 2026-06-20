@@ -4,6 +4,7 @@ namespace App\Livewire\Student;
 
 use App\Models\Course;
 use App\Models\Module;
+use App\Services\QuizAccessService;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -48,7 +49,9 @@ class CourseShow extends Component
 
         $allowNextAvailable = true;
 
-        return $this->course->modules->values()->map(function (Module $module, int $index) use (&$allowNextAvailable, $lessonProgressByModule, $quizAttemptsByModule, $student) {
+        $quizAccess = app(QuizAccessService::class);
+
+        return $this->course->modules->values()->map(function (Module $module, int $index) use (&$allowNextAvailable, $lessonProgressByModule, $quizAttemptsByModule, $student, $quizAccess) {
             $progress = $lessonProgressByModule->get($module->id);
             $attempts = $quizAttemptsByModule->get($module->id, collect());
             $isQuiz = $module->isQuiz();
@@ -57,7 +60,7 @@ class CourseShow extends Component
                 ? $attempts->contains(fn ($attempt) => $attempt->status === 'completed')
                 : $progress?->status === 'completed';
             $publishedQuiz = $isQuiz ? $module->publishedQuiz : null;
-            $canOpenQuiz = $publishedQuiz?->canStudentStartAttempt($student->id) ?? false;
+            $canOpenQuiz = $publishedQuiz ? $quizAccess->canOpen($publishedQuiz, $student) : false;
 
             $isAvailable = $allowNextAvailable && ! $isCompleted;
 

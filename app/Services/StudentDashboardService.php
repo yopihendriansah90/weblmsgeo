@@ -9,7 +9,10 @@ use App\Models\Student;
 
 class StudentDashboardService
 {
-    public function __construct(private readonly LessonProgressService $progressService) {}
+    public function __construct(
+        private readonly LessonProgressService $progressService,
+        private readonly QuizAccessService $quizAccess,
+    ) {}
 
     public function summary(Student $student): array
     {
@@ -51,7 +54,7 @@ class StudentDashboardService
                 })
                 ->with('module.course')
                 ->get()
-                ->filter(fn (Quiz $quiz): bool => $quiz->canStudentStartAttempt($student->id))
+                ->filter(fn (Quiz $quiz): bool => $this->quizAccess->canOpen($quiz, $student))
                 ->values(),
             'quiz_states' => $latestAttemptsByQuizId->map(fn ($attempt): array => [
                 'status' => $attempt->status,
@@ -72,7 +75,7 @@ class StudentDashboardService
             ->first(fn ($courseModule) => $courseModule->isQuiz())
             ?->publishedQuiz;
 
-        if (! $quiz || ! $quiz->canStudentStartAttempt($student->id)) {
+        if (! $quiz || ! $this->quizAccess->canOpen($quiz, $student)) {
             return null;
         }
 

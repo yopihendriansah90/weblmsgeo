@@ -59,6 +59,25 @@ class StudentCourseShowTest extends TestCase
             ->assertDontSee('Quiz Terkunci');
     }
 
+    public function test_final_quiz_redirects_when_opened_directly_before_lessons_are_completed(): void
+    {
+        $student = $this->student();
+        [$course, $firstLesson, $secondLesson, $quizModule, $quiz] = $this->courseWithTwoLessonsAndQuiz();
+
+        LessonProgress::create([
+            'student_id' => $student->id,
+            'module_id' => $firstLesson->id,
+            'status' => 'completed',
+            'completed_at' => now(),
+        ]);
+
+        $this->actingAs($student->user)
+            ->get(route('student.quizzes.take', $quiz))
+            ->assertRedirect(route('student.courses.show', $course));
+
+        $this->assertSame(0, $quiz->attempts()->where('student_id', $student->id)->count());
+    }
+
     public function test_completed_quiz_without_retake_does_not_show_open_button(): void
     {
         $student = $this->student();

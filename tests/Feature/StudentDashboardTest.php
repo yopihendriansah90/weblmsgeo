@@ -104,6 +104,59 @@ class StudentDashboardTest extends TestCase
         $this->assertNotSame($progressIfQuizWasCounted, $summary['progress_percentage']);
     }
 
+    public function test_dashboard_hides_course_quiz_until_all_lessons_are_completed(): void
+    {
+        $student = $this->student();
+        $course = Course::create([
+            'title' => 'Course Dashboard Lock',
+            'slug' => 'course-dashboard-lock',
+            'status' => 'published',
+        ]);
+
+        $firstLesson = Module::create([
+            'course_id' => $course->id,
+            'type' => 'lesson',
+            'title' => 'Bab Pertama',
+            'slug' => 'bab-dashboard-pertama',
+            'status' => 'published',
+        ]);
+
+        Module::create([
+            'course_id' => $course->id,
+            'type' => 'lesson',
+            'title' => 'Bab Kedua',
+            'slug' => 'bab-dashboard-kedua',
+            'status' => 'published',
+        ]);
+
+        $quizModule = Module::create([
+            'course_id' => $course->id,
+            'type' => 'quiz',
+            'title' => 'Quiz Dashboard',
+            'slug' => 'quiz-dashboard-lock',
+            'status' => 'published',
+        ]);
+
+        Quiz::create([
+            'module_id' => $quizModule->id,
+            'title' => 'Quiz Dashboard Lock',
+            'status' => 'published',
+        ]);
+
+        LessonProgress::create([
+            'student_id' => $student->id,
+            'module_id' => $firstLesson->id,
+            'status' => 'completed',
+            'last_opened_at' => now(),
+            'completed_at' => now(),
+        ]);
+
+        $summary = app(StudentDashboardService::class)->summary($student);
+
+        $this->assertNull($summary['last_module_quiz']);
+        $this->assertFalse($summary['available_quizzes']->pluck('title')->contains('Quiz Dashboard Lock'));
+    }
+
     private function student(): Student
     {
         $school = School::create(['name' => 'Student School', 'level' => 'SMP', 'status' => 'active']);

@@ -6,6 +6,7 @@ use App\Models\Quiz;
 use App\Models\QuizAttempt;
 use App\Models\QuizStep;
 use App\Models\QuizStepAttempt;
+use App\Services\QuizAccessService;
 use App\Services\QuizFlowService;
 use Illuminate\Support\Arr;
 use Livewire\Attributes\Layout;
@@ -24,12 +25,19 @@ class QuizTake extends Component
 
     public ?string $errorMessage = null;
 
-    public function mount(Quiz $quiz, QuizFlowService $flowService): void
+    public function mount(Quiz $quiz, QuizFlowService $flowService, QuizAccessService $quizAccess): void
     {
         abort_unless($quiz->status === 'published', 404);
         $this->quiz = $quiz->load('module.course', 'steps');
 
         $student = auth()->user()->student;
+
+        if (! $quizAccess->hasCompletedCourseLessons($this->quiz, $student)) {
+            session()->flash('status', 'Selesaikan semua bab pembahasan terlebih dahulu sebelum membuka quiz.');
+            $this->redirect(route('student.courses.show', $this->quiz->module->course), navigate: false);
+
+            return;
+        }
 
         if (! $this->quiz->canStudentStartAttempt($student->id)) {
             session()->flash('status', 'Quiz sudah selesai dan tidak dapat diulang.');
